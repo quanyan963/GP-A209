@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="ArialRound">
+        <attr name="text_type" format="enum">
+            <enum name="thin" value="0" />
+            <enum name="bold" value="1" />
+        </attr>
+    </declare-styleable>
+</resources>
