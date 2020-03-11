@@ -7,6 +7,14 @@
     tools:context=".main.MainActivity"
     android:background="@color/colorPrimaryDark">
 
+    <com.txtled.gp_a209.widget.ArialRoundTextView
+        android:id="@+id/atv_hint"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginTop="@dimen/dp_62_y"
 
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
