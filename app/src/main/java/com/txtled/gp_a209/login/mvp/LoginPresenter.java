@@ -53,7 +53,6 @@ public class LoginPresenter extends RxPresenter<LoginContract.View> implements L
     private CognitoCachingCredentialsProvider provider;
     private AmazonDynamoDB client;
 
-
     @Inject
     public LoginPresenter(DataManagerModel mDataManagerModel) {
         this.mDataManagerModel = mDataManagerModel;
