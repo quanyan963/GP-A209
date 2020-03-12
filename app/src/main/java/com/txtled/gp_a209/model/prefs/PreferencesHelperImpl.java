@@ -14,23 +14,13 @@ import javax.inject.Inject;
 public class PreferencesHelperImpl implements PreferencesHelper {
     private static final String SP_NAME = "my_sp";
     private SharedPreferences mSharedPreferences;
-    public static final String PLAY_POSITION = "play_position";
     public static final String IS_FIRST_APP = "is_first_app";
+    public static final String USER_ID = "user_id";
 
     @Inject
     public PreferencesHelperImpl() {
         mSharedPreferences = MyApplication.getInstance().getSharedPreferences(SP_NAME, Context.
                 MODE_PRIVATE);
-    }
-
-    @Override
-    public int getPlayPosition() {
-        return mSharedPreferences.getInt(PLAY_POSITION, 0);
-    }
-
-    @Override
-    public void setPlayPosition(int position) {
-        mSharedPreferences.edit().putInt(PLAY_POSITION, position).apply();
     }
 
     @Override
@@ -43,53 +33,13 @@ public class PreferencesHelperImpl implements PreferencesHelper {
         mSharedPreferences.edit().putBoolean(IS_FIRST_APP,first).apply();
     }
 
-//    @Override
-//    public void setIsFirstApp(boolean b) {
-//        mSharedPreferences.edit().putBoolean(IS_FIRST_APP,b).apply();
-//    }
-//
-//    @Override
-//    public boolean getIsFirstApp() {
-//        return mSharedPreferences.getBoolean(IS_FIRST_APP,true);
-//    }
-//
-//    @Override
-//    public void setMainVolume(int progress) {
-//        mSharedPreferences.edit().putInt(MAIN_VOLUME,progress).apply();
-//    }
-//
-//    @Override
-//    public int getMainVolume() {
-//        return mSharedPreferences.getInt(MAIN_VOLUME,0);
-//    }
-//
-//    @Override
-//    public void setInitDialog(boolean b) {
-//
-//    }
-//
-//    @Override
-//    public boolean getInitDialog() {
-//        return false;
-//    }
-//
-//    @Override
-//    public boolean getIsCycle() {
-//        return mSharedPreferences.getBoolean(IS_CYCLE,true);
-//    }
-//
-//    @Override
-//    public void setIsCycle(boolean b) {
-//        mSharedPreferences.edit().putBoolean(IS_CYCLE,b).apply();
-//    }
-//
-//    @Override
-//    public boolean getIsRandom() {
-//        return mSharedPreferences.getBoolean(IS_RANDOM,false);
-//    }
-//
-//    @Override
-//    public void setIsRandom(boolean b) {
-//        mSharedPreferences.edit().putBoolean(IS_RANDOM,b).apply();
-//    }
+    @Override
+    public String getUserId() {
+        return mSharedPreferences.getString(USER_ID,"");
+    }
+
+    @Override
+    public void setUserId(String id) {
+        mSharedPreferences.edit().putString(USER_ID,id).apply();
+    }
 }

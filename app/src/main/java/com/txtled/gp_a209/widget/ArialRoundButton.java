@@ -34,17 +34,17 @@ public class ArialRoundButton extends MaterialButton {
     }
 
     private void init(Context context, AttributeSet attrs, int defStyleAttr) {
-        String fontName = "ArialRoundedMTStd.ttf";
+        String fontName = "ArialRoundedMTStd.otf";
         if (attrs != null) {
             TypedArray typedArray = context.getTheme().
                     obtainStyledAttributes(attrs, R.styleable.ArialRound, defStyleAttr, 0);
             int fontType = typedArray.getInteger(R.styleable.ArialRound_text_type, 0);
             switch (fontType) {
                 case THIN:
-                    fontName = "ArialRoundedMTStd.ttf";
+                    fontName = "ArialRoundedMTStd.otf";
                     break;
                 case BOLD:
-                    fontName = "ArialRoundedMTStd-ExtraBold.ttf";
+                    fontName = "ArialRoundedMTStd-ExtraBold.otf";
                     break;
             }
         }

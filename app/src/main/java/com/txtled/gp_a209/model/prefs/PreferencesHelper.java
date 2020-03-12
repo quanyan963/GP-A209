@@ -5,11 +5,12 @@ package com.txtled.gp_a209.model.prefs;
  */
 
 public interface PreferencesHelper {
-    int getPlayPosition();
-
-    void setPlayPosition(int position);
 
     boolean isFirstIn();
 
     void setFirstIn(boolean first);
+
+    String getUserId();
+
+    void setUserId(String id);
 }

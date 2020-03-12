@@ -1,9 +1,5 @@
 package com.txtled.gp_a209.main;
 
-import androidx.appcompat.app.AppCompatActivity;
-
-import android.os.Bundle;
-
 import com.txtled.gp_a209.R;
 import com.txtled.gp_a209.base.MvpBaseActivity;
 import com.txtled.gp_a209.main.mvp.MainContract;

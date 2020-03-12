@@ -32,16 +32,6 @@ public class DataManagerModel implements DBHelper, PreferencesHelper, NetHelper,
     }
 
     @Override
-    public int getPlayPosition() {
-        return 0;
-    }
-
-    @Override
-    public void setPlayPosition(int position) {
-
-    }
-
-    @Override
     public boolean isFirstIn() {
         return mPreferencesHelper.isFirstIn();
     }
@@ -49,6 +39,16 @@ public class DataManagerModel implements DBHelper, PreferencesHelper, NetHelper,
     @Override
     public void setFirstIn(boolean first) {
         mPreferencesHelper.setFirstIn(first);
+    }
+
+    @Override
+    public String getUserId() {
+        return mPreferencesHelper.getUserId();
+    }
+
+    @Override
+    public void setUserId(String id) {
+        mPreferencesHelper.setUserId(id);
     }
 
     @Override

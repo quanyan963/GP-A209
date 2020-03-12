@@ -5,6 +5,7 @@ import android.app.Activity;
 
 import com.txtled.gp_a209.di.module.ActivityModule;
 import com.txtled.gp_a209.di.scope.ActivityScope;
+import com.txtled.gp_a209.login.LoginActivity;
 import com.txtled.gp_a209.main.MainActivity;
 import com.txtled.gp_a209.start.StartActivity;
 
@@ -23,4 +24,6 @@ public interface ActivityComponent {
     void inject(MainActivity mainActivity);
 
     void inject(StartActivity startActivity);
+
+    void inject(LoginActivity loginActivity);
 }

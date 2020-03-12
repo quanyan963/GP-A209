@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".main.MainActivity"
+    android:background="@color/colorPrimaryDark">
+
+    <com.txtled.gp_a209.widget.ArialRoundTextView
+        android:id="@+id/atv_hint"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginTop="@dimen/dp_62_y"
+        style="@style/main_tv"
+        android:text="@string/conn_wifi_hint"
+        app:text_type="thin"/>
+
+    <com.txtled.gp_a209.widget.ArialRoundTextView
+        android:id="@+id/atv_problem"
+        style="@style/main_tv"
+        android:layout_width="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginBottom="@dimen/dp_16_y"
+        android:padding="@dimen/dp_16_x"
+        android:textSize="12sp" />
+
+    <com.txtled.gp_a209.widget.ArialRoundButton
+        android:id="@+id/abt_login"
+        style="@style/main_btn"
+        app:backgroundTint="@color/black"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:textColor="@color/yellow"
+        android:text="@string/login_with_amazon"
+        app:layout_constraintBottom_toTopOf="@+id/atv_problem"/>
+
+    <com.txtled.gp_a209.widget.ArialRoundTextView
+        android:id="@+id/atv_login_hint"
+        style="@style/main_tv"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/abt_login"
+        android:layout_marginBottom="@dimen/dp_46_y"
+        android:text="@string/login_hint"/>
+    <com.txtled.gp_a209.widget.ArialRoundTextView
+        android:id="@+id/atv_wifi_name"
+        style="@style/main_tv"
+        app:layout_constraintBottom_toTopOf="@+id/atv_login_hint"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/atv_hint"
+        android:textColor="@color/white"
+        app:text_type="bold"
+        android:textSize="@dimen/dp_22_x"
+        android:text="Wifi"/>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
