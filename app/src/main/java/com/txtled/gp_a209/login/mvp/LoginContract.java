@@ -23,6 +23,10 @@ public interface LoginContract {
         void hidSnackBar();
 
         void setInfo(String ssid, WifiInfo info);
+
+        void showLoginFail();
+
+        void toMainView();
     }
     interface Presenter extends BasePresenter<View>{
 

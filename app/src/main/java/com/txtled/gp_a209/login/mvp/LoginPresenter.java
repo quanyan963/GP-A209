@@ -26,8 +26,10 @@ import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
 import com.txtled.gp_a209.R;
 import com.txtled.gp_a209.application.MyApplication;
+import com.txtled.gp_a209.base.CommonSubscriber;
 import com.txtled.gp_a209.base.RxPresenter;
 import com.txtled.gp_a209.model.DataManagerModel;
+import com.txtled.gp_a209.utils.RxUtil;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -35,6 +37,7 @@ import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
+import io.reactivex.Flowable;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
@@ -103,6 +106,7 @@ public class LoginPresenter extends RxPresenter<LoginContract.View> implements L
 
 
     private void onWifiChanged(Context context,WifiInfo info) {
+        view.hidSnackBar();
         boolean disconnected = info == null
                 || info.getNetworkId() == -1
                 || "<unknown ssid>".equals(info.getSSID());
@@ -135,6 +139,8 @@ public class LoginPresenter extends RxPresenter<LoginContract.View> implements L
         switch (id){
             case R.id.abt_login:
                 view.showLoadingView();
+                userId = "";
+                mDataManagerModel.setUserId(userId);
                 AuthorizationManager.authorize(
                         new AuthorizeRequest.Builder(mRequestContext)
                                 .addScopes(ProfileScope.profile(),ProfileScope.postalCode())
@@ -150,7 +156,17 @@ public class LoginPresenter extends RxPresenter<LoginContract.View> implements L
             Observable.timer(4, TimeUnit.SECONDS).subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread()).subscribe(aLong -> {
                 if (userId.equals("")){
-                    view.hidLoadingView();
+                    view.showLoginFail();
+                    addSubscribe(Flowable.timer(3,TimeUnit.SECONDS)
+                            .compose(RxUtil.rxSchedulerHelper())
+                            .subscribeWith(new CommonSubscriber<Long>(view){
+
+                                @Override
+                                public void onNext(Long aLong) {
+                                    view.hidSnackBar();
+                                }
+                            }));
+
                 }
             });
         }
@@ -185,7 +201,7 @@ public class LoginPresenter extends RxPresenter<LoginContract.View> implements L
             }
             mDataManagerModel.setUserId(userId);
             //view.setUserId(userId);
-            view.hidLoadingView();
+            view.toMainView();
         }
 
         @Override

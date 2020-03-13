@@ -1,5 +1,6 @@
 package com.txtled.gp_a209.login;
 
+import android.content.Intent;
 import android.net.wifi.WifiInfo;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
@@ -14,6 +15,7 @@ import com.txtled.gp_a209.R;
 import com.txtled.gp_a209.base.MvpBaseActivity;
 import com.txtled.gp_a209.login.mvp.LoginContract;
 import com.txtled.gp_a209.login.mvp.LoginPresenter;
+import com.txtled.gp_a209.main.MainActivity;
 import com.txtled.gp_a209.utils.AlertUtils;
 import com.txtled.gp_a209.widget.ArialRoundButton;
 import com.txtled.gp_a209.widget.ArialRoundTextView;
@@ -82,17 +84,19 @@ public class LoginActivity extends MvpBaseActivity<LoginPresenter> implements Lo
 
     @Override
     public void checkLocation() {
+        atvWifiName.setText(R.string.unknown);
         showSnackBar(atvProblem,R.string.open_location);
     }
 
     @Override
     public void setNoWifiView() {
+        atvWifiName.setText(R.string.unknown);
         showSnackBar(atvProblem,R.string.no_wifi);
     }
 
     @Override
     public void hidSnackBar() {
-        if (snackbar.isShown()){
+        if (snackbar != null && snackbar.isShown()){
             hideSnackBar();
         }
     }
@@ -100,6 +104,19 @@ public class LoginActivity extends MvpBaseActivity<LoginPresenter> implements Lo
     @Override
     public void setInfo(String ssid, WifiInfo info) {
         atvWifiName.setText(ssid);
+    }
+
+    @Override
+    public void showLoginFail() {
+        hidLoadingView();
+        hideSnackBar();
+        showSnackBar(atvProblem,R.string.login_failed);
+    }
+
+    @Override
+    public void toMainView() {
+        hidLoadingView();
+        startActivity(new Intent(this, MainActivity.class));
     }
 
     private class FirstClick extends ClickableSpan {

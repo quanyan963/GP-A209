@@ -53,8 +53,7 @@
         app:layout_constraintTop_toBottomOf="@+id/atv_hint"
         android:textColor="@color/white"
         app:text_type="bold"
-        android:textSize="@dimen/dp_22_x"
-        android:text="Wifi"/>
+        android:textSize="@dimen/dp_22_x" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
