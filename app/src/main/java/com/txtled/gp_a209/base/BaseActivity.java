@@ -16,13 +16,14 @@ import androidx.appcompat.widget.Toolbar;
 import com.google.android.material.snackbar.Snackbar;
 import com.txtled.gp_a209.R;
 import com.txtled.gp_a209.application.MyApplication;
+import com.txtled.gp_a209.widget.ArialRoundTextView;
 
 import butterknife.ButterKnife;
 
 
 public abstract class BaseActivity extends AppCompatActivity {
     public static final String TAG = BaseActivity.class.getSimpleName();
-    public TextView tvTitle;
+    public ArialRoundTextView tvTitle;
     public boolean isBack = true;
     public boolean changeColor = true;
     private long mExitTime;
@@ -60,26 +61,23 @@ public abstract class BaseActivity extends AppCompatActivity {
 
 
     public void initToolbar() {
-//        toolbar = (Toolbar) findViewById(R.id.toolbar);
-//        if (toolbar != null) {
-//            tvTitle = (TextView) findViewById(R.id.tv_title);
-//            ivRight = (ImageView) findViewById(R.id.iv_right);
-//            setSupportActionBar(toolbar);
-//            setTitle("");
-//
-//            toolbar.setOnMenuItemClickListener(onMenuItemClick);
-//            toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    if (isBack){
-//                        onBackPressed();
-//                    }else {
-//                        onLeftClick();
-//                    }
-//
-//                }
-//            });
-//        }
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        if (toolbar != null) {
+            tvTitle = (ArialRoundTextView) findViewById(R.id.tv_title);
+            ivRight = (ImageView) findViewById(R.id.iv_right);
+            setSupportActionBar(toolbar);
+            setTitle("");
+
+            toolbar.setOnMenuItemClickListener(onMenuItemClick);
+            toolbar.setNavigationOnClickListener(v -> {
+                if (isBack){
+                    onBackPressed();
+                }else {
+                    onLeftClick();
+                }
+
+            });
+        }
     }
 
     public void onLeftClick() {
@@ -87,18 +85,18 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     public void setNavigationIcon(boolean isBack) {
         this.isBack = isBack;
-//        if (isBack) {
-//            toolbar.setNavigationIcon(R.mipmap.back);
-//        } else {
-//            toolbar.setNavigationIcon(R.mipmap.schedule);
-//        }
+        if (isBack) {
+            toolbar.setNavigationIcon(R.mipmap.logwifi_back_xhdpi);
+        } else {
+            toolbar.setNavigationIcon(R.mipmap.devicelist_left_xhdpi);
+        }
 
     }
 
-    public void setRightImg(boolean isShow, @Nullable Drawable drawable, View.OnClickListener listener) {
+    public void setRightImg(boolean isShow, @Nullable int drawable, View.OnClickListener listener) {
         if (isShow) {
             ivRight.setVisibility(View.VISIBLE);
-            ivRight.setImageDrawable(drawable);
+            ivRight.setImageResource(drawable);
             ivRight.setOnClickListener(listener);
         } else {
             ivRight.setVisibility(View.GONE);

@@ -3,6 +3,7 @@ package com.txtled.gp_a209.di.component;
 import android.app.Activity;
 
 
+import com.txtled.gp_a209.add.AddDeviceActivity;
 import com.txtled.gp_a209.di.module.ActivityModule;
 import com.txtled.gp_a209.di.scope.ActivityScope;
 import com.txtled.gp_a209.login.LoginActivity;
@@ -26,4 +27,6 @@ public interface ActivityComponent {
     void inject(StartActivity startActivity);
 
     void inject(LoginActivity loginActivity);
+
+    void inject(AddDeviceActivity addDeviceActivity);
 }

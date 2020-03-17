@@ -96,9 +96,7 @@ public class LoginActivity extends MvpBaseActivity<LoginPresenter> implements Lo
 
     @Override
     public void hidSnackBar() {
-        if (snackbar != null && snackbar.isShown()){
-            hideSnackBar();
-        }
+        hideSnackBar();
     }
 
     @Override
@@ -147,7 +145,8 @@ public class LoginActivity extends MvpBaseActivity<LoginPresenter> implements Lo
     @Override
     public void onBackPressed() {
         if (snackbar != null && snackbar.isShown()){
-            hideSnackBar();
+            snackbar.dismiss();
+            snackbar = null;
         }else {
             super.onBackPressed();
         }

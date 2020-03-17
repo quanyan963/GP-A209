@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/colorPrimaryDark">
+    <include
+        android:id="@+id/i_add_tool"
+        layout="@layout/toolbar"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"/>
+
+    <com.txtled.gp_a209.widget.ArialRoundTextView
+        android:id="@+id/atv_top"
+        style="@style/main_tv"
+        app:layout_constraintTop_toBottomOf="@+id/i_add_tool"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginTop="@dimen/dp_16_x"
+        android:textSize="20sp"
+        android:text="@string/log_wifi"/>
+
+    <LinearLayout
+        android:id="@+id/ll_input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginBottom="@dimen/dp_30_y"
+        android:orientation="vertical">
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/til_name"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:layout_marginLeft="@dimen/dp_46_x"
+            android:layout_marginRight="@dimen/dp_46_x"
+            android:layout_marginBottom="@dimen/dp_8_x"
+            app:passwordToggleEnabled="false"
+            app:passwordToggleTint="@color/white"
+            android:background="@color/colorPrimaryDark">
+            <com.txtled.gp_a209.widget.ArialRoundEditText
+                android:id="@+id/aet_wifi_name"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingLeft="@dimen/dp_8_x"
+                android:paddingTop="@dimen/dp_8_x"
+                android:paddingBottom="@dimen/dp_8_x"
+                android:background="@color/white"
+                android:clickable="true"
+                android:textSize="14sp"
+                android:inputType="text"
+                android:gravity="center_vertical"
+                android:focusableInTouchMode="true"
+                android:hint="@string/wifi_name"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/til_pass"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:layout_marginLeft="@dimen/dp_46_x"
+            android:layout_marginRight="@dimen/dp_46_x"
+            app:passwordToggleEnabled="true"
+            app:passwordToggleTint="@color/yellow"
+            android:background="@color/colorPrimaryDark">
+            <com.txtled.gp_a209.widget.ArialRoundEditText
+                android:id="@+id/aet_password"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingLeft="@dimen/dp_8_x"
+                android:paddingTop="@dimen/dp_8_x"
+                android:paddingBottom="@dimen/dp_8_x"
+                android:background="@color/white"
+                android:textSize="14sp"
+                android:inputType="textPassword"
+                android:gravity="center_vertical"
+                android:focusableInTouchMode="true"
+                android:hint="@string/password_hint"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+    </LinearLayout>
+
+
+
+    <com.txtled.gp_a209.widget.ArialRoundTextView
+        style="@style/main_tv"
+        app:layout_constraintTop_toBottomOf="@+id/atv_top"
+        app:layout_constraintBottom_toTopOf="@+id/ll_input"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:textColor="@color/bg_snack"
+        android:text="@string/device_will_configured"/>
+
+    <com.txtled.gp_a209.widget.ArialRoundTextView
+        android:id="@+id/atv_eye_hint"
+        style="@style/main_tv"
+        app:layout_constraintTop_toBottomOf="@+id/ll_input"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginTop="@dimen/dp_12_x"
+        android:textSize="12sp"
+        android:textColor="@color/white"
+        android:text="@string/eye_hint"/>
+
+    <com.txtled.gp_a209.widget.ArialRoundTextView
+        android:id="@+id/atv_no_pass"
+        style="@style/main_tv"
+        app:layout_constraintTop_toBottomOf="@+id/atv_eye_hint"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginTop="@dimen/dp_12_x"
+        android:textSize="12sp"
+        android:textColor="@color/yellow"
+        android:padding="@dimen/dp_4_x"
+        android:text="@string/wifi_no_password"/>
+
+    <com.txtled.gp_a209.widget.ArialRoundButton
+        android:id="@+id/abt_collect"
+        style="@style/main_btn"
+        app:layout_constraintTop_toBottomOf="@+id/atv_no_pass"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:textColor="@color/yellow"
+        android:text="@string/collect"/>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

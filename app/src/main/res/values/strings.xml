@@ -16,4 +16,15 @@
     <string name="no_wifi">You\'re not connected to the Internet.</string>
     <string name="unknown">Unknown</string>
     <string name="login_failed">Login failed, please try again.</string>
+    <string name="device_list">DEVICE LIST</string>
+    <string name="log_wifi">Log Onto Your Home Wi-Fi</string>
+    <string name="device_will_configured">Your device will be configured on\nthe following network:</string>
+    <string name="eye_hint">Click the eye icon to check your password</string>
+    <string name="wifi_no_password"><![CDATA[No password ? Click here to continue >]]></string>
+    <string name="collect">Collect</string>
+    <string name="add_device">ADD DEVICE</string>
+    <string name="wifi_name">Wifi name</string>
+    <string name="password_hint">Please enter the password</string>
+    <string name="hint_title">Please connect to your home\nWi-Fi first</string>
+    <string name="hint_msg">Please turn Wi-Fi on in your\nphone\'s settings.</string>
 </resources>

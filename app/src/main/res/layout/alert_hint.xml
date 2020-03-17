@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/background_white">
+
+    <com.txtled.gp_a209.widget.ArialRoundTextView
+        android:id="@+id/atv_hint_title"
+        style="@style/main_tv"
+        app:text_type="bold"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/dp_16_x"
+        android:text="@string/hint_title"/>
+
+    <com.txtled.gp_a209.widget.ArialRoundTextView
+        android:id="@+id/atv_hint_msg"
+        style="@style/main_tv"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/atv_hint_title"
+        android:layout_marginTop="@dimen/dp_16_x"
+        android:layout_marginBottom="@dimen/dp_16_x"
+        android:textSize="14sp"
+        android:text="@string/hint_msg" />
+    <View
+        android:id="@+id/v_line"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_1_y"
+        android:layout_below="@+id/atv_hint_msg"
+        android:background="@color/gray"/>
+    <com.txtled.gp_a209.widget.ArialRoundButton
+        android:id="@+id/abt_ok"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/white"
+        android:layout_below="@+id/v_line"
+        android:textSize="20sp"
+        android:textColor="@color/blue"
+        android:gravity="center"
+        android:text="@string/ok"
+        android:padding="@dimen/dp_12_x"/>
+
+</RelativeLayout>

@@ -19,11 +19,13 @@ import androidx.core.content.ContextCompat;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
 import com.txtled.gp_a209.R;
+import com.txtled.gp_a209.widget.ArialRoundButton;
 
 
 public class AlertUtils {
     //private static OnCreateThingListener thingListener;
     private static boolean canClose = false;
+    public static OnConfirmClickListener clickListener;
 
     public static void showErrorMessage(Context context, int titleRes,
                                         String errorCode, DialogInterface.OnClickListener listener) {
@@ -75,6 +77,10 @@ public class AlertUtils {
 
     public interface OnConfirmClickListener{
         void onConfirmClick(String friendlyName);
+    }
+
+    public static void setListener(OnConfirmClickListener listener){
+        clickListener = listener;
     }
 
 //    public static OnCreateThingListener getThingListener(){
@@ -177,6 +183,23 @@ public class AlertUtils {
 //            };
 //        }
 //    }
+
+    public static void showHintDialog(Context context, int viewId){
+        if (!((Activity) context).isFinishing()){
+            LayoutInflater inflater = LayoutInflater.from(context);
+            View view = inflater.inflate(viewId,null);
+            ArialRoundButton abt_ok = view.findViewById(R.id.abt_ok);
+            AlertDialog dialog = new AlertDialog.Builder(context)
+                    .setView(view)
+                    .create();
+            dialog.setCancelable(false);
+            abt_ok.setOnClickListener(v -> dialog.dismiss());
+            dialog.show();
+            Window window = dialog.getWindow();
+            window.setBackgroundDrawable(context.getResources()
+                    .getDrawable(R.drawable.background_white));
+        }
+    }
 
     private static void setAlphaAnimation(View view){
         AlphaAnimation animation = new AlphaAnimation(0f, 1f);
