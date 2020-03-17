@@ -25,6 +25,11 @@
         <item name="actionMenuTextColor">@color/white</item>
     </style>
 
+    <style name="dialogWindowAnimInToOut" parent="android:Animation" mce_bogus="1">
+        <item name="android:windowEnterAnimation">@anim/anim_out</item>
+        <item name="android:windowExitAnimation">@anim/anim_in</item>
+    </style>
+
     <style name="main_tv">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>

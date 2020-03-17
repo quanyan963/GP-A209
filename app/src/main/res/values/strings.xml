@@ -27,4 +27,6 @@
     <string name="password_hint">Please enter the password</string>
     <string name="hint_title">Please connect to your home\nWi-Fi first</string>
     <string name="hint_msg">Please turn Wi-Fi on in your\nphone\'s settings.</string>
+    <string name="config_wifi">wifi: %1$s</string>
+    <string name="hint_device">Please press long to enter the\ndistribution mode.\n\nName:</string>
 </resources>

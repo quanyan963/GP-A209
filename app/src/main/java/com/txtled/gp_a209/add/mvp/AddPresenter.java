@@ -40,9 +40,15 @@ public class AddPresenter extends RxPresenter<AddContract.View> implements AddCo
     public void onClick(int id) {
         switch (id){
             case R.id.abt_collect:
-
+            case R.id.atv_no_pass:
+                view.showConnectHint();
                 break;
         }
+    }
+
+    @Override
+    public void configWifi() {
+
     }
 
     public boolean isSDKAtLeastP() {

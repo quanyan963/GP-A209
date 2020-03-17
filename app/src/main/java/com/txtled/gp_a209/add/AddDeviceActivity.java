@@ -48,7 +48,14 @@ public class AddDeviceActivity extends MvpBaseActivity<AddPresenter> implements 
         aetPassword.requestFocus();
         abtCollect.setOnClickListener(this);
         presenter.init(this);
-        AlertUtils.showHintDialog(this,R.layout.alert_hint);
+        AlertUtils.setListener(b -> {
+            if (b){
+                presenter.configWifi();
+            }
+        });
+        AlertUtils.showHintDialog(this,R.layout.alert_hint,R.string.hint_title
+                ,R.string.hint_msg,false,null,null);
+        atvNoPass.setOnClickListener(this);
         aetPassword.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -62,7 +69,15 @@ public class AddDeviceActivity extends MvpBaseActivity<AddPresenter> implements 
 
             @Override
             public void afterTextChanged(Editable s) {
-
+                if (s.length() > 7){
+                    if (aetPassword.getText().toString().trim().length() != 0){
+                        changeBtnColor(true);
+                    }else {
+                        changeBtnColor(false);
+                    }
+                }else {
+                    changeBtnColor(false);
+                }
             }
         });
     }
@@ -109,6 +124,11 @@ public class AddDeviceActivity extends MvpBaseActivity<AddPresenter> implements 
     public void setInfo(String ssid, WifiInfo info) {
         hideSnackBar();
         aetWifiName.setText(ssid);
+    }
+
+    @Override
+    public void showConnectHint() {
+        AlertUtils.showHintDialog(this,R.layout.alert_hint,getString());
     }
 
     @Override

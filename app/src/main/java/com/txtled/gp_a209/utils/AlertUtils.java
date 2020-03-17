@@ -11,6 +11,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
 import android.view.animation.AlphaAnimation;
+import android.view.animation.AnimationSet;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
@@ -20,6 +22,7 @@ import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
 import com.txtled.gp_a209.R;
 import com.txtled.gp_a209.widget.ArialRoundButton;
+import com.txtled.gp_a209.widget.ArialRoundTextView;
 
 
 public class AlertUtils {
@@ -76,7 +79,7 @@ public class AlertUtils {
     }
 
     public interface OnConfirmClickListener{
-        void onConfirmClick(String friendlyName);
+        void onConfirmClick(boolean b);
     }
 
     public static void setListener(OnConfirmClickListener listener){
@@ -86,118 +89,46 @@ public class AlertUtils {
 //    public static OnCreateThingListener getThingListener(){
 //        return thingListener;
 //    }
-//
-//    public static void showAlertDialog(Context context, int viewId,
-//                                       OnConfirmClickListener listener) {
-//        canClose = false;
-//        if (!((Activity) context).isFinishing()) {
-//            LayoutInflater layoutInflater = LayoutInflater.from(context);
-//            View view = layoutInflater.inflate(viewId, null);
-//            TextInputEditText editText = (TextInputEditText) view.findViewById(R.id.alert_wwa_item);
-//            TextView textView = (TextView) view.findViewById(R.id.tv_alert_create);
-//            AlertDialog dialog = new AlertDialog.Builder(context)
-//                    .setView(view)
-//                    .setNegativeButton(R.string.cancel, (dialog12, which) -> dialog12.dismiss())
-//                    .setPositiveButton(R.string.confirm,null)
-//                    .create();
-//            editText.addTextChangedListener(new TextWatcher() {
-//                @Override
-//                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-//
-//                }
-//
-//                @Override
-//                public void onTextChanged(CharSequence s, int start, int before, int count) {
-//
-//                }
-//
-//                @Override
-//                public void afterTextChanged(Editable s) {
-//                    textView.setText("");
-//                    if (!s.toString().trim().isEmpty()){
-//                        if (!s.toString().matches("^[[A-Za-z]|\\s]+$")){
-//                            textView.setHint(R.string.contain_hint);
-//                            //setAlphaAnimation(textView);
-//                            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
-//                        }else {
-//                            textView.setHint(R.string.wake_up_hint);
-//                            //setAlphaAnimation(textView);
-//                            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
-//                        }
-//                    }else {
-//                        textView.setHint(R.string.wake_up_hint);
-//                        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
-//                    }
-//                }
-//            });
-//            dialog.setCanceledOnTouchOutside(false);
-//            dialog.setCancelable(true);
-//            dialog.show();
-//            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
-//            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
-//                if (canClose){
-//                    dialog.dismiss();
-//                }else {
-//                    //editText.clearFocus();
-//                    editText.setFocusable(false);
-//                    listener.onConfirmClick(editText.getText().toString().trim());
-//                    dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
-//                    dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setEnabled(false);
-//                    Utils.hideSoftKeyboard(context,editText);
-//                    dialog.setCancelable(false);
-//
-//                }
-//            });
-//            thingListener = new OnCreateThingListener() {
-//                @Override
-//                public void onStatueChange(int str) {
-//                    ((Activity) context).runOnUiThread(() -> {
-//                        if (str == R.string.device_name_used){
-//                            editText.setFocusable(true);
-//                            editText.setFocusableInTouchMode(true);
-//                            editText.requestFocus();
-//
-//                        }else if (str == R.string.create_thing_fail){
-//                            editText.setFocusable(true);
-//                            editText.setFocusableInTouchMode(true);
-//                            editText.requestFocus();
-//                            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
-//                            dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setEnabled(true);
-//                            dialog.setCancelable(true);
-//                        }
-//                        textView.setText(str);
-//                        setAlphaAnimation(textView);
-//                    });
-//                }
-//
-//                @Override
-//                public void dismiss() {
-//                    canClose = true;
-//                    ((Activity) context).runOnUiThread(() -> {
-//                        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
-//                        dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setEnabled(true);
-//                        dialog.setCancelable(true);
-//                    });
-//
-//                }
-//            };
-//        }
-//    }
 
-    public static void showHintDialog(Context context, int viewId){
+    public static void showHintDialog(Context context, int viewId,String title,
+                                      int msg, boolean isConfig, String wifiName, String pass){
         if (!((Activity) context).isFinishing()){
             LayoutInflater inflater = LayoutInflater.from(context);
             View view = inflater.inflate(viewId,null);
-            ArialRoundButton abt_ok = view.findViewById(R.id.abt_ok);
+            ArialRoundButton abtOk = view.findViewById(R.id.abt_ok);
+            ArialRoundTextView atvHintTitle = view.findViewById(R.id.atv_hint_title);
+            ArialRoundTextView atvHintMsg = view.findViewById(R.id.atv_hint_msg);
+            atvHintTitle.setText(title);
+            atvHintMsg.setText(msg);
             AlertDialog dialog = new AlertDialog.Builder(context)
                     .setView(view)
                     .create();
             dialog.setCancelable(false);
-            abt_ok.setOnClickListener(v -> dialog.dismiss());
             dialog.show();
             Window window = dialog.getWindow();
+            window.setWindowAnimations(R.style.dialogWindowAnimInToOut);
             window.setBackgroundDrawable(context.getResources()
                     .getDrawable(R.drawable.background_white));
+            abtOk.setOnClickListener(v -> {
+                dialog.dismiss();
+                clickListener.onConfirmClick(isConfig);
+                if (isConfig){
+                    View config = inflater.inflate(R.layout.alert_configure,null);
+                    ArialRoundTextView atvWifi = config.findViewById(R.id.atv_wifi);
+                    ArialRoundTextView atvPass = config.findViewById(R.id.atv_pass);
+                    atvWifi.setText(context.getString(R.string.config_wifi,wifiName));
+                    atvPass.setText(pass);
+                    AlertDialog configDialog = new AlertDialog.Builder(context)
+                            .setView(config)
+                            .create();
+                    configDialog.setCancelable(false);
+                    configDialog.show();
+                    Window cWindow = configDialog.getWindow();
+                    cWindow.setWindowAnimations(R.style.dialogWindowAnimInToOut);
+                    cWindow.setBackgroundDrawable(context.getResources()
+                            .getDrawable(R.drawable.background_white));
+                }
+            });
         }
     }
 
@@ -278,6 +209,7 @@ public class AlertUtils {
             dialog.setCancelable(false);
             dialog.show();
             Window window = dialog.getWindow();
+            window.setWindowAnimations(R.style.dialogWindowAnimInToOut);
             window.setBackgroundDrawable(context.getResources()
                     .getDrawable(R.drawable.background_white));
         }
