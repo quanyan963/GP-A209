@@ -30,6 +30,10 @@
         <item name="android:windowExitAnimation">@anim/anim_in</item>
     </style>
 
+    <style name="Dialog_Fullscreen">
+        <item name="android:windowFullscreen">false</item>
+    </style>
+
     <style name="main_tv">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>

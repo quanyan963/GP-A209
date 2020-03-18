@@ -52,6 +52,16 @@ public class DataManagerModel implements DBHelper, PreferencesHelper, NetHelper,
     }
 
     @Override
+    public String getDeviceAddress() {
+        return mPreferencesHelper.getDeviceAddress();
+    }
+
+    @Override
+    public void setDeviceAddress(String address) {
+        mPreferencesHelper.setDeviceAddress(address);
+    }
+
+    @Override
     public void requestPermissions(Activity activity, String[] permissions, OnPermissionsListener permissionsListener) {
         mOperateHelper.requestPermissions(activity, permissions, permissionsListener);
     }

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="friendlyName">
+        <item>Fox</item>
+        <item>Koala</item>
+        <item>Bear</item>
+        <item>Lion</item>
+        <item>Monkey</item>
+        <item>Sloth</item>
+    </string-array>
+</resources>

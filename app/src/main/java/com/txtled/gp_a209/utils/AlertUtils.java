@@ -9,10 +9,12 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.AnimationSet;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
@@ -90,8 +92,10 @@ public class AlertUtils {
 //        return thingListener;
 //    }
 
+    public static int width;
+
     public static void showHintDialog(Context context, int viewId,String title,
-                                      int msg, boolean isConfig, String wifiName, String pass){
+                                      int msg, boolean isConfig){
         if (!((Activity) context).isFinishing()){
             LayoutInflater inflater = LayoutInflater.from(context);
             View view = inflater.inflate(viewId,null);
@@ -100,10 +104,11 @@ public class AlertUtils {
             ArialRoundTextView atvHintMsg = view.findViewById(R.id.atv_hint_msg);
             atvHintTitle.setText(title);
             atvHintMsg.setText(msg);
+            abtOk.setText(isConfig ? R.string.next : R.string.ok);
             AlertDialog dialog = new AlertDialog.Builder(context)
                     .setView(view)
                     .create();
-            dialog.setCancelable(false);
+            dialog.setCancelable(true);
             dialog.show();
             Window window = dialog.getWindow();
             window.setWindowAnimations(R.style.dialogWindowAnimInToOut);
@@ -112,23 +117,50 @@ public class AlertUtils {
             abtOk.setOnClickListener(v -> {
                 dialog.dismiss();
                 clickListener.onConfirmClick(isConfig);
-                if (isConfig){
-                    View config = inflater.inflate(R.layout.alert_configure,null);
-                    ArialRoundTextView atvWifi = config.findViewById(R.id.atv_wifi);
-                    ArialRoundTextView atvPass = config.findViewById(R.id.atv_pass);
-                    atvWifi.setText(context.getString(R.string.config_wifi,wifiName));
-                    atvPass.setText(pass);
-                    AlertDialog configDialog = new AlertDialog.Builder(context)
-                            .setView(config)
-                            .create();
-                    configDialog.setCancelable(false);
-                    configDialog.show();
-                    Window cWindow = configDialog.getWindow();
-                    cWindow.setWindowAnimations(R.style.dialogWindowAnimInToOut);
-                    cWindow.setBackgroundDrawable(context.getResources()
-                            .getDrawable(R.drawable.background_white));
+            });
+        }
+    }
+
+    public static AlertDialog showProgressDialog(Context context,String wifiName,String pass){
+        if (!((Activity) context).isFinishing()){
+            LayoutInflater inflater = LayoutInflater.from(context);
+            View config = inflater.inflate(R.layout.alert_configure,null);
+            ArialRoundTextView atvWifi = config.findViewById(R.id.atv_wifi);
+            ArialRoundTextView atvPass = config.findViewById(R.id.atv_pass);
+            atvWifi.setText(context.getString(R.string.config_wifi,wifiName));
+            atvPass.setText(pass);
+            AlertDialog configDialog = new AlertDialog.Builder(context,R.style.TransparentDialog)
+                    .setView(config)
+                    .create();
+            configDialog.setCancelable(false);
+            configDialog.show();
+            Window cWindow = configDialog.getWindow();
+
+            ViewTreeObserver vto = atvWifi.getViewTreeObserver();
+            vto.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+                public boolean onPreDraw() {
+                    atvWifi.getViewTreeObserver().removeOnPreDrawListener(this);
+                    width = atvWifi.getMeasuredWidth();
+                    return true;
                 }
             });
+
+            ViewTreeObserver passVto = atvPass.getViewTreeObserver();
+            passVto.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+                public boolean onPreDraw() {
+                    atvPass.getViewTreeObserver().removeOnPreDrawListener(this);
+                    width = atvPass.getMeasuredWidth() > width ?
+                            atvPass.getMeasuredWidth() : width;
+                    cWindow.setLayout(width+60, RelativeLayout.LayoutParams.WRAP_CONTENT);
+                    return true;
+                }
+            });
+            cWindow.setWindowAnimations(R.style.dialogWindowAnimInToOut);
+            cWindow.setBackgroundDrawable(context.getResources()
+                    .getDrawable(R.drawable.background_white));
+            return configDialog;
+        }else {
+            return null;
         }
     }
 

@@ -7,6 +7,7 @@
         android:id="@+id/pb_config"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp_6_y"
         android:layout_alignParentTop="true"
         android:layout_centerInParent="true"/>
     <com.txtled.gp_a209.widget.ArialRoundTextView
@@ -14,6 +15,7 @@
         style="@style/main_tv"
         android:layout_centerInParent="true"
         android:layout_below="@+id/pb_config"
+        android:layout_marginTop="@dimen/dp_8_y"
         android:textSize="12sp" />
 
     <com.txtled.gp_a209.widget.ArialRoundTextView
@@ -22,6 +24,7 @@
         android:layout_centerInParent="true"
         android:layout_below="@+id/atv_wifi"
         android:inputType="textPassword"
+        android:layout_marginBottom="@dimen/dp_6_y"
         android:textSize="12sp" />
 
 </RelativeLayout>

@@ -12,6 +12,7 @@
     <string name="problems">Experiencing any problems? *Give us your feedback*</string>
     <string name="maintenance">Under maintenance</string>
     <string name="ok">OK</string>
+    <string name="next">NEXT</string>
     <string name="open_location">Location not opened,please open it.</string>
     <string name="no_wifi">You\'re not connected to the Internet.</string>
     <string name="unknown">Unknown</string>
@@ -28,5 +29,11 @@
     <string name="hint_title">Please connect to your home\nWi-Fi first</string>
     <string name="hint_msg">Please turn Wi-Fi on in your\nphone\'s settings.</string>
     <string name="config_wifi">wifi: %1$s</string>
-    <string name="hint_device">Please press long to enter the\ndistribution mode.\n\nName:</string>
+    <string name="hint_device">Please long press the button to enter\nthe distribution network model.\nApp will configure wifi to :\n %1$s</string>
+    <string name="hint_config_msg">After device into the\ndistribution network mode\nplease go next.</string>
+    <string name="configure_result_failed_port">Device configure task failed, the device port could be used by other thread</string>
+    <string name="configure_result_failed">Device configure task failed</string>
+    <string name="configure_result_success">Device Wifi configuration successful</string>
+    <string name="connected">Connected</string>
+    <string name="new_name">New choose a name for your device</string>
 </resources>

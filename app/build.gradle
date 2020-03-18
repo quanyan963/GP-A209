@@ -77,4 +77,6 @@ dependencies {
     //cognito
     implementation 'com.amazonaws:aws-android-sdk-cognito:2.16.6'
     implementation 'com.amazonaws:aws-android-sdk-cognitoidentityprovider:2.16.6'
+
+    implementation project(':esptouch')
 }

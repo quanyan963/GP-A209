@@ -13,4 +13,8 @@ public interface PreferencesHelper {
     String getUserId();
 
     void setUserId(String id);
+
+    String getDeviceAddress();
+
+    void setDeviceAddress(String address);
 }

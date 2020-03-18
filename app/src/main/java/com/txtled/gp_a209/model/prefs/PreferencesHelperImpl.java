@@ -16,6 +16,7 @@ public class PreferencesHelperImpl implements PreferencesHelper {
     private SharedPreferences mSharedPreferences;
     public static final String IS_FIRST_APP = "is_first_app";
     public static final String USER_ID = "user_id";
+    public static final String DEVICE_ADDRESS = "device_address";
 
     @Inject
     public PreferencesHelperImpl() {
@@ -41,5 +42,15 @@ public class PreferencesHelperImpl implements PreferencesHelper {
     @Override
     public void setUserId(String id) {
         mSharedPreferences.edit().putString(USER_ID,id).apply();
+    }
+
+    @Override
+    public String getDeviceAddress() {
+        return mSharedPreferences.getString(DEVICE_ADDRESS,"");
+    }
+
+    @Override
+    public void setDeviceAddress(String address) {
+        mSharedPreferences.edit().putString(DEVICE_ADDRESS,address).apply();
     }
 }

@@ -18,9 +18,13 @@ public interface AddContract {
 
         void setNoWifiView();
 
-        void setInfo(String ssid, WifiInfo info);
+        void setInfo(String ssid);
 
         void showConnectHint();
+
+        void configureSuccess(String address);
+
+        void setData(String[] data);
     }
 
     interface Presenter extends BasePresenter<View>{
@@ -29,6 +33,12 @@ public interface AddContract {
 
         void onClick(int id);
 
-        void configWifi();
+        void configWifi(byte[] s, String pass);
+
+        void connDevice(String address);
+
+        void setName(String name);
+
+        void getConfiguredData();
     }
 }

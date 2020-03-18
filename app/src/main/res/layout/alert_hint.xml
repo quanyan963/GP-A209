@@ -27,7 +27,7 @@
     <View
         android:id="@+id/v_line"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/dp_1_y"
+        android:layout_height="@dimen/dp_1_x"
         android:layout_below="@+id/atv_hint_msg"
         android:background="@color/gray"/>
     <com.txtled.gp_a209.widget.ArialRoundButton

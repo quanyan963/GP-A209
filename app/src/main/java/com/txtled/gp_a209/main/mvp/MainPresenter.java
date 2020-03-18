@@ -66,7 +66,6 @@ public class MainPresenter extends RxPresenter<MainContract.View> implements Mai
                     public void onNext(List<DeviceInfo> data) {
                         //返回数据
                         view.getDeviceData(data);
-
                     }
                 }));
 
