@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.espressif.iot.esptouch.util.ByteUtil;
 import com.google.android.material.textfield.TextInputLayout;
 import com.txtled.gp_a209.R;
+import com.txtled.gp_a209.add.listener.OnCreateThingListener;
 import com.txtled.gp_a209.add.mvp.AddContract;
 import com.txtled.gp_a209.add.mvp.AddPresenter;
 import com.txtled.gp_a209.base.MvpBaseActivity;
@@ -28,7 +29,7 @@ import butterknife.ButterKnife;
  * Created by Mr.Quan on 2020/3/17.
  */
 public class AddDeviceActivity extends MvpBaseActivity<AddPresenter> implements AddContract.View,
-        View.OnClickListener, TextWatcher {
+        View.OnClickListener, TextWatcher, OnCreateThingListener {
     @BindView(R.id.aet_password)
     ArialRoundEditText aetPassword;
     @BindView(R.id.aet_wifi_name)
@@ -141,17 +142,24 @@ public class AddDeviceActivity extends MvpBaseActivity<AddPresenter> implements 
     }
 
     @Override
-    public void configureSuccess(String address) {
+    public void configureSuccess() {
         showList(true);
-        presenter.connDevice(address);
         changeBtnColor(false);
     }
 
+    /**
+     * 给adapter添加数据
+     * @param data dynamodb中得出的数据
+     */
     @Override
     public void setData(String[] data) {
         adapter.setData(data);
     }
 
+    /**
+     * 过渡动画
+     * @param b
+     */
     private void showList(boolean b) {
         AlphaAnimation hid = new AlphaAnimation(1, 0);
         hid.setDuration(300);
@@ -216,9 +224,13 @@ public class AddDeviceActivity extends MvpBaseActivity<AddPresenter> implements 
         }
     }
 
+    /**
+     * 所有的点击事件
+     * @param v
+     */
     @Override
     public void onClick(View v) {
-        presenter.onClick(v.getId());
+        presenter.onClick(v.getId(),rlvNameList.getVisibility() == View.VISIBLE, this);
     }
 
     @Override
@@ -231,6 +243,10 @@ public class AddDeviceActivity extends MvpBaseActivity<AddPresenter> implements 
 
     }
 
+    /**
+     * 密码判断
+     * @param s password
+     */
     @Override
     public void afterTextChanged(Editable s) {
         if (s.length() > 7) {
@@ -251,5 +267,16 @@ public class AddDeviceActivity extends MvpBaseActivity<AddPresenter> implements 
         }else {
             super.onBackPressed();
         }
+    }
+
+    //添加事务时界面更新
+    @Override
+    public void onStatueChange(int str) {
+
+    }
+
+    @Override
+    public void dismiss() {
+
     }
 }

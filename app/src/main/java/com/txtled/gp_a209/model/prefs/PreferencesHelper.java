@@ -17,4 +17,8 @@ public interface PreferencesHelper {
     String getDeviceAddress();
 
     void setDeviceAddress(String address);
+
+    void setUid(String uid);
+
+    String getUid();
 }

@@ -35,6 +35,10 @@ public class StartPresenter extends RxPresenter<StartContract.View> implements S
 
     @Override
     public void startTimer(Activity activity) {
+        if (mDataManagerModel.getUid().isEmpty()){
+
+            mDataManagerModel.setUid(String.valueOf(android.os.Build.SERIAL));
+        }
         addSubscribe(Flowable.timer(3, TimeUnit.SECONDS)
                 .compose(RxUtil.<Long>rxSchedulerHelper())
                 .subscribeWith(new CommonSubscriber<Long>(view){

@@ -15,4 +15,6 @@ public class Constants {
     public static final String USER_ID = "UserId";
     public static final String DB_NAME = "FOX";
     public static final String THING_DIR = "ThingDir";
+    public static final String ACCESS_KEY = "";
+    public static final String SECRET_ACCESS_KEY = "";
 }
