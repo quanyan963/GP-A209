@@ -204,6 +204,7 @@ public class AddPresenter extends RxPresenter<AddContract.View> implements AddCo
      */
     private void createIotCore(String name, OnCreateThingListener listener) {
         if (names != null){
+
             if (refreshData.get(position).getThing().isEmpty()){
                 //创建事物
                 createIotThing(listener);
