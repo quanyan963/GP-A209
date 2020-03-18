@@ -81,7 +81,10 @@ public class AddDeviceActivity extends MvpBaseActivity<AddPresenter> implements 
 
         rlvNameList.setHasFixedSize(true);
         rlvNameList.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new DeviceNameAdapter(this, name -> presenter.setName(name));
+        adapter = new DeviceNameAdapter(this, name -> {
+            presenter.setName(name);
+            abtCollect.setEnabled(true);
+        });
         rlvNameList.setAdapter(adapter);
         presenter.getConfiguredData();
     }
@@ -141,6 +144,7 @@ public class AddDeviceActivity extends MvpBaseActivity<AddPresenter> implements 
     public void configureSuccess(String address) {
         showList(true);
         presenter.connDevice(address);
+        changeBtnColor(false);
     }
 
     @Override
