@@ -3,6 +3,7 @@ package com.txtled.gp_a209.add.mvp;
 import android.app.Activity;
 import android.net.wifi.WifiInfo;
 
+import com.txtled.gp_a209.add.listener.OnCreateThingListener;
 import com.txtled.gp_a209.base.BasePresenter;
 import com.txtled.gp_a209.base.BaseView;
 
@@ -22,7 +23,7 @@ public interface AddContract {
 
         void showConnectHint();
 
-        void configureSuccess(String address);
+        void configureSuccess();
 
         void setData(String[] data);
     }
@@ -31,11 +32,9 @@ public interface AddContract {
 
         void init(Activity activity);
 
-        void onClick(int id);
+        void onClick(int id, boolean isCommit, OnCreateThingListener listener);
 
         void configWifi(byte[] s, String pass);
-
-        void connDevice(String address);
 
         void setName(String name);
 
