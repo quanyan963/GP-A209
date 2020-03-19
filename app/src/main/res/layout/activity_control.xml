@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/colorPrimaryDark">
+
+    <include android:id="@+id/i_control_tool"
+        layout="@layout/toolbar"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"/>
+    <RadioGroup
+        android:id="@+id/rg_sound_one"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/i_control_tool"
+        android:orientation="horizontal"
+        android:layout_marginTop="@dimen/dp_16_x">
+        <RadioButton
+            android:id="@+id/rb_lullaby"
+            style="@style/main_rb"
+            android:drawableTop="@mipmap/afcafcalarm_brahmdes_xhdpi"
+            android:text="@string/lullaby" />
+        <RadioButton
+            android:id="@+id/rb_sleeves"
+            style="@style/main_rb"
+            android:drawableTop="@mipmap/afcalarm_greensldes_xhdpi"
+            android:text="@string/greensleeves"/>
+        <RadioButton
+            android:id="@+id/rb_canon"
+            style="@style/main_rb"
+            android:drawableTop="@mipmap/afcalarm_greensldes_xhdpi"
+            android:text="@string/canon"/>
+    </RadioGroup>
+    <RadioGroup
+        android:id="@+id/rg_sound_two"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/rg_sound_one"
+        android:orientation="horizontal"
+        android:layout_marginTop="@dimen/dp_12_x">
+        <RadioButton
+            android:id="@+id/rb_waves"
+            style="@style/main_rb"
+            android:drawableTop="@mipmap/afcalarm_wavedes_xhdpi"
+            android:text="@string/waves"/>
+        <RadioButton
+            android:id="@+id/rb_rain"
+            style="@style/main_rb"
+            android:drawableTop="@mipmap/afcalarm_raindes_1_xhdpi"
+            android:text="Rain"/>
+        <RadioButton
+            android:id="@+id/rb_noise"
+            style="@style/main_rb"
+            android:drawableTop="@mipmap/afcalarm_noisedes_xhdpi"
+            android:text="White Noise"/>
+    </RadioGroup>
+    <RadioButton
+        android:id="@+id/rb_none"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/rg_sound_two"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:background="@null"
+        android:button="@null"
+        android:textSize="14sp"
+        android:textColor="@color/text_un"
+        android:gravity="center"
+        android:layout_marginTop="@dimen/dp_12_x"
+        android:drawableTop="@mipmap/alarm_soundoff_xhdpi"
+        android:text="@string/sound_off"/>
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,5 +1,6 @@
 package com.txtled.gp_a209.add;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -7,6 +8,7 @@ import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -29,7 +31,7 @@ import butterknife.ButterKnife;
  * Created by Mr.Quan on 2020/3/17.
  */
 public class AddDeviceActivity extends MvpBaseActivity<AddPresenter> implements AddContract.View,
-        View.OnClickListener, TextWatcher, OnCreateThingListener {
+        View.OnClickListener, TextWatcher {
     @BindView(R.id.aet_password)
     ArialRoundEditText aetPassword;
     @BindView(R.id.aet_wifi_name)
@@ -52,7 +54,7 @@ public class AddDeviceActivity extends MvpBaseActivity<AddPresenter> implements 
     TextInputLayout tilPass;
 
     private DeviceNameAdapter adapter;
-    private String name;
+    private AlertDialog dialog;
 
     @Override
     public void setInject() {
@@ -84,7 +86,7 @@ public class AddDeviceActivity extends MvpBaseActivity<AddPresenter> implements 
         rlvNameList.setLayoutManager(new LinearLayoutManager(this));
         adapter = new DeviceNameAdapter(this, name -> {
             presenter.setName(name);
-            abtCollect.setEnabled(true);
+            changeBtnColor(true);
         });
         rlvNameList.setAdapter(adapter);
         presenter.getConfiguredData();
@@ -143,8 +145,10 @@ public class AddDeviceActivity extends MvpBaseActivity<AddPresenter> implements 
 
     @Override
     public void configureSuccess() {
-        showList(true);
-        changeBtnColor(false);
+        runOnUiThread(() -> {
+            showList(true);
+            changeBtnColor(false);
+        });
     }
 
     /**
@@ -176,17 +180,22 @@ public class AddDeviceActivity extends MvpBaseActivity<AddPresenter> implements 
             @Override
             public void onAnimationEnd(Animation animation) {
                 if (b) {
+                    tilName.clearAnimation();
+                    tilPass.clearAnimation();
+                    atvEyeHint.clearAnimation();
+                    atvNoPass.clearAnimation();
                     tilName.setVisibility(View.GONE);
                     tilPass.setVisibility(View.GONE);
                     atvEyeHint.setVisibility(View.GONE);
                     atvNoPass.setVisibility(View.GONE);
                     rlvNameList.setVisibility(View.VISIBLE);
                     rlvNameList.startAnimation(show);
+                    //rlvNameList.setAlpha(1);
                     atvTop.setText(R.string.connected);
                     atvDeviceWill.setText(R.string.new_name);
-                    atvTop.startAnimation(show);
-                    atvDeviceWill.startAnimation(show);
+
                 } else {
+                    rlvNameList.clearAnimation();
                     rlvNameList.setVisibility(View.GONE);
                     tilName.setVisibility(View.VISIBLE);
                     tilPass.setVisibility(View.VISIBLE);
@@ -198,10 +207,11 @@ public class AddDeviceActivity extends MvpBaseActivity<AddPresenter> implements 
                     atvNoPass.startAnimation(show);
                     atvTop.setText(R.string.log_wifi);
                     atvDeviceWill.setText(R.string.device_will_configured);
-                    atvTop.startAnimation(show);
-                    atvDeviceWill.startAnimation(show);
+                    changeBtnColor(true);
                 }
-
+                atvTop.startAnimation(show);
+                atvDeviceWill.startAnimation(show);
+                abtCollect.setAnimation(show);
             }
 
             @Override
@@ -209,18 +219,18 @@ public class AddDeviceActivity extends MvpBaseActivity<AddPresenter> implements 
 
             }
         });
+        atvTop.startAnimation(hid);
+        abtCollect.setAnimation(hid);
+        atvDeviceWill.startAnimation(hid);
         if (b) {
-            rlvNameList.setAlpha(0);
+            //rlvNameList.setAlpha(0);
             tilName.startAnimation(hid);
             tilPass.startAnimation(hid);
             atvEyeHint.startAnimation(hid);
             atvNoPass.startAnimation(hid);
-            atvTop.startAnimation(hid);
-            atvDeviceWill.startAnimation(hid);
+
         } else {
             rlvNameList.startAnimation(hid);
-            atvTop.startAnimation(hid);
-            atvDeviceWill.startAnimation(hid);
         }
     }
 
@@ -230,7 +240,7 @@ public class AddDeviceActivity extends MvpBaseActivity<AddPresenter> implements 
      */
     @Override
     public void onClick(View v) {
-        presenter.onClick(v.getId(),rlvNameList.getVisibility() == View.VISIBLE, this);
+        presenter.onClick(v.getId(),rlvNameList.getVisibility() == View.VISIBLE);
     }
 
     @Override
@@ -271,12 +281,20 @@ public class AddDeviceActivity extends MvpBaseActivity<AddPresenter> implements 
 
     //添加事务时界面更新
     @Override
-    public void onStatueChange(int str) {
-
+    public void onStatueChange() {
+        runOnUiThread(() -> dialog = AlertUtils.showProgressDialog(AddDeviceActivity.this));
     }
 
     @Override
     public void dismiss() {
+        runOnUiThread(() -> {
+            if (dialog != null && dialog.isShowing()){
+                dialog.dismiss();
+                AlertUtils.showAlertDialog(this, R.string.success,
+                        (dialog, which) -> this.finish());
+                dialog = null;
+            }
+        });
 
     }
 }

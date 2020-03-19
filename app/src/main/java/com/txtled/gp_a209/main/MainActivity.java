@@ -12,6 +12,7 @@ import com.txtled.gp_a209.R;
 import com.txtled.gp_a209.add.AddDeviceActivity;
 import com.txtled.gp_a209.base.MvpBaseActivity;
 import com.txtled.gp_a209.bean.DeviceInfo;
+import com.txtled.gp_a209.control.ControlActivity;
 import com.txtled.gp_a209.main.mvp.MainContract;
 import com.txtled.gp_a209.main.mvp.MainPresenter;
 import com.txtled.gp_a209.widget.ArialRoundButton;
@@ -20,8 +21,11 @@ import java.util.List;
 
 import butterknife.BindView;
 
+import static com.txtled.gp_a209.utils.Constants.ENDPOINT;
+import static com.txtled.gp_a209.utils.Constants.NAME;
+
 public class MainActivity extends MvpBaseActivity<MainPresenter> implements MainContract.View,
-        SwipeRefreshLayout.OnRefreshListener {
+        SwipeRefreshLayout.OnRefreshListener, DeviceListAdapter.OnDeviceClickListener {
 
     @BindView(R.id.rlv_device_list)
     RecyclerView rlvDeviceList;
@@ -48,8 +52,13 @@ public class MainActivity extends MvpBaseActivity<MainPresenter> implements Main
         srlRefresh.setOnRefreshListener(this);
         rlvDeviceList.setHasFixedSize(true);
         rlvDeviceList.setLayoutManager(new LinearLayoutManager(this));
-        listAdapter = new DeviceListAdapter(this);
+        listAdapter = new DeviceListAdapter(this,this);
         rlvDeviceList.setAdapter(listAdapter);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         srlRefresh.setRefreshing(true);
         onRefresh();
     }
@@ -75,5 +84,14 @@ public class MainActivity extends MvpBaseActivity<MainPresenter> implements Main
         srlRefresh.setRefreshing(false);
         if (!data.isEmpty())
             listAdapter.setData(data);
+    }
+
+    /**
+     * 列表点击事件
+     * @param endpoint
+     */
+    @Override
+    public void onDeviceClick(String endpoint,String name) {
+        startActivity(new Intent(this, ControlActivity.class).putExtra(ENDPOINT,endpoint).putExtra(NAME,name));
     }
 }

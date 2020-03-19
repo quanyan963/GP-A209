@@ -3,6 +3,7 @@ package com.txtled.gp_a209.add.mvp;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.location.LocationManager;
@@ -11,6 +12,8 @@ import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.Window;
 
 import androidx.appcompat.app.AlertDialog;
@@ -23,10 +26,17 @@ import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.auth.CognitoCachingCredentialsProvider;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
+import com.amazonaws.services.dynamodbv2.model.AttributeDefinition;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.amazonaws.services.dynamodbv2.model.AttributeValueUpdate;
+import com.amazonaws.services.dynamodbv2.model.CreateTableRequest;
 import com.amazonaws.services.dynamodbv2.model.GetItemRequest;
 import com.amazonaws.services.dynamodbv2.model.GetItemResult;
+import com.amazonaws.services.dynamodbv2.model.KeySchemaElement;
+import com.amazonaws.services.dynamodbv2.model.KeyType;
+import com.amazonaws.services.dynamodbv2.model.ProvisionedThroughput;
+import com.amazonaws.services.dynamodbv2.model.PutItemRequest;
+import com.amazonaws.services.dynamodbv2.model.ScalarAttributeType;
 import com.amazonaws.services.dynamodbv2.model.UpdateItemRequest;
 import com.amazonaws.services.iot.AWSIot;
 import com.amazonaws.services.iot.AWSIotClient;
@@ -43,36 +53,59 @@ import com.espressif.iot.esptouch.IEsptouchTask;
 import com.espressif.iot.esptouch.util.ByteUtil;
 import com.espressif.iot.esptouch.util.TouchNetUtil;
 import com.txtled.gp_a209.R;
-import com.txtled.gp_a209.add.listener.OnCreateThingListener;
+import com.txtled.gp_a209.add.adp.UDPBuild;
+import com.txtled.gp_a209.add.listener.OnUdpSendRequest;
 import com.txtled.gp_a209.application.MyApplication;
 import com.txtled.gp_a209.base.CommonSubscriber;
 import com.txtled.gp_a209.base.RxPresenter;
 import com.txtled.gp_a209.bean.DeviceInfo;
+import com.txtled.gp_a209.bean.WWADeviceInfo;
 import com.txtled.gp_a209.model.DataManagerModel;
 import com.txtled.gp_a209.utils.AlertUtils;
 import com.txtled.gp_a209.utils.Constants;
 import com.txtled.gp_a209.utils.RxUtil;
 import com.txtled.gp_a209.utils.Utils;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
-import io.reactivex.FlowableEmitter;
 import io.reactivex.FlowableOnSubscribe;
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
 
 import static android.content.Context.WIFI_SERVICE;
 import static com.txtled.gp_a209.base.BaseActivity.TAG;
-import static com.txtled.gp_a209.utils.Constants.ACCESS_KEY;
+import static com.txtled.gp_a209.utils.Constants.CA;
 import static com.txtled.gp_a209.utils.Constants.DB_NAME;
-import static com.txtled.gp_a209.utils.Constants.SECRET_ACCESS_KEY;
+import static com.txtled.gp_a209.utils.Constants.DISCOVERY;
+import static com.txtled.gp_a209.utils.Constants.FRIENDLY_NAME;
+import static com.txtled.gp_a209.utils.Constants.REBOOT;
+import static com.txtled.gp_a209.utils.Constants.REST_API;
+import static com.txtled.gp_a209.utils.Constants.SEND_CA_ONE;
+import static com.txtled.gp_a209.utils.Constants.SEND_CA_TWO;
+import static com.txtled.gp_a209.utils.Constants.SEND_CERT_ONE;
+import static com.txtled.gp_a209.utils.Constants.SEND_CERT_TWO;
+import static com.txtled.gp_a209.utils.Constants.SEND_KEY_ONE;
+import static com.txtled.gp_a209.utils.Constants.SEND_KEY_TWO;
+import static com.txtled.gp_a209.utils.Constants.SEND_THING_NAME;
+import static com.txtled.gp_a209.utils.Constants.THIN;
 import static com.txtled.gp_a209.utils.Constants.THING_DIR;
 import static com.txtled.gp_a209.utils.Constants.USER_ID;
+import static com.txtled.gp_a209.utils.ForUse.ACCESS_KEY;
+import static com.txtled.gp_a209.utils.ForUse.SECRET_ACCESS_KEY;
 
 /**
  * Created by Mr.Quan on 2020/3/17.
@@ -82,6 +115,7 @@ public class AddPresenter extends RxPresenter<AddContract.View> implements AddCo
     private Activity activity;
     private EsptouchAsyncTask4 mTask;
     private WifiManager myWifiManager;
+    private UDPBuild udpBuild;
     private DhcpInfo dhcpInfo;
     private String broadCast = "";
     private WifiInfo wifiInfo;
@@ -94,6 +128,11 @@ public class AddPresenter extends RxPresenter<AddContract.View> implements AddCo
     private String[] names;
     private CreateThingResult iotThing;
     private CreateKeysAndCertificateResult keysAndCertificate;
+    private WWADeviceInfo info;
+    private AttributeValue cert_data;
+    private HashMap<String, AttributeValue> key;
+    private AlertDialog dialog;
+    private String strReceive;
     @Inject
     public AddPresenter(DataManagerModel dataManagerModel) {
         this.dataManagerModel = dataManagerModel;
@@ -111,6 +150,8 @@ public class AddPresenter extends RxPresenter<AddContract.View> implements AddCo
         client = new AmazonDynamoDBClient(provider);
         userId = dataManagerModel.getUserId();
 
+        key = new HashMap<>();
+        key.put(USER_ID, new AttributeValue().withS(userId));
         //初始化awsIot
         try {
             if (awsIot == null) {
@@ -142,17 +183,24 @@ public class AddPresenter extends RxPresenter<AddContract.View> implements AddCo
      * 控件点击
      * @param id viewId
      * @param isCommit 根据true/false执行不同方法
-     * @param listener 变更界面的监听器
      */
     @Override
-    public void onClick(int id, boolean isCommit, OnCreateThingListener listener) {
+    public void onClick(int id, boolean isCommit) {
         switch (id){
             case R.id.abt_collect:
             case R.id.atv_no_pass:
                 if (isCommit){
-                    connDevice(listener);
+                    connDevice();
                 }else {
                     view.showConnectHint();
+//                    broadCast = dataManagerModel.getDeviceAddress();
+//                    udpSend(String.format(SEND_THING_NAME, REST_API,""), new OnUdpSendRequest() {
+//                        @Override
+//                        public void OnRequestListener(String result) {
+//                            result.length();
+//                            udpBuild.stopUDPSocket();
+//                        }
+//                    });
                 }
                 break;
         }
@@ -172,6 +220,7 @@ public class AddPresenter extends RxPresenter<AddContract.View> implements AddCo
         byte[] broadcast = {(byte)1};
         if (mTask != null) {
             mTask.cancelEsptouch();
+            mTask = null;
         }
         mTask = new EsptouchAsyncTask4(wifiInfo.getSSID().substring(1,wifiInfo.getSSID().length()-1),pass);
         mTask.execute(ssid, bssid, password, deviceCount, broadcast);
@@ -179,14 +228,11 @@ public class AddPresenter extends RxPresenter<AddContract.View> implements AddCo
 
     /**
      * 创建事务
-     * @param listener 变更界面的监听器
      */
-    public void connDevice(OnCreateThingListener listener) {
-        addSubscribe(Flowable.create(new FlowableOnSubscribe<String>() {
-            @Override
-            public void subscribe(FlowableEmitter<String> e) {
-                createIotCore(name, listener);
-            }
+    public void connDevice() {
+        addSubscribe(Flowable.create((FlowableOnSubscribe<String>) e -> {
+            createIotCore(name);
+            e.onNext("success");
         },BackpressureStrategy.BUFFER)
                 .compose(RxUtil.rxSchedulerHelper())
                 .subscribeWith(new CommonSubscriber<String>(view){
@@ -199,76 +245,271 @@ public class AddPresenter extends RxPresenter<AddContract.View> implements AddCo
 
     /**
      * 创建iotCore并写入设备
-     * @param name friendlyName
-     * @param listener
+     * @param friendlyName friendlyName
      */
-    private void createIotCore(String name, OnCreateThingListener listener) {
-        if (names != null){
+    private void createIotCore(String friendlyName) {
+        view.onStatueChange();
+        try{
+            if (names != null){
 
-            if (refreshData.get(position).getThing().isEmpty()){
-                //创建事物
-                createIotThing(listener);
+                if (info.getThing().isEmpty()){
+                    //创建事物
+                    createIotThing();
 
-                //HashMap<String, AttributeValue> cert = createData(keysAndCertificate,iotThing,friendlyName);
-                cert_data.addMEntry(friendlyName, new AttributeValue()
-                        .withS(iotThing.getThingName()));
+                    //HashMap<String, AttributeValue> cert = createData(keysAndCertificate,iotThing,friendlyName);
+                    cert_data.addMEntry(friendlyName, new AttributeValue()
+                            .withS(iotThing.getThingName()));
 
-                client.updateItem(new UpdateItemRequest().withTableName(DB_NAME)
-                        .withKey(key).addAttributeUpdatesEntry(THING_DIR,
-                                new AttributeValueUpdate()
-                                        .withValue(cert_data)));
-            }else {
-                //改名字
+                    client.updateItem(new UpdateItemRequest().withTableName(DB_NAME)
+                            .withKey(key).addAttributeUpdatesEntry(THING_DIR,
+                                    new AttributeValueUpdate()
+                                            .withValue(cert_data)));
+                }else {
+                    //改名字
 
-                Map<String, AttributeValue> thingNames = cert_data.getM();
-                for (int i = 0; i < names.length; i++) {
-                    if (refreshData.get(position).getThing()
-                            .equals(thingNames.get(names[i]).getS())){
-                        listener.onStatueChange(R.string.changing);
-                        thingNames.remove(names[i]);
-                        thingNames.put(friendlyName,new AttributeValue()
-                                .withS(refreshData.get(position).getThing()));
-                        break;
+                    Map<String, AttributeValue> thingNames = cert_data.getM();
+                    for (int i = 0; i < names.length; i++) {
+                        if (info.getThing()
+                                .equals(thingNames.get(names[i]).getS())){
+                            //listener.onStatueChange(R.string.changing);
+                            thingNames.remove(names[i]);
+                            thingNames.put(friendlyName,new AttributeValue()
+                                    .withS(info.getThing()));
+                            break;
+                        }
+                        if (i == names.length - 1){
+                            thingNames.put(friendlyName, new AttributeValue()
+                                    .withS(info.getThing()));
+                        }
                     }
-                    if (i == names.length - 1){
-                        thingNames.put(friendlyName, new AttributeValue()
-                                .withS(refreshData.get(position).getThing()));
-                    }
+
+                    client.updateItem(new UpdateItemRequest().withTableName(DB_NAME)
+                            .withKey(key).addAttributeUpdatesEntry(THING_DIR,
+                                    new AttributeValueUpdate()
+                                            .withValue(new AttributeValue().withM(thingNames))));
+
+                    String[] friendlyNames = info
+                            .getFriendlyNames().split(",");
+
+                    String newNames = getNewName(friendlyNames,friendlyName);
+
+                    String finalNewNames = newNames;
+                    udpSend(String.format(FRIENDLY_NAME, newNames), result -> {
+                        if (result.contains("1")){
+                            view.dismiss();
+                            udpBuild.stopUDPSocket();
+                            //listener.onStatueChange(R.string.complete_change);
+
+                        }else {
+                            udpBuild.sendMessage(String.format(FRIENDLY_NAME, finalNewNames),
+                                    info.getIp());
+                        }
+                    });
+
+                    info.setFriendlyNames(newNames);
+                    //view.updateAdapter(position, info);
+                    return;
                 }
+            }else {
+                //创建事物
+                if (info.getThing().isEmpty()){
+                    createIotThing();
+                    //创建数据
+                    HashMap<String, AttributeValue> certs = new HashMap<>();
+                    certs.put(friendlyName, new AttributeValue()
+                            .withS(iotThing.getThingName()));//createData(keysAndCertificate,iotThing,friendlyName)
 
-                client.updateItem(new UpdateItemRequest().withTableName(DB_NAME)
-                        .withKey(key).addAttributeUpdatesEntry(THING_DIR,
-                                new AttributeValueUpdate()
-                                        .withValue(new AttributeValue().withM(thingNames))));
+                    PutItemRequest request = new PutItemRequest();
+                    request.withTableName(Constants.DB_NAME);
+                    request.addItemEntry(USER_ID, new AttributeValue().withS(userId));
+                    request.addItemEntry(THING_DIR, new AttributeValue().withM(certs));
+                    client.putItem(request);
+                }else {
+                    //创建数据
+                    HashMap<String, AttributeValue> certs = new HashMap<>();
+                    certs.put(friendlyName, new AttributeValue()
+                            .withS(info.getThing()));//createData(keysAndCertificate,iotThing,friendlyName)
 
-                String[] friendlyNames = refreshData.get(position)
-                        .getFriendlyNames().split(",");
+                    PutItemRequest request = new PutItemRequest();
+                    request.withTableName(Constants.DB_NAME);
+                    request.addItemEntry(USER_ID, new AttributeValue().withS(userId));
+                    request.addItemEntry(THING_DIR, new AttributeValue().withM(certs));
+                    client.putItem(request);
 
-                String newNames = getNewName(friendlyNames,friendlyName);
+                    String[] friendlyNames = info
+                            .getFriendlyNames().split(",");
 
-                String finalNewNames = newNames;
-                udpSend(String.format(FRIENDLY_NAME, newNames), result -> {
-                    if (result.contains("1")){
-                        udpBuild.stopUDPSocket();
-                        listener.onStatueChange(R.string.complete_change);
-                        listener.dismiss();
-                    }else {
-                        udpBuild.sendMessage(String.format(FRIENDLY_NAME, finalNewNames),
-                                refreshData.get(position).getIp());
-                    }
-                });
+                    String newNames = getNewName(friendlyNames,friendlyName);
 
-                refreshData.get(position).setFriendlyNames(newNames);
-                view.updateAdapter(position, refreshData);
-                return;
+                    udpSend(String.format(FRIENDLY_NAME, newNames), result -> {
+                        if (result.contains("1")){
+                            udpBuild.stopUDPSocket();
+                            //listener.onStatueChange(R.string.complete_change);
+                            view.dismiss();
+                        }else {
+                            udpBuild.sendMessage(String.format(FRIENDLY_NAME, newNames),
+                                    info.getIp());
+                        }
+                    });
+
+                    info.setFriendlyNames(newNames);
+                    //view.updateAdapter(position, refreshData);
+                    return;
+                }
             }
-        }else {
+        }catch (Exception e){
+            //创建表
+            CreateTableRequest tableRequest = new CreateTableRequest()
+                    .withTableName(DB_NAME)
+                    .withKeySchema(new KeySchemaElement().withAttributeName(USER_ID)
+                            .withKeyType(KeyType.HASH))
+                    .withAttributeDefinitions(new AttributeDefinition()
+                            .withAttributeName(USER_ID)
+                            .withAttributeType(ScalarAttributeType.S))
+                    .withProvisionedThroughput(
+                            new ProvisionedThroughput(10L, 10L));
+            tableRequest.setGeneralProgressListener(progressEvent -> {
+                if (progressEvent.getEventCode() == 4) {
+                    //创建事物
+                    createIotThing();
+                    //创建数据
+                    HashMap<String, AttributeValue> certs = new HashMap<>();
+                    certs.put(friendlyName, new AttributeValue()
+                            .withS(iotThing.getThingName()));//createData(keysAndCertificate,iotThing,friendlyName)
 
+                    PutItemRequest request = new PutItemRequest();
+                    request.withTableName(Constants.DB_NAME);
+                    request.addItemEntry(USER_ID, new AttributeValue().withS(userId));
+                    request.addItemEntry(THING_DIR, new AttributeValue().withM(certs));
+                    client.putItem(request);
+                }
+            });
+            client.createTable(tableRequest);
         }
+
+        //写入设备
+        writeToDevice(friendlyName);
     }
 
-    private void createIotThing(OnCreateThingListener listener) {
-        listener.onStatueChange(R.string.hint_create_thing);
+    private void writeToDevice(String friendlyName) {
+        //listener.onStatueChange(R.string.transmitting_data);
+        String friendlyNames = getNewName(info.getFriendlyNames().split(","),friendlyName);
+        broadCast = info.getIp();
+        udpSend(String.format(SEND_THING_NAME, REST_API,
+                iotThing.getThingName()), result -> {
+            if (result.contains("\"ca0\"")){
+                udpBuild.sendMessage(result.contains("1") ?
+                        String.format(SEND_CA_TWO,CA.substring(CA.length()/2)) :
+                        String.format(SEND_CA_ONE,CA.substring(0,CA.length()/2)),broadCast);
+
+            }else if (result.contains("\"ca1\"")){
+                udpBuild.sendMessage(result.contains("\"ca1\":1") ?
+                        String.format(SEND_CERT_ONE,keysAndCertificate.getCertificatePem()
+                                .substring(0,keysAndCertificate.getCertificatePem().length()/2)) :
+                        String.format(SEND_CA_TWO,CA.substring(CA.length()/2)),broadCast);
+
+            }else if (result.contains("\"cert0\"")){
+                udpBuild.sendMessage(result.contains("1") ?
+                        String.format(SEND_CERT_TWO,keysAndCertificate.getCertificatePem()
+                                .substring(keysAndCertificate.getCertificatePem().length()/2)):
+                        String.format(SEND_CERT_ONE,keysAndCertificate.getCertificatePem()
+                                .substring(0,keysAndCertificate.getCertificatePem().length()/2)),broadCast);
+
+            }else if (result.contains("\"cert1\"")){
+                udpBuild.sendMessage(result.contains("\"cert1\":1") ?
+                        String.format(SEND_KEY_ONE,keysAndCertificate.getKeyPair().getPrivateKey()
+                                .substring(0,keysAndCertificate.getKeyPair().getPrivateKey().length()/2)) :
+                        String.format(SEND_CERT_TWO,keysAndCertificate.getCertificatePem()
+                                .substring(keysAndCertificate.getCertificatePem().length()/2)),broadCast);
+
+            }else if (result.contains("\"key0\"")){
+                udpBuild.sendMessage(result.contains("1") ?
+                        String.format(SEND_KEY_TWO,keysAndCertificate.getKeyPair().getPrivateKey()
+                                .substring(keysAndCertificate.getKeyPair().getPrivateKey().length()/2)):
+                        String.format(SEND_KEY_ONE,keysAndCertificate.getKeyPair().getPrivateKey()
+                                .substring(0,keysAndCertificate.getKeyPair()
+                                        .getPrivateKey().length()/2)),broadCast);
+
+            }else if (result.contains("\"key1\"")){
+                udpBuild.sendMessage(result.contains("\"key1\":1") ?
+                        String.format(FRIENDLY_NAME, friendlyNames) :
+                        String.format(SEND_KEY_TWO,keysAndCertificate.getKeyPair().getPrivateKey()
+                                .substring(keysAndCertificate.getKeyPair()
+                                        .getPrivateKey().length()/2)),broadCast);
+            }else if (result.contains("\"friendlyname\"")){
+                udpBuild.sendMessage(result.contains("1") ? REBOOT :
+                        String.format(FRIENDLY_NAME, friendlyNames),broadCast);
+            }else if (result.contains("\"reboot\"")){
+                if (result.contains("1")){
+                    udpBuild.stopUDPSocket();
+                    //listener.onStatueChange(R.string.transmit_completed);
+                    view.dismiss();
+                    info.setThing(iotThing.getThingName());
+                    info.setFriendlyNames(friendlyNames);
+                    //view.updateAdapter(position,refreshData);
+                }else {
+                    udpBuild.sendMessage(REBOOT,broadCast);
+                }
+            } else {
+                udpBuild.sendMessage(result.contains("1") ?
+                        String.format(SEND_CA_ONE,CA.substring(0,CA.length()/2)) :
+                        String.format(SEND_THING_NAME, REST_API, iotThing.getThingName()),broadCast);
+            }
+        });
+    }
+
+    private String getNewName(String[] friendlyNames, String friendlyName){
+        String newNames = "";
+        boolean changed = false;
+
+        for (int i = 0; i < friendlyNames.length; i++) {
+            if (friendlyNames[i].contains(userId)){
+                friendlyNames[i] = userId+"_"+friendlyName;
+                changed = true;
+            }
+            newNames += friendlyNames[i] + (i == friendlyNames.length - 1 ? "" : ",");
+        }
+        if (!changed){
+            newNames += (newNames.isEmpty() ? "" : ",") + userId + "_" + friendlyName;
+        }
+        return newNames;
+    }
+
+    private void udpSend(String message, OnUdpSendRequest listener){
+        strReceive = "";
+        udpBuild = UDPBuild.getUdpBuild();
+        myWifiManager = ((WifiManager) activity.getApplicationContext()
+                .getSystemService(Context.WIFI_SERVICE));
+        dhcpInfo = myWifiManager.getDhcpInfo();
+        udpBuild.setIgnoreIp(Utils.getWifiIp(dhcpInfo.ipAddress));
+        udpBuild.setUdpReceiveCallback(data -> {
+            strReceive = new String(data.getData(), 0, data.getLength());
+            listener.OnRequestListener(strReceive);
+        });
+        setTime(message,listener);
+        udpBuild.sendMessage(message,broadCast);
+    }
+
+    /**
+     * 搜索超时判断
+     */
+    private void setTime(String message, OnUdpSendRequest listener) {
+        addSubscribe(Flowable.timer(3,TimeUnit.SECONDS)
+                .compose(RxUtil.rxSchedulerHelper())
+                .subscribeWith(new CommonSubscriber<Long>(view){
+
+                    @Override
+                    public void onNext(Long aLong) {
+                        if (strReceive.equals("")){
+                            udpSend(message,listener);
+                            //udpBuild.sendMessage(message,broadCast);
+                        }
+                    }
+                }));
+    }
+
+    private void createIotThing() {
+        //listener.onStatueChange(R.string.hint_create_thing);
         //创建事物
         iotThing = awsIot.createThing(new CreateThingRequest()
                 .withThingName(dataManagerModel.getUid()+"_"+System.currentTimeMillis()));
@@ -330,16 +571,45 @@ public class AddPresenter extends RxPresenter<AddContract.View> implements AddCo
                 }));
     }
 
+    /**
+     * 向设备获取信息
+     */
+    @Override
+    public void getDeviceInfo() {
+        udpSend(DISCOVERY, result -> {
+            if (result.contains("\"discovery\":0")){
+                udpBuild.sendMessage(DISCOVERY,broadCast);
+            }else {
+                try {
+                    JSONObject deviceInfo = new JSONObject(result);
+                    info = new WWADeviceInfo(
+                            deviceInfo.optString("ip"),
+                            deviceInfo.optString("netmask"),
+                            deviceInfo.optString("gw"),
+                            deviceInfo.optString("host"),
+                            deviceInfo.optString("port"),
+                            deviceInfo.optString("cid"),
+                            deviceInfo.optString("thing"),
+                            deviceInfo.optString("friendlyname"),
+                            deviceInfo.optString("ver")
+                    );
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        });
+    }
+
     private String[] getDeviceData() {
-        
-        HashMap<String, AttributeValue> key = new HashMap<>();
-        key.put(USER_ID, new AttributeValue().withS(userId));
+        data = new ArrayList<>();
         //获取数据
         GetItemResult itemResult = client.getItem(new GetItemRequest()
                 .withTableName(DB_NAME).withKey(key));
         if (itemResult.getItem() != null) {
             Map<String, AttributeValue> resultItem = itemResult.getItem();
-            AttributeValue cert_data = resultItem.get(THING_DIR);
+            cert_data = resultItem.get(THING_DIR);
             //设备名称
             names = cert_data.getM().keySet().toArray(new String[cert_data.getM().size()]);
 
@@ -421,8 +691,6 @@ public class AddPresenter extends RxPresenter<AddContract.View> implements AddCo
         private IEsptouchTask mEsptouchTask;
         private String name;
         private String pass;
-        private AlertDialog dialog;
-        private AlertDialog mResultDialog;
 
         public EsptouchAsyncTask4(String name, String pass) {
             this.name = name;
@@ -431,10 +699,6 @@ public class AddPresenter extends RxPresenter<AddContract.View> implements AddCo
 
         public void cancelEsptouch() {
             cancel(true);
-            if (dialog !=null){
-                dialog.dismiss();
-                dialog = null;
-            }
             if (mEsptouchTask != null) {
                 mEsptouchTask.interrupt();
             }
@@ -476,19 +740,19 @@ public class AddPresenter extends RxPresenter<AddContract.View> implements AddCo
 
         @Override
         protected void onPostExecute(List<IEsptouchResult> result) {
-            dialog.dismiss();
-            dialog = null;
             if (result == null) {
-
-                mResultDialog = new AlertDialog.Builder(activity)
-                        .setMessage(R.string.configure_result_failed_port)
-                        .setPositiveButton(android.R.string.ok, null)
-                        .show();
-                Window window = mResultDialog.getWindow();
-                window.setWindowAnimations(R.style.dialogWindowAnimInToOut);
-                window.setBackgroundDrawable(activity.getResources()
-                        .getDrawable(R.drawable.background_white));
-                mResultDialog.setCanceledOnTouchOutside(false);
+                dialog.dismiss();
+                dialog = null;
+                AlertUtils.showAlertDialog(activity,R.string.configure_result_failed_port);
+//                mResultDialog = new AlertDialog.Builder(activity)
+//                        .setMessage(R.string.configure_result_failed_port)
+//                        .setPositiveButton(android.R.string.ok, null)
+//                        .show();
+//                Window window = mResultDialog.getWindow();
+//                window.setWindowAnimations(R.style.dialogWindowAnimInToOut);
+//                window.setBackgroundDrawable(activity.getResources()
+//                        .getDrawable(R.drawable.background_white));
+//                mResultDialog.setCanceledOnTouchOutside(false);
                 return;
             }
 
@@ -501,15 +765,18 @@ public class AddPresenter extends RxPresenter<AddContract.View> implements AddCo
             // executing before receiving enough results
 
             if (!firstResult.isSuc()) {
-                mResultDialog = new AlertDialog.Builder(activity)
-                        .setMessage(R.string.configure_result_failed)
-                        .setPositiveButton(android.R.string.ok, null)
-                        .show();
-                Window window = mResultDialog.getWindow();
-                window.setWindowAnimations(R.style.dialogWindowAnimInToOut);
-                window.setBackgroundDrawable(activity.getResources()
-                        .getDrawable(R.drawable.background_white));
-                mResultDialog.setCanceledOnTouchOutside(false);
+                dialog.dismiss();
+                dialog = null;
+                AlertUtils.showAlertDialog(activity,R.string.configure_result_failed);
+//                mResultDialog = new AlertDialog.Builder(activity)
+//                        .setMessage()
+//                        .setPositiveButton(android.R.string.ok, null)
+//                        .show();
+//                Window window = mResultDialog.getWindow();
+//                window.setWindowAnimations(R.style.dialogWindowAnimInToOut);
+//                window.setBackgroundDrawable(activity.getResources()
+//                        .getDrawable(R.drawable.background_white));
+//                mResultDialog.setCanceledOnTouchOutside(false);
                 return;
             }
 
@@ -520,20 +787,20 @@ public class AddPresenter extends RxPresenter<AddContract.View> implements AddCo
             dataManagerModel.setDeviceAddress(broadCast);
 
             //activity.insertWWAInfo(result);
+            try {
+                getDeviceInfo();
+                Thread.sleep(5000);
+                dialog.dismiss();
+                dialog = null;
+                AlertUtils.showAlertDialog(activity, R.string.configure_result_success,
+                        (dialog, which) -> view.configureSuccess());
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
 
+            cancelEsptouch();
             //CharSequence[] items = new CharSequence[resultMsgList.size()];
-            mResultDialog = new AlertDialog.Builder(activity)
-                    .setMessage(R.string.configure_result_success)
-                    .setPositiveButton(android.R.string.ok, (dialog, which) -> {
-                        view.configureSuccess();
-                        cancelEsptouch();
-                    })
-                    .show();
-            Window window = mResultDialog.getWindow();
-            window.setWindowAnimations(R.style.dialogWindowAnimInToOut);
-            window.setBackgroundDrawable(activity.getResources()
-                    .getDrawable(R.drawable.background_white));
-            mResultDialog.setCanceledOnTouchOutside(false);
+
         }
     }
 }

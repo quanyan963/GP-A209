@@ -19,11 +19,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
+import io.reactivex.FlowableEmitter;
 import io.reactivex.FlowableOnSubscribe;
 
 import static com.txtled.gp_a209.base.BaseFragment.TAG;
@@ -40,6 +42,7 @@ public class MainPresenter extends RxPresenter<MainContract.View> implements Mai
     private CognitoCachingCredentialsProvider provider;
     private AmazonDynamoDB client;
     private String userId;
+    private List<DeviceInfo> data;
 
     @Inject
     public MainPresenter(DataManagerModel mDataManagerModel) {
@@ -55,12 +58,26 @@ public class MainPresenter extends RxPresenter<MainContract.View> implements Mai
 
     @Override
     public void onRefresh() {
+//        addSubscribe(Flowable.timer(5, TimeUnit.SECONDS)
+//                .compose(RxUtil.rxSchedulerHelper())
+//                .subscribeWith(new CommonSubscriber<Long>(view){
+//
+//                    @Override
+//                    public void onNext(Long aLong) {
+//                        if (data.isEmpty() && successed == false){
+//                            view.
+//                        }
+//                    }
+//                }));
         addSubscribe(Flowable.create((FlowableOnSubscribe<List<DeviceInfo>>) e -> {
-                    //查数据
-                    e.onNext(getDeviceData());
-
-                },
-                BackpressureStrategy.BUFFER).compose(RxUtil.rxSchedulerHelper())
+            //查数据
+            try {
+                e.onNext(MainPresenter.this.getDeviceData());
+            }catch (Exception e1){
+                data = new ArrayList<>();
+                e.onNext(data);
+            }
+        }, BackpressureStrategy.BUFFER).compose(RxUtil.rxSchedulerHelper())
                 .subscribeWith(new CommonSubscriber<List<DeviceInfo>>(view) {
                     @Override
                     public void onNext(List<DeviceInfo> data) {
@@ -72,7 +89,7 @@ public class MainPresenter extends RxPresenter<MainContract.View> implements Mai
     }
 
     private List<DeviceInfo> getDeviceData() {
-        List<DeviceInfo> data = new ArrayList<>();
+        data = new ArrayList<>();
         HashMap<String, AttributeValue> key = new HashMap<>();
         key.put(USER_ID, new AttributeValue().withS(userId));
         //获取数据

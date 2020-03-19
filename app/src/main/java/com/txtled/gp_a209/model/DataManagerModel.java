@@ -62,6 +62,16 @@ public class DataManagerModel implements DBHelper, PreferencesHelper, NetHelper,
     }
 
     @Override
+    public void setUid(String uid) {
+        mPreferencesHelper.setUid(uid);
+    }
+
+    @Override
+    public String getUid() {
+        return mPreferencesHelper.getUid();
+    }
+
+    @Override
     public void requestPermissions(Activity activity, String[] permissions, OnPermissionsListener permissionsListener) {
         mOperateHelper.requestPermissions(activity, permissions, permissionsListener);
     }

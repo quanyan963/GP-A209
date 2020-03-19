@@ -75,6 +75,11 @@ public class StartPresenter extends RxPresenter<StartContract.View> implements S
                 }));
     }
 
+    @Override
+    public boolean isLogin() {
+        return mDataManagerModel.getUserId() == "" ? false : true;
+    }
+
     public static boolean checkPermission(Context context, String[] permissions) {
         PackageManager packageManager = context.getPackageManager();
         String packageName = context.getPackageName();

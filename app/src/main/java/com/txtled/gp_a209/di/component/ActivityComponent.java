@@ -4,6 +4,7 @@ import android.app.Activity;
 
 
 import com.txtled.gp_a209.add.AddDeviceActivity;
+import com.txtled.gp_a209.control.ControlActivity;
 import com.txtled.gp_a209.di.module.ActivityModule;
 import com.txtled.gp_a209.di.scope.ActivityScope;
 import com.txtled.gp_a209.login.LoginActivity;
@@ -29,4 +30,6 @@ public interface ActivityComponent {
     void inject(LoginActivity loginActivity);
 
     void inject(AddDeviceActivity addDeviceActivity);
+
+    void inject(ControlActivity controlActivity);
 }

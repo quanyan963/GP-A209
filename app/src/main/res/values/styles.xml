@@ -44,6 +44,19 @@
         <item name="android:gravity">center</item>
     </style>
 
+    <style name="main_rb">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/text_un</item>
+        <item name="android:lineSpacingMultiplier">1.2</item>
+        <item name="text_type">thin</item>
+        <item name="android:gravity">center</item>
+        <item name="android:background">@null</item>
+        <item name="android:button">@null</item>
+        <item name="android:layout_weight">1</item>
+    </style>
+
     <style name="main_btn">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>

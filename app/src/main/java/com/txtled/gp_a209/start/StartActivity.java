@@ -37,7 +37,11 @@ public class StartActivity extends MvpBaseActivity<StartPresenter> implements St
 
     @Override
     public void toMain() {
-        startActivity(new Intent(this, MainActivity.class));
+        if (presenter.isLogin()){
+            startActivity(new Intent(this, MainActivity.class));
+        }else {
+            startActivity(new Intent(this, LoginActivity.class));
+        }
         this.finish();
     }
 

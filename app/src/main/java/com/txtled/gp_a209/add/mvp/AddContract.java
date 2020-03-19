@@ -26,18 +26,24 @@ public interface AddContract {
         void configureSuccess();
 
         void setData(String[] data);
+
+        void onStatueChange();
+
+        void dismiss();
     }
 
     interface Presenter extends BasePresenter<View>{
 
         void init(Activity activity);
 
-        void onClick(int id, boolean isCommit, OnCreateThingListener listener);
+        void onClick(int id, boolean isCommit);
 
         void configWifi(byte[] s, String pass);
 
         void setName(String name);
 
         void getConfiguredData();
+
+        void getDeviceInfo();
     }
 }

@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.txtled.gp_a209.R;
 import com.txtled.gp_a209.widget.ArialRoundTextView;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -32,7 +33,8 @@ public class DeviceNameAdapter extends RecyclerView.Adapter<DeviceNameAdapter.De
     }
 
     public void setData(String[] d) {
-        data = Arrays.asList(context.getResources().getStringArray(R.array.friendlyName));
+        List<String> temp = Arrays.asList(context.getResources().getStringArray(R.array.friendlyName));
+        data = new ArrayList<>(temp);
         if (d != null){
             for (int i = 0; i < d.length; i++) {
                 for (int j = 0; j < data.size(); j++) {

@@ -164,6 +164,39 @@ public class AlertUtils {
         }
     }
 
+    public static AlertDialog showProgressDialog(Context context){
+        if (!((Activity) context).isFinishing()){
+            LayoutInflater inflater = LayoutInflater.from(context);
+            View config = inflater.inflate(R.layout.alert_configure,null);
+            ArialRoundTextView atvWifi = config.findViewById(R.id.atv_wifi);
+            ArialRoundTextView atvPass = config.findViewById(R.id.atv_pass);
+            atvWifi.setText(R.string.uploading);
+            atvPass.setVisibility(View.INVISIBLE);
+            AlertDialog configDialog = new AlertDialog.Builder(context,R.style.TransparentDialog)
+                    .setView(config)
+                    .create();
+            configDialog.setCancelable(false);
+            configDialog.show();
+            Window cWindow = configDialog.getWindow();
+
+            ViewTreeObserver vto = atvWifi.getViewTreeObserver();
+            vto.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+                public boolean onPreDraw() {
+                    atvWifi.getViewTreeObserver().removeOnPreDrawListener(this);
+                    width = atvWifi.getMeasuredWidth();
+                    cWindow.setLayout(width+60, RelativeLayout.LayoutParams.WRAP_CONTENT);
+                    return true;
+                }
+            });
+            cWindow.setWindowAnimations(R.style.dialogWindowAnimInToOut);
+            cWindow.setBackgroundDrawable(context.getResources()
+                    .getDrawable(R.drawable.background_yellow));
+            return configDialog;
+        }else {
+            return null;
+        }
+    }
+
     private static void setAlphaAnimation(View view){
         AlphaAnimation animation = new AlphaAnimation(0f, 1f);
         animation.setDuration(500);
@@ -217,16 +250,15 @@ public class AlertUtils {
         if (!((Activity) context).isFinishing()) {
             AlertDialog dialog = new AlertDialog.Builder(context)
                     .setMessage(messageRes)
-                    .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                        }
-                    })
+                    .setPositiveButton(R.string.ok, (dialog1, which) -> dialog1.dismiss())
                     .create();
             dialog.setCancelable(true);
             if (!dialog.isShowing()) {
                 dialog.show();
+                Window window = dialog.getWindow();
+                window.setWindowAnimations(R.style.dialogWindowAnimInToOut);
+                window.setBackgroundDrawable(context.getResources()
+                        .getDrawable(R.drawable.background_white));
             }
         }
     }

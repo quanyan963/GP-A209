@@ -25,12 +25,15 @@ import butterknife.ButterKnife;
 public class DeviceListAdapter extends RecyclerView.Adapter<DeviceListAdapter.DeviceListHolder> {
     private Context context;
     private List<DeviceInfo> data;
+    private OnDeviceClickListener listener;
 
-    public DeviceListAdapter(Context context) {
+    public DeviceListAdapter(Context context,OnDeviceClickListener listener) {
         this.context = context;
+        this.listener = listener;
     }
 
     public void setData(List<DeviceInfo> data){
+        this.data = null;
         this.data = data;
         notifyDataSetChanged();
     }
@@ -46,6 +49,8 @@ public class DeviceListAdapter extends RecyclerView.Adapter<DeviceListAdapter.De
     public void onBindViewHolder(@NonNull DeviceListAdapter.DeviceListHolder holder, int position) {
         if (data != null){
             holder.atvDeviceName.setText(data.get(position).getDeviceName());
+            holder.itemView.setOnClickListener(v ->
+                    listener.onDeviceClick(data.get(position).getEndpoint(),data.get(position).getDeviceName()));
         }
 
     }
@@ -67,5 +72,9 @@ public class DeviceListAdapter extends RecyclerView.Adapter<DeviceListAdapter.De
             super(itemView);
             ButterKnife.bind(this, itemView);
         }
+    }
+
+    public interface OnDeviceClickListener{
+        void onDeviceClick(String endpoint, String name);
     }
 }

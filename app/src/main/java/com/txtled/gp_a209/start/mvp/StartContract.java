@@ -18,5 +18,7 @@ public interface StartContract {
     interface Presenter extends BasePresenter<View>{
 
         void startTimer(Activity activity);
+
+        boolean isLogin();
     }
 }
