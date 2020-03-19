@@ -29,7 +29,6 @@ public class ControlActivity extends MvpBaseActivity<ControlPresenter> implement
         endpoint = intent.getStringExtra(ENDPOINT);
         tvTitle.setText(name);
         setNavigationIcon(true);
-
     }
 
     @Override
