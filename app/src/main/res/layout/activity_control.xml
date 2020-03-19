@@ -10,24 +10,43 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"/>
+
+    <com.txtled.gp_a209.widget.ArialRoundTextView
+        android:id="@+id/atv_alarm"
+        style="@style/main_tv"
+        app:layout_constraintTop_toBottomOf="@+id/i_control_tool"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:textSize="18sp"
+        android:text="Alarm 7:30 a.m"
+        android:visibility="invisible"/>
+    <com.txtled.gp_a209.widget.ArialRoundTextView
+        android:id="@+id/atv_repeat"
+        style="@style/main_tv"
+        app:layout_constraintTop_toBottomOf="@+id/atv_alarm"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:textSize="12sp"
+        android:text="Repeat: Never"
+        android:visibility="invisible"/>
     <RadioGroup
         android:id="@+id/rg_sound_one"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@+id/i_control_tool"
+        app:layout_constraintTop_toBottomOf="@+id/atv_repeat"
         android:orientation="horizontal"
         android:layout_marginTop="@dimen/dp_16_x">
-        <RadioButton
+        <com.txtled.gp_a209.widget.ArialRoundRadioButton
             android:id="@+id/rb_lullaby"
             style="@style/main_rb"
             android:drawableTop="@mipmap/afcafcalarm_brahmdes_xhdpi"
             android:text="@string/lullaby" />
-        <RadioButton
+        <com.txtled.gp_a209.widget.ArialRoundRadioButton
             android:id="@+id/rb_sleeves"
             style="@style/main_rb"
             android:drawableTop="@mipmap/afcalarm_greensldes_xhdpi"
             android:text="@string/greensleeves"/>
-        <RadioButton
+        <com.txtled.gp_a209.widget.ArialRoundRadioButton
             android:id="@+id/rb_canon"
             style="@style/main_rb"
             android:drawableTop="@mipmap/afcalarm_greensldes_xhdpi"
@@ -39,24 +58,24 @@
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@+id/rg_sound_one"
         android:orientation="horizontal"
-        android:layout_marginTop="@dimen/dp_12_x">
-        <RadioButton
+        android:layout_marginTop="@dimen/dp_16_x">
+        <com.txtled.gp_a209.widget.ArialRoundRadioButton
             android:id="@+id/rb_waves"
             style="@style/main_rb"
             android:drawableTop="@mipmap/afcalarm_wavedes_xhdpi"
             android:text="@string/waves"/>
-        <RadioButton
+        <com.txtled.gp_a209.widget.ArialRoundRadioButton
             android:id="@+id/rb_rain"
             style="@style/main_rb"
             android:drawableTop="@mipmap/afcalarm_raindes_1_xhdpi"
             android:text="Rain"/>
-        <RadioButton
+        <com.txtled.gp_a209.widget.ArialRoundRadioButton
             android:id="@+id/rb_noise"
             style="@style/main_rb"
             android:drawableTop="@mipmap/afcalarm_noisedes_xhdpi"
             android:text="White Noise"/>
     </RadioGroup>
-    <RadioButton
+    <com.txtled.gp_a209.widget.ArialRoundRadioButton
         android:id="@+id/rb_none"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -68,7 +87,94 @@
         android:textSize="14sp"
         android:textColor="@color/text_un"
         android:gravity="center"
-        android:layout_marginTop="@dimen/dp_12_x"
+        android:layout_marginTop="@dimen/dp_16_x"
         android:drawableTop="@mipmap/alarm_soundoff_xhdpi"
         android:text="@string/sound_off"/>
+
+    <RelativeLayout
+        android:id="@+id/rl_volume"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/rb_none"
+        android:layout_marginTop="@dimen/dp_16_x">
+        <ImageButton
+            android:id="@+id/img_volume_down"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_alignParentLeft="true"
+            android:background="@null"
+            android:src="@mipmap/alarm_soundlow_xhdpi"
+            android:padding="@dimen/dp_6_x"
+            android:layout_marginLeft="@dimen/dp_16_x"/>
+        <SeekBar
+            android:id="@+id/sb_volume"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/img_volume_down"
+            android:layout_toLeftOf="@+id/img_volume_up"
+            android:progressDrawable="@drawable/progress_un"
+            android:thumb="@drawable/seekbar_selector_un"
+            android:progress="50"/>
+        <ImageButton
+            android:id="@+id/img_volume_up"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="@dimen/dp_16_x"
+            android:background="@null"
+            android:src="@mipmap/alarm_soundahigh_xhdpi"
+            android:padding="@dimen/dp_6_x" />
+    </RelativeLayout>
+
+    <RadioGroup
+        android:id="@+id/rg_duration"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/rl_volume"
+        android:orientation="horizontal"
+        android:layout_marginTop="@dimen/dp_16_x"
+        android:layout_marginLeft="@dimen/dp_16_x"
+        android:layout_marginRight="@dimen/dp_16_x">
+        <com.txtled.gp_a209.widget.ArialRoundRadioButton
+            android:id="@+id/rb_never"
+            style="@style/main_rb"
+            android:drawableTop="@mipmap/afcalarm_00des_xhdpi" />
+        <com.txtled.gp_a209.widget.ArialRoundRadioButton
+            android:id="@+id/rb_fifteen"
+            style="@style/main_rb"
+            android:drawableTop="@mipmap/afcalarm_15des_xhdpi" />
+        <com.txtled.gp_a209.widget.ArialRoundRadioButton
+            android:id="@+id/rb_thirteen"
+            style="@style/main_rb"
+            android:drawableTop="@mipmap/afcalarm_30des_xhdpi" />
+        <com.txtled.gp_a209.widget.ArialRoundRadioButton
+            android:id="@+id/rb_sixty"
+            style="@style/main_rb"
+            android:drawableTop="@mipmap/afcalarm_60des_xhdpi" />
+    </RadioGroup>
+    <com.txtled.gp_a209.widget.ArialRoundTextView
+        style="@style/main_tv"
+        app:layout_constraintBottom_toBottomOf="@+id/rg_duration"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:textSize="14sp"
+        android:textColor="@color/text_un"
+        android:text="@string/select_timer"
+        android:layout_marginBottom="-10dp"/>
+
+    <com.txtled.gp_a209.widget.ArialRoundButton
+        android:id="@+id/abt_power"
+        style="@style/main_btn"
+        android:layout_width="match_parent"
+        app:layout_constraintTop_toBottomOf="@+id/rg_duration"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:textColor="@color/yellow"
+        android:backgroundTint="@color/black"
+        android:gravity="center"
+        android:text="@string/turn_on"/>
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>
