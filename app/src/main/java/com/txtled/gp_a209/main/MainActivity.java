@@ -2,6 +2,7 @@ package com.txtled.gp_a209.main;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.View;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -84,6 +85,12 @@ public class MainActivity extends MvpBaseActivity<MainPresenter> implements Main
         srlRefresh.setRefreshing(false);
         if (!data.isEmpty())
             listAdapter.setData(data);
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+
+        return onExitActivity(keyCode,event);
     }
 
     /**

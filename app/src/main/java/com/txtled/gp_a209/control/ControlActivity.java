@@ -397,6 +397,12 @@ public class ControlActivity extends MvpBaseActivity<ControlPresenter> implement
     }
 
     @Override
+    public void onDestroy() {
+        presenter.destroy();
+        super.onDestroy();
+    }
+
+    @Override
     public void setData(IotCoreData iotCoreData) {
         runOnUiThread(() -> {
             powerChanged(iotCoreData.getDevice().equals("on"));

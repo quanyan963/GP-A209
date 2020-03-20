@@ -7,6 +7,7 @@ import android.text.SpannableStringBuilder;
 import android.text.TextPaint;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
+import android.view.KeyEvent;
 import android.view.View;
 
 import androidx.appcompat.app.AlertDialog;
@@ -115,6 +116,7 @@ public class LoginActivity extends MvpBaseActivity<LoginPresenter> implements Lo
     public void toMainView() {
         hidLoadingView();
         startActivity(new Intent(this, MainActivity.class));
+        finish();
     }
 
     private class FirstClick extends ClickableSpan {
@@ -140,6 +142,11 @@ public class LoginActivity extends MvpBaseActivity<LoginPresenter> implements Lo
     public void onDestroy() {
         super.onDestroy();
         presenter.onDestroy(this);
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        return onExitActivity(keyCode,event);
     }
 
     @Override

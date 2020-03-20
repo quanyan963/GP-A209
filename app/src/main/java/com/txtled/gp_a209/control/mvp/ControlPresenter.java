@@ -256,4 +256,9 @@ public class ControlPresenter extends RxPresenter<ControlContract.View> implemen
             e.printStackTrace();
         }
     }
+
+    @Override
+    public void destroy() {
+        MqttClient.getClient().closeClient();
+    }
 }

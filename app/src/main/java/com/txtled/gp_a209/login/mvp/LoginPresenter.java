@@ -153,7 +153,7 @@ public class LoginPresenter extends RxPresenter<LoginContract.View> implements L
     public void onResume(boolean isShowing) {
         mRequestContext.onResume();
         if (isShowing){
-            Observable.timer(4, TimeUnit.SECONDS).subscribeOn(Schedulers.io())
+            Observable.timer(8, TimeUnit.SECONDS).subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread()).subscribe(aLong -> {
                 if (userId.equals("")){
                     view.showLoginFail();

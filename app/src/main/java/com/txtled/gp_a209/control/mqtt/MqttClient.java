@@ -72,7 +72,7 @@ public class MqttClient {
             myTopic.setListener(listener);
             client.subscribe(myTopic);
         } catch (AWSIotException e) {
-            e.printStackTrace();
+
         }
     }
 
@@ -80,11 +80,11 @@ public class MqttClient {
         try {
             client.detach(device);
             client.unsubscribe(myTopic);
-            client.disconnect(1000,false);
+            client.disconnect(3000,false);
         } catch (AWSIotException e) {
-            e.printStackTrace();
+
         } catch (AWSIotTimeoutException e) {
-            e.printStackTrace();
+
         }
 
     }

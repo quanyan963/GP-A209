@@ -37,5 +37,7 @@ public interface ControlContract {
         void initData();
 
         void sendVolume(int progress);
+
+        void destroy();
     }
 }
