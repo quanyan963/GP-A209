@@ -10,10 +10,14 @@ import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 
+import androidx.appcompat.app.AlertDialog;
+
 import com.txtled.gp_a209.R;
 import com.txtled.gp_a209.base.MvpBaseActivity;
+import com.txtled.gp_a209.bean.IotCoreData;
 import com.txtled.gp_a209.control.mvp.ControlContract;
 import com.txtled.gp_a209.control.mvp.ControlPresenter;
+import com.txtled.gp_a209.utils.AlertUtils;
 import com.txtled.gp_a209.widget.ArialRoundButton;
 import com.txtled.gp_a209.widget.ArialRoundRadioButton;
 import com.txtled.gp_a209.widget.ArialRoundTextView;
@@ -73,11 +77,10 @@ public class ControlActivity extends MvpBaseActivity<ControlPresenter> implement
     ArialRoundButton abtPower;
     private String name;
     private String endpoint;
-    private int position;
-    private boolean isClicked;
-    private int line;
-    private int oldLine;
-    private int oldPosition;
+    private AlertDialog loading;
+    private boolean power;
+    private boolean result;
+    private int beforeProgress;
 
     @Override
     public void setInject() {
@@ -106,6 +109,24 @@ public class ControlActivity extends MvpBaseActivity<ControlPresenter> implement
         rbThirteen.setOnCheckedChangeListener(this);
         rbSixty.setOnCheckedChangeListener(this);
         abtPower.setOnClickListener(this);
+        sbVolume.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                beforeProgress = seekBar.getProgress();
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                presenter.sendVolume(seekBar.getProgress());
+            }
+        });
+        loading = AlertUtils.showLoadingDialog(this,R.layout.alert_progress);
+        loading.show();
     }
 
     @Override
@@ -230,7 +251,7 @@ public class ControlActivity extends MvpBaseActivity<ControlPresenter> implement
                         return drawable;
                 }
             default:
-                drawable = getResources().getDrawable(R.mipmap.alarm_soundoff_xhdpi);
+                drawable = getResources().getDrawable(R.mipmap.alarm_soundxhdpi);
                 drawable.setBounds(0, 0, drawable.getMinimumWidth(), drawable.getMinimumHeight());
                 return drawable;
         }
@@ -353,11 +374,112 @@ public class ControlActivity extends MvpBaseActivity<ControlPresenter> implement
                 }
                 break;
         }
-        presenter.sendMqtt(buttonView.getId());
+        if (!result)
+            presenter.sendMqtt(buttonView.getId());
+        result = false;
     }
 
     @Override
     public void onClick(View v) {
+        presenter.onClick(v.getId(),power);
+    }
 
+    @Override
+    public void mqttSuccess(int id) {
+
+    }
+
+    @Override
+    public void hidLoadingView() {
+        if (loading != null && loading.isShowing()){
+            loading.dismiss();
+        }
+    }
+
+    @Override
+    public void setData(IotCoreData iotCoreData) {
+        runOnUiThread(() -> {
+            powerChanged(iotCoreData.getDevice().equals("on"));
+            sbVolume.setProgress(iotCoreData.getVolume());
+            switch (iotCoreData.getDuration()){
+                case 0:
+                    result = true;
+                    rbNever.setChecked(true);
+                    break;
+                case 15:
+                    result = true;
+                    rbFifteen.setChecked(true);
+                    break;
+                case 30:
+                    result = true;
+                    rbThirteen.setChecked(true);
+                    break;
+                case 60:
+                    result = true;
+                    rbSixty.setChecked(true);
+                    break;
+            }
+            switch (iotCoreData.getSound()){
+                case 0:
+                    result = true;
+                    rbNone.setChecked(true);
+                    break;
+                case 1:
+                    result = true;
+                    rbLullaby.setChecked(true);
+                    break;
+                case 2:
+                    result = true;
+                    rbSleeves.setChecked(true);
+                    break;
+                case 3:
+                    result = true;
+                    rbCanon.setChecked(true);
+                    break;
+                case 4:
+                    result = true;
+                    rbWaves.setChecked(true);
+                    break;
+                case 5:
+                    result = true;
+                    rbRain.setChecked(true);
+                    break;
+                case 6:
+                    result = true;
+                    rbNoise.setChecked(true);
+                    break;
+            }
+        });
+    }
+
+    @Override
+    public void powerChanged(boolean b) {
+        power = b;
+        if (b){
+            abtPower.setTextColor(getResources().getColor(R.color.bg_snack));
+            abtPower.setText(R.string.turn_off);
+            abtPower.setBackgroundColor(getResources().getColor(R.color.gray));
+        }else {
+            abtPower.setTextColor(getResources().getColor(R.color.yellow));
+            abtPower.setText(R.string.turn_on);
+            abtPower.setBackgroundColor(getResources().getColor(R.color.black));
+        }
+    }
+
+    @Override
+    public void volumeFail() {
+        sbVolume.setProgress(beforeProgress);
+    }
+
+    @Override
+    public void initFail() {
+        hidLoadingView();
+
+    }
+
+    @Override
+    public void mqttFail(int id) {
+        result = true;
+        ((ArialRoundRadioButton)findViewById(id)).setChecked(false);
     }
 }

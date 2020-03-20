@@ -1,11 +1,10 @@
 package com.txtled.gp_a209.control.mvp;
 
 import android.app.Activity;
-import android.widget.RadioGroup;
 
 import com.txtled.gp_a209.base.BasePresenter;
 import com.txtled.gp_a209.base.BaseView;
-import com.txtled.gp_a209.control.ControlActivity;
+import com.txtled.gp_a209.bean.IotCoreData;
 
 /**
  * Created by Mr.Quan on 2020/3/19.
@@ -13,11 +12,30 @@ import com.txtled.gp_a209.control.ControlActivity;
 public interface ControlContract {
     interface View extends BaseView{
 
+        void mqttSuccess(int id);
+
+        void mqttFail(int id);
+
+        void hidLoadingView();
+
+        void setData(IotCoreData iotCoreData);
+
+        void powerChanged(boolean power);
+
+        void volumeFail();
+
+        void initFail();
     }
 
     interface Presenter extends BasePresenter<View>{
         void init(String endpoint, Activity activity);
 
         void sendMqtt(int id);
+
+        void onClick(int id,boolean power);
+
+        void initData();
+
+        void sendVolume(int progress);
     }
 }

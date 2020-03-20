@@ -47,4 +47,5 @@
     <string name="sound_off">Natural Sound Off</string>
     <string name="select_timer">Select Timer</string>
     <string name="turn_on">Turn On</string>
+    <string name="turn_off">Turn off</string>
 </resources>

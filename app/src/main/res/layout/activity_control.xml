@@ -88,7 +88,7 @@
         android:textColor="@color/text_un"
         android:gravity="center"
         android:layout_marginTop="@dimen/dp_16_x"
-        android:drawableTop="@mipmap/alarm_soundoff_xhdpi"
+        android:drawableTop="@mipmap/alarm_soundxhdpi"
         android:text="@string/sound_off"/>
 
     <RelativeLayout
@@ -116,7 +116,8 @@
             android:layout_toLeftOf="@+id/img_volume_up"
             android:progressDrawable="@drawable/progress_un"
             android:thumb="@drawable/seekbar_selector_un"
-            android:progress="50"/>
+            android:max="10"
+            android:progress="10"/>
         <ImageButton
             android:id="@+id/img_volume_up"
             android:layout_width="wrap_content"

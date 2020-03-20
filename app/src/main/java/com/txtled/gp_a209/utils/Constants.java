@@ -11,6 +11,17 @@ public class Constants {
             Manifest.permission.ACCESS_COARSE_LOCATION };
     public static final int THIN = 0;
     public static final int BOLD = 1;
+    public static final String TOPIC = "topic";
+    public static final String MESSAGE = "message";
+    public static final int WHAT = 0x11;
+    public static final String PUBLISH = "$aws/things/%s/shadow/update";
+    public static final String SUBSCRIBE = "$aws/things/%s/shadow/update/accepted";
+    public static final String GET_DATA = "$aws/things/%s/shadow/get";
+    public static final String DATA_SOUND = "{\"state\":{\"desired\":{\"sound\":%d}}}";
+    public static final String DATA_VOLUME = "{\"state\":{\"desired\":{\"volume\":%d}}}";
+    public static final String DATA_LIGHT = "{\"state\":{\"desired\":{\"light\":%d}}}";
+    public static final String DATA_DEVICE = "{\"state\":{\"desired\":{\"device\":%s}}}";
+    public static final String DATA_DURATION = "{\"state\":{\"desired\":{\"duration\":%d}}}";
     public static final String IDENTITY_POOL_ID = "us-east-1:fdd912d6-7ba0-4ce9-8a7f-9d3398b21540";
     public static final String USER_ID = "UserId";
     public static final String DB_NAME = "FOX";
