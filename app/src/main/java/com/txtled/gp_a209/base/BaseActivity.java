@@ -1,12 +1,10 @@
 package com.txtled.gp_a209.base;
 
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;

@@ -45,4 +45,6 @@
     <string name="canon">Canon in D</string>
     <string name="waves">Waves</string>
     <string name="sound_off">Natural Sound Off</string>
+    <string name="select_timer">Select Timer</string>
+    <string name="turn_on">Turn On</string>
 </resources>
