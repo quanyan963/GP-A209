@@ -113,7 +113,6 @@ public class AddDeviceActivity extends MvpBaseActivity<AddPresenter> implements 
             presenter.setName(name);
             changeBtnColor(true);
         });
-        rlvNameList.setAdapter(adapter);
         presenter.getConfiguredData();
     }
 
