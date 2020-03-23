@@ -100,6 +100,7 @@ public class InfoActivity extends MvpBaseActivity<InfoPresenter> implements Info
         if (hasChanged){
             this.setResult(OK);
             hasChanged = false;
+
         }
         super.onBackPressed();
     }
