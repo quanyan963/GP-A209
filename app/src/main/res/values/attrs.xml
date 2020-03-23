@@ -6,4 +6,10 @@
             <enum name="bold" value="1" />
         </attr>
     </declare-styleable>
+
+    <declare-styleable name="MyViewStyle">
+        <attr name="show_type" format="boolean"/>
+        <attr name="left_text" format="string"/>
+        <attr name="right_text" format="string"/>
+    </declare-styleable>
 </resources>

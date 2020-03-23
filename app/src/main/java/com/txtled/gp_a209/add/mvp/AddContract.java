@@ -45,5 +45,7 @@ public interface AddContract {
         void getConfiguredData();
 
         void getDeviceInfo();
+
+        void onDestroy();
     }
 }

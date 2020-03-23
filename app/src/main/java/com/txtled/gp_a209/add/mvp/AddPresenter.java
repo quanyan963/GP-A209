@@ -60,6 +60,8 @@ import com.txtled.gp_a209.base.CommonSubscriber;
 import com.txtled.gp_a209.base.RxPresenter;
 import com.txtled.gp_a209.bean.DeviceInfo;
 import com.txtled.gp_a209.bean.WWADeviceInfo;
+import com.txtled.gp_a209.broadcast.MyBroadcastReceiver;
+import com.txtled.gp_a209.broadcast.OnWifiChangeListener;
 import com.txtled.gp_a209.model.DataManagerModel;
 import com.txtled.gp_a209.utils.AlertUtils;
 import com.txtled.gp_a209.utils.Constants;
@@ -133,6 +135,7 @@ public class AddPresenter extends RxPresenter<AddContract.View> implements AddCo
     private HashMap<String, AttributeValue> key;
     private AlertDialog dialog;
     private String strReceive;
+    private MyBroadcastReceiver mReceiver;
     @Inject
     public AddPresenter(DataManagerModel dataManagerModel) {
         this.dataManagerModel = dataManagerModel;
@@ -602,6 +605,11 @@ public class AddPresenter extends RxPresenter<AddContract.View> implements AddCo
         });
     }
 
+    @Override
+    public void onDestroy() {
+        activity.unregisterReceiver(mReceiver);
+    }
+
     private String[] getDeviceData() {
         data = new ArrayList<>();
         //获取数据
@@ -626,28 +634,28 @@ public class AddPresenter extends RxPresenter<AddContract.View> implements AddCo
         return Build.VERSION.SDK_INT >= 28;
     }
 
-    private BroadcastReceiver mReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-            if (action == null) {
-                return;
-            }
+//    private BroadcastReceiver mReceiver = new BroadcastReceiver() {
+//        @Override
+//        public void onReceive(Context context, Intent intent) {
+//            String action = intent.getAction();
+//            if (action == null) {
+//                return;
+//            }
+//
+//            WifiManager wifiManager = (WifiManager) context.getApplicationContext()
+//                    .getSystemService(WIFI_SERVICE);
+//            assert wifiManager != null;
+//
+//            switch (action) {
+//                case WifiManager.NETWORK_STATE_CHANGED_ACTION:
+//                case LocationManager.PROVIDERS_CHANGED_ACTION:
+//                    onWifiChanged(context,wifiManager.getConnectionInfo());
+//                    break;
+//            }
+//        }
+//    };
 
-            WifiManager wifiManager = (WifiManager) context.getApplicationContext()
-                    .getSystemService(WIFI_SERVICE);
-            assert wifiManager != null;
-
-            switch (action) {
-                case WifiManager.NETWORK_STATE_CHANGED_ACTION:
-                case LocationManager.PROVIDERS_CHANGED_ACTION:
-                    onWifiChanged(context,wifiManager.getConnectionInfo());
-                    break;
-            }
-        }
-    };
-
-    private void onWifiChanged(Context context, WifiInfo info) {
+    private void onChanged(Context context, WifiInfo info) {
         view.hidSnackBar();
         boolean disconnected = info == null
                 || info.getNetworkId() == -1
@@ -682,6 +690,8 @@ public class AddPresenter extends RxPresenter<AddContract.View> implements AddCo
         if (isSDKAtLeastP()) {
             filter.addAction(LocationManager.PROVIDERS_CHANGED_ACTION);
         }
+
+        mReceiver = new MyBroadcastReceiver((context, info) -> onChanged(context,info));
         activity.registerReceiver(mReceiver, filter);
     }
 

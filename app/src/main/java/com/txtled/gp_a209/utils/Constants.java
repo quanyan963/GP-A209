@@ -14,6 +14,8 @@ public class Constants {
     public static final String TOPIC = "topic";
     public static final String MESSAGE = "message";
     public static final int WHAT = 0x11;
+    public static final int RESULT = 2000;
+    public static final int OK = 200;
     public static final String PUBLISH = "$aws/things/%s/shadow/update";
     public static final String SUBSCRIBE = "$aws/things/%s/shadow/update/accepted";
     public static final String GET_DATA = "$aws/things/%s/shadow/get";
@@ -30,6 +32,8 @@ public class Constants {
     public static final String MY_OIT_CE = "myiotce";
     public static final String ENDPOINT = "endpoint";
     public static final String NAME = "name";
+    public static final String VERSION = "version";
+    public static final String WIFI = "wifi";
     public static final String DISCOVERY = "{\"discovery\":1}";
     public static final String SEND_THING_NAME = "{\"endpoint\":\"%s\",\"thing\":\"%s\"}";
     public static final String SEND_CA_ONE = "{\"ca0\":\"%s\"}";

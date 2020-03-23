@@ -48,4 +48,11 @@
     <string name="select_timer">Select Timer</string>
     <string name="turn_on">Turn On</string>
     <string name="turn_off">Turn off</string>
+    <string name="no_device">There was no devices powered on.</string>
+
+    //device information
+    <string name="information">INFORMATION</string>
+    <string name="change_name">Change Name</string>
+    <string name="ware_version">Firmware Version</string>
+    <string name="wifi_setup">Wi-Fi Setup</string>
 </resources>

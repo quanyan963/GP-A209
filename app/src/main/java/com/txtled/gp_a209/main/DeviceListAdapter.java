@@ -12,8 +12,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.txtled.gp_a209.R;
 import com.txtled.gp_a209.bean.DeviceInfo;
+import com.txtled.gp_a209.bean.WWADeviceInfo;
 import com.txtled.gp_a209.widget.ArialRoundTextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -24,15 +26,19 @@ import butterknife.ButterKnife;
  */
 public class DeviceListAdapter extends RecyclerView.Adapter<DeviceListAdapter.DeviceListHolder> {
     private Context context;
-    private List<DeviceInfo> data;
+    private List<WWADeviceInfo> data;
     private OnDeviceClickListener listener;
+    private String userId;
+    private List<String> nameList;
 
-    public DeviceListAdapter(Context context,OnDeviceClickListener listener) {
+    public DeviceListAdapter(Context context,OnDeviceClickListener listener, String userId) {
         this.context = context;
         this.listener = listener;
+        this.userId = userId;
+        nameList = new ArrayList<>();
     }
 
-    public void setData(List<DeviceInfo> data){
+    public void setData(List<WWADeviceInfo> data){
         this.data = null;
         this.data = data;
         notifyDataSetChanged();
@@ -48,11 +54,19 @@ public class DeviceListAdapter extends RecyclerView.Adapter<DeviceListAdapter.De
     @Override
     public void onBindViewHolder(@NonNull DeviceListAdapter.DeviceListHolder holder, int position) {
         if (data != null){
-            holder.atvDeviceName.setText(data.get(position).getDeviceName());
+            String names = data.get(position).getFriendlyNames();
+            String[] name = names.split(",");
+            for (int i = 0; i < name.length; i++) {
+                if (name[i].contains(userId)){
+                    nameList.add(name[i].split("_")[1]);
+                    holder.atvDeviceName.setText(name[i].split("_")[1]);
+                }
+            }
             holder.itemView.setOnClickListener(v ->
-                    listener.onDeviceClick(data.get(position).getEndpoint(),data.get(position).getDeviceName()));
+                    listener.onDeviceClick(data.get(position).getThing(),nameList.get(position)));
+            holder.imgSetting.setOnClickListener(v ->
+                    listener.onSettingClick(data.get(position), nameList.get(position)));
         }
-
     }
 
     @Override
@@ -76,5 +90,6 @@ public class DeviceListAdapter extends RecyclerView.Adapter<DeviceListAdapter.De
 
     public interface OnDeviceClickListener{
         void onDeviceClick(String endpoint, String name);
+        void onSettingClick(WWADeviceInfo data, String name);
     }
 }

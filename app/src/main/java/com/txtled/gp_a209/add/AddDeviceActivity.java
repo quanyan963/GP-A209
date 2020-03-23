@@ -27,6 +27,8 @@ import com.txtled.gp_a209.widget.ArialRoundTextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static com.txtled.gp_a209.utils.Constants.OK;
+
 /**
  * Created by Mr.Quan on 2020/3/17.
  */
@@ -291,10 +293,19 @@ public class AddDeviceActivity extends MvpBaseActivity<AddPresenter> implements 
             if (dialog != null && dialog.isShowing()){
                 dialog.dismiss();
                 AlertUtils.showAlertDialog(this, R.string.success,
-                        (dialog, which) -> this.finish());
+                        (dialog, which) -> {
+                            this.setResult(OK);
+                            this.finish();
+                        });
                 dialog = null;
             }
         });
 
+    }
+
+    @Override
+    public void onDestroy() {
+        presenter.onDestroy();
+        super.onDestroy();
     }
 }

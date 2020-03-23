@@ -7,6 +7,7 @@ import com.txtled.gp_a209.add.AddDeviceActivity;
 import com.txtled.gp_a209.control.ControlActivity;
 import com.txtled.gp_a209.di.module.ActivityModule;
 import com.txtled.gp_a209.di.scope.ActivityScope;
+import com.txtled.gp_a209.information.InfoActivity;
 import com.txtled.gp_a209.login.LoginActivity;
 import com.txtled.gp_a209.main.MainActivity;
 import com.txtled.gp_a209.start.StartActivity;
@@ -32,4 +33,6 @@ public interface ActivityComponent {
     void inject(AddDeviceActivity addDeviceActivity);
 
     void inject(ControlActivity controlActivity);
+
+    void inject(InfoActivity infoActivity);
 }
