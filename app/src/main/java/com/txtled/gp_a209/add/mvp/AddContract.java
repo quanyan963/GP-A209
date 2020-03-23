@@ -6,6 +6,7 @@ import android.net.wifi.WifiInfo;
 import com.txtled.gp_a209.add.listener.OnCreateThingListener;
 import com.txtled.gp_a209.base.BasePresenter;
 import com.txtled.gp_a209.base.BaseView;
+import com.txtled.gp_a209.bean.WWADeviceInfo;
 
 /**
  * Created by Mr.Quan on 2020/3/17.
@@ -30,11 +31,13 @@ public interface AddContract {
         void onStatueChange();
 
         void dismiss();
+
+        void changeName(String name);
     }
 
     interface Presenter extends BasePresenter<View>{
 
-        void init(Activity activity,String ip);
+        void init(Activity activity);
 
         void onClick(int id, boolean isCommit);
 
@@ -47,5 +50,7 @@ public interface AddContract {
         void getDeviceInfo();
 
         void onDestroy();
+
+        void initData(WWADeviceInfo info);
     }
 }

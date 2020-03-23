@@ -20,6 +20,7 @@ import com.txtled.gp_a209.add.listener.OnCreateThingListener;
 import com.txtled.gp_a209.add.mvp.AddContract;
 import com.txtled.gp_a209.add.mvp.AddPresenter;
 import com.txtled.gp_a209.base.MvpBaseActivity;
+import com.txtled.gp_a209.bean.WWADeviceInfo;
 import com.txtled.gp_a209.utils.AlertUtils;
 import com.txtled.gp_a209.widget.ArialRoundButton;
 import com.txtled.gp_a209.widget.ArialRoundEditText;
@@ -29,7 +30,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 import static com.txtled.gp_a209.utils.Constants.ENDPOINT;
+import static com.txtled.gp_a209.utils.Constants.NAME;
 import static com.txtled.gp_a209.utils.Constants.OK;
+import static com.txtled.gp_a209.utils.Constants.THING_DIR;
 import static com.txtled.gp_a209.utils.Constants.TYPE;
 
 /**
@@ -62,6 +65,9 @@ public class AddDeviceActivity extends MvpBaseActivity<AddPresenter> implements 
     private AlertDialog dialog;
     private int type;
     private String ip;
+    private String friendlyName;
+    private String thing;
+    private WWADeviceInfo info;
 
     @Override
     public void setInject() {
@@ -72,13 +78,23 @@ public class AddDeviceActivity extends MvpBaseActivity<AddPresenter> implements 
     public void init() {
         Intent intent = getIntent();
         type = intent.getIntExtra(TYPE,0);
-        ip = intent.getStringExtra(ENDPOINT);
+        if (type == 1){
+            ip = intent.getStringExtra(ENDPOINT);
+            friendlyName = intent.getStringExtra(NAME);
+            thing = intent.getStringExtra(THING_DIR);
+            info = new WWADeviceInfo();
+            info.setIp(ip);
+            info.setThing(thing);
+            info.setFriendlyNames(friendlyName);
+            presenter.initData(info);
+        }
+
         initToolbar();
         setNavigationIcon(true);
         changeBtnColor(false);
         aetPassword.requestFocus();
         abtCollect.setOnClickListener(this);
-        presenter.init(this,ip);
+        presenter.init(this);
         aetWifiName.clearFocus();
         aetPassword.clearFocus();
         AlertUtils.setListener(b -> {
@@ -99,8 +115,12 @@ public class AddDeviceActivity extends MvpBaseActivity<AddPresenter> implements 
             atvEyeHint.setVisibility(View.GONE);
             atvTop.setText(R.string.connected);
             atvDeviceWill.setText(R.string.new_name);
-        }else {
+        }else if (type == 0){
             tvTitle.setText(R.string.add_device);
+            AlertUtils.showHintDialog(this, R.layout.alert_hint, getString(R.string.hint_title)
+                    , R.string.hint_msg, false);
+        }else {
+            tvTitle.setText(R.string.wifi_setup_big);
             AlertUtils.showHintDialog(this, R.layout.alert_hint, getString(R.string.hint_title)
                     , R.string.hint_msg, false);
         }
@@ -170,8 +190,18 @@ public class AddDeviceActivity extends MvpBaseActivity<AddPresenter> implements 
     @Override
     public void configureSuccess() {
         runOnUiThread(() -> {
-            showList(true);
-            changeBtnColor(false);
+            if (type == 2){
+                AlertUtils.showAlertDialog(this, R.string.re_wifi,
+                        (dialog, which) -> {
+                            this.setResult(OK,new Intent().putExtra(NAME,
+                                    aetWifiName.getText().toString()));
+                            this.finish();
+                        });
+            }else {
+                showList(true);
+                changeBtnColor(false);
+            }
+
         });
     }
 
@@ -329,6 +359,21 @@ public class AddDeviceActivity extends MvpBaseActivity<AddPresenter> implements 
             }
         });
 
+    }
+
+    @Override
+    public void changeName(String name) {
+        runOnUiThread(() -> {
+            if (dialog != null && dialog.isShowing()){
+                dialog.dismiss();
+                AlertUtils.showAlertDialog(this, R.string.rename_success,
+                        (dialog, which) -> {
+                            this.setResult(OK,new Intent().putExtra(NAME,name));
+                            this.finish();
+                        });
+                dialog = null;
+            }
+        });
     }
 
     @Override

@@ -18,5 +18,6 @@ public interface InfoContract {
 
         void init(Activity activity);
 
+        String getName(String friendlyName);
     }
 }

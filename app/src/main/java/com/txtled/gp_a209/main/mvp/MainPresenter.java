@@ -11,19 +11,10 @@ import android.os.Build;
 
 import androidx.core.location.LocationManagerCompat;
 
-import com.amazonaws.auth.CognitoCachingCredentialsProvider;
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
-import com.amazonaws.services.dynamodbv2.model.AttributeValue;
-import com.amazonaws.services.dynamodbv2.model.GetItemRequest;
-import com.amazonaws.services.dynamodbv2.model.GetItemResult;
-import com.amazonaws.services.iot.model.CreateKeysAndCertificateResult;
-import com.txtled.gp_a209.add.adp.UDPBuild;
 import com.txtled.gp_a209.add.listener.OnUdpSendRequest;
-import com.txtled.gp_a209.application.MyApplication;
+import com.txtled.gp_a209.add.udp.UDPBuild;
 import com.txtled.gp_a209.base.CommonSubscriber;
 import com.txtled.gp_a209.base.RxPresenter;
-import com.txtled.gp_a209.bean.DeviceInfo;
 import com.txtled.gp_a209.bean.WWADeviceInfo;
 import com.txtled.gp_a209.broadcast.MyBroadcastReceiver;
 import com.txtled.gp_a209.model.DataManagerModel;
@@ -34,27 +25,18 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
-import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
-import io.reactivex.FlowableEmitter;
-import io.reactivex.FlowableOnSubscribe;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
-import static com.txtled.gp_a209.base.BaseFragment.TAG;
-import static com.txtled.gp_a209.utils.Constants.DB_NAME;
 import static com.txtled.gp_a209.utils.Constants.DISCOVERY;
-import static com.txtled.gp_a209.utils.Constants.THING_DIR;
-import static com.txtled.gp_a209.utils.Constants.USER_ID;
 
 /**
  * Created by Mr.Quan on 2019/12/9.

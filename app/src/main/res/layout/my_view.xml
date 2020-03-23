@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="wrap_content"
-    android:clickable="true"
-    android:background="@drawable/bg_item_selector">
+    android:layout_width="match_parent" android:layout_height="wrap_content">
 
     <RelativeLayout
         android:id="@+id/rl_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:background="@drawable/bg_item_selector">
         <com.txtled.gp_a209.widget.ArialRoundTextView
             android:id="@+id/atv_left_text"
             style="@style/main_tv"

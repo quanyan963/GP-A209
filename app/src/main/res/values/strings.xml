@@ -56,4 +56,7 @@
     <string name="change_name_big">CHANGE NAME</string>
     <string name="ware_version">Firmware Version</string>
     <string name="wifi_setup">Wi-Fi Setup</string>
+    <string name="wifi_setup_big">Wi-Fi SETUP</string>
+    <string name="rename_success">Rename Successful!</string>
+    <string name="re_wifi">Wi-Fi Reset Successful!</string>
 </resources>

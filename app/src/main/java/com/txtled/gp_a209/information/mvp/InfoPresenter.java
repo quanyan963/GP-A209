@@ -34,4 +34,17 @@ public class InfoPresenter extends RxPresenter<InfoContract.View> implements Inf
 
         userId = dataManagerModel.getUserId();
     }
+
+    @Override
+    public String getName(String friendlyName) {
+        String[] name = friendlyName.split(",");
+        for (int i = 0; i < name.length; i++) {
+            if (name[i].contains(userId)){
+                return name[i].split("_")[1];
+            }else {
+                continue;
+            }
+        }
+        return "";
+    }
 }

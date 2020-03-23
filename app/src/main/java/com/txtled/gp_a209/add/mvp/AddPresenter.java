@@ -1,10 +1,7 @@
 package com.txtled.gp_a209.add.mvp;
 
 import android.app.Activity;
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.IntentFilter;
 import android.location.LocationManager;
 import android.net.DhcpInfo;
@@ -12,9 +9,6 @@ import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.os.Build;
-import android.os.Handler;
-import android.os.Looper;
-import android.view.Window;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.location.LocationManagerCompat;
@@ -53,7 +47,7 @@ import com.espressif.iot.esptouch.IEsptouchTask;
 import com.espressif.iot.esptouch.util.ByteUtil;
 import com.espressif.iot.esptouch.util.TouchNetUtil;
 import com.txtled.gp_a209.R;
-import com.txtled.gp_a209.add.adp.UDPBuild;
+import com.txtled.gp_a209.add.udp.UDPBuild;
 import com.txtled.gp_a209.add.listener.OnUdpSendRequest;
 import com.txtled.gp_a209.application.MyApplication;
 import com.txtled.gp_a209.base.CommonSubscriber;
@@ -61,7 +55,6 @@ import com.txtled.gp_a209.base.RxPresenter;
 import com.txtled.gp_a209.bean.DeviceInfo;
 import com.txtled.gp_a209.bean.WWADeviceInfo;
 import com.txtled.gp_a209.broadcast.MyBroadcastReceiver;
-import com.txtled.gp_a209.broadcast.OnWifiChangeListener;
 import com.txtled.gp_a209.model.DataManagerModel;
 import com.txtled.gp_a209.utils.AlertUtils;
 import com.txtled.gp_a209.utils.Constants;
@@ -82,13 +75,7 @@ import javax.inject.Inject;
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
 import io.reactivex.FlowableOnSubscribe;
-import io.reactivex.Observable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
-import io.reactivex.schedulers.Schedulers;
 
-import static android.content.Context.WIFI_SERVICE;
 import static com.txtled.gp_a209.base.BaseActivity.TAG;
 import static com.txtled.gp_a209.utils.Constants.CA;
 import static com.txtled.gp_a209.utils.Constants.DB_NAME;
@@ -103,7 +90,6 @@ import static com.txtled.gp_a209.utils.Constants.SEND_CERT_TWO;
 import static com.txtled.gp_a209.utils.Constants.SEND_KEY_ONE;
 import static com.txtled.gp_a209.utils.Constants.SEND_KEY_TWO;
 import static com.txtled.gp_a209.utils.Constants.SEND_THING_NAME;
-import static com.txtled.gp_a209.utils.Constants.THIN;
 import static com.txtled.gp_a209.utils.Constants.THING_DIR;
 import static com.txtled.gp_a209.utils.Constants.USER_ID;
 import static com.txtled.gp_a209.utils.ForUse.ACCESS_KEY;
@@ -146,11 +132,8 @@ public class AddPresenter extends RxPresenter<AddContract.View> implements AddCo
      * @param activity
      */
     @Override
-    public void init(Activity activity, String ip) {
+    public void init(Activity activity) {
         this.activity = activity;
-        if (!ip.isEmpty()){
-            broadCast = ip;
-        }
         registerBroadcast(activity);
         provider = MyApplication.getCredentialsProvider();
         client = new AmazonDynamoDBClient(provider);
@@ -302,7 +285,7 @@ public class AddPresenter extends RxPresenter<AddContract.View> implements AddCo
                     String finalNewNames = newNames;
                     udpSend(String.format(FRIENDLY_NAME, newNames), result -> {
                         if (result.contains("1")){
-                            view.dismiss();
+                            view.changeName(friendlyName);
                             udpBuild.stopUDPSocket();
                             //listener.onStatueChange(R.string.complete_change);
 
@@ -611,6 +594,12 @@ public class AddPresenter extends RxPresenter<AddContract.View> implements AddCo
     @Override
     public void onDestroy() {
         activity.unregisterReceiver(mReceiver);
+    }
+
+    @Override
+    public void initData(WWADeviceInfo info) {
+        this.info = info;
+        broadCast = info.getIp();
     }
 
     private String[] getDeviceData() {

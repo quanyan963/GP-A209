@@ -40,7 +40,7 @@ public class DeviceNameAdapter extends RecyclerView.Adapter<DeviceNameAdapter.De
                 for (int j = 0; j < data.size(); j++) {
                     if (d[i].equals(data.get(j))){
                         data.remove(j);
-                        return;
+                        break;
                     }
                 }
             }

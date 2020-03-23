@@ -15,6 +15,9 @@ public class Constants {
     public static final String MESSAGE = "message";
     public static final int WHAT = 0x11;
     public static final int RESULT = 2000;
+    public static final int NAME_RESULT = 2001;
+    public static final int WIFI_RESULT = 2002;
+    public static final int INFO = 2003;
     public static final int OK = 200;
     public static final String PUBLISH = "$aws/things/%s/shadow/update";
     public static final String SUBSCRIBE = "$aws/things/%s/shadow/update/accepted";

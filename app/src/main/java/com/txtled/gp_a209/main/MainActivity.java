@@ -26,9 +26,12 @@ import java.util.List;
 import butterknife.BindView;
 
 import static com.txtled.gp_a209.utils.Constants.ENDPOINT;
+import static com.txtled.gp_a209.utils.Constants.INFO;
 import static com.txtled.gp_a209.utils.Constants.NAME;
 import static com.txtled.gp_a209.utils.Constants.OK;
 import static com.txtled.gp_a209.utils.Constants.RESULT;
+import static com.txtled.gp_a209.utils.Constants.THIN;
+import static com.txtled.gp_a209.utils.Constants.THING_DIR;
 import static com.txtled.gp_a209.utils.Constants.TYPE;
 import static com.txtled.gp_a209.utils.Constants.VERSION;
 import static com.txtled.gp_a209.utils.Constants.WIFI;
@@ -60,8 +63,7 @@ public class MainActivity extends MvpBaseActivity<MainPresenter> implements Main
         userId = presenter.init(this);
         setRightImg(true, R.mipmap.devicelist_add_xhdpi, v ->
                 startActivityForResult(new Intent(MainActivity.this,
-                        AddDeviceActivity.class).putExtra(TYPE,0)
-                        .putExtra(ENDPOINT,""), RESULT));
+                        AddDeviceActivity.class).putExtra(TYPE,0), RESULT));
         srlRefresh.setOnRefreshListener(this);
         rlvDeviceList.setHasFixedSize(true);
         rlvDeviceList.setLayoutManager(new LinearLayoutManager(this));
@@ -149,14 +151,15 @@ public class MainActivity extends MvpBaseActivity<MainPresenter> implements Main
 
     @Override
     public void onSettingClick(WWADeviceInfo data,String name) {
-        startActivity(new Intent(this, InfoActivity.class).putExtra(NAME,name)
+        startActivityForResult(new Intent(this, InfoActivity.class)
+                .putExtra(NAME, data.getFriendlyNames())
                 .putExtra(ENDPOINT,data.getIp()).putExtra(VERSION,data.getVer())
-                .putExtra(WIFI,wifiName));
+                .putExtra(WIFI,wifiName).putExtra(THING_DIR,data.getThing()),INFO);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        if (requestCode == RESULT){
+        if (requestCode == RESULT || requestCode == INFO){
             if (resultCode == OK){
                 srlRefresh.setRefreshing(true);
                 onRefresh();
