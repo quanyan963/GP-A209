@@ -29,6 +29,7 @@ import static com.txtled.gp_a209.utils.Constants.ENDPOINT;
 import static com.txtled.gp_a209.utils.Constants.NAME;
 import static com.txtled.gp_a209.utils.Constants.OK;
 import static com.txtled.gp_a209.utils.Constants.RESULT;
+import static com.txtled.gp_a209.utils.Constants.TYPE;
 import static com.txtled.gp_a209.utils.Constants.VERSION;
 import static com.txtled.gp_a209.utils.Constants.WIFI;
 
@@ -59,7 +60,8 @@ public class MainActivity extends MvpBaseActivity<MainPresenter> implements Main
         userId = presenter.init(this);
         setRightImg(true, R.mipmap.devicelist_add_xhdpi, v ->
                 startActivityForResult(new Intent(MainActivity.this,
-                        AddDeviceActivity.class),RESULT));
+                        AddDeviceActivity.class).putExtra(TYPE,0)
+                        .putExtra(ENDPOINT,""), RESULT));
         srlRefresh.setOnRefreshListener(this);
         rlvDeviceList.setHasFixedSize(true);
         rlvDeviceList.setLayoutManager(new LinearLayoutManager(this));

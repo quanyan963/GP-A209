@@ -34,6 +34,7 @@ public class Constants {
     public static final String NAME = "name";
     public static final String VERSION = "version";
     public static final String WIFI = "wifi";
+    public static final String TYPE = "type";
     public static final String DISCOVERY = "{\"discovery\":1}";
     public static final String SEND_THING_NAME = "{\"endpoint\":\"%s\",\"thing\":\"%s\"}";
     public static final String SEND_CA_ONE = "{\"ca0\":\"%s\"}";

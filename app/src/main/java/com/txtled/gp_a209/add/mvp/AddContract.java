@@ -34,7 +34,7 @@ public interface AddContract {
 
     interface Presenter extends BasePresenter<View>{
 
-        void init(Activity activity);
+        void init(Activity activity,String ip);
 
         void onClick(int id, boolean isCommit);
 

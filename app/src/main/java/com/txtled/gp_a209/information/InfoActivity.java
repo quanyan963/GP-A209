@@ -17,14 +17,14 @@ import butterknife.ButterKnife;
 
 import static com.txtled.gp_a209.utils.Constants.ENDPOINT;
 import static com.txtled.gp_a209.utils.Constants.NAME;
+import static com.txtled.gp_a209.utils.Constants.TYPE;
 import static com.txtled.gp_a209.utils.Constants.VERSION;
 import static com.txtled.gp_a209.utils.Constants.WIFI;
 
 /**
  * Created by Mr.Quan on 2020/3/23.
  */
-public class InfoActivity extends MvpBaseActivity<InfoPresenter> implements InfoContract.View,
-        View.OnClickListener {
+public class InfoActivity extends MvpBaseActivity<InfoPresenter> implements InfoContract.View {
     @BindView(R.id.mv_change_name)
     MyView mvChangeName;
     @BindView(R.id.mv_version)
@@ -56,8 +56,9 @@ public class InfoActivity extends MvpBaseActivity<InfoPresenter> implements Info
         mvVersion.setRightText(version);
         mvWifi.setRightText(wifiName);
         presenter.init(this);
-        mvChangeName.setOnClickListener(this);
-        mvVersion.setOnClickListener(this);
+        mvChangeName.setListener(v -> startActivity(new Intent(InfoActivity.this,
+                AddDeviceActivity.class).putExtra(TYPE,1).putExtra(ENDPOINT,ip)));
+        mvVersion.setListener(v -> {});
     }
 
     @Override
@@ -68,15 +69,5 @@ public class InfoActivity extends MvpBaseActivity<InfoPresenter> implements Info
     @Override
     protected void beforeContentView() {
 
-    }
-
-    @Override
-    public void onClick(View v) {
-        presenter.onClick(v);
-    }
-
-    @Override
-    public void showDialog() {
-        startActivity(new Intent(this, AddDeviceActivity.class));
     }
 }

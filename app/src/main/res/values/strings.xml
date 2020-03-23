@@ -53,6 +53,7 @@
     //device information
     <string name="information">INFORMATION</string>
     <string name="change_name">Change Name</string>
+    <string name="change_name_big">CHANGE NAME</string>
     <string name="ware_version">Firmware Version</string>
     <string name="wifi_setup">Wi-Fi Setup</string>
 </resources>

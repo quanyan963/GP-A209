@@ -4,31 +4,36 @@
     android:clickable="true"
     android:background="@drawable/bg_item_selector">
 
-    <com.txtled.gp_a209.widget.ArialRoundTextView
-        android:id="@+id/atv_left_text"
-        style="@style/main_tv"
-        android:layout_centerVertical="true"
-        android:layout_alignParentLeft="true"
-        android:layout_margin="@dimen/dp_16_x"/>
-    <com.txtled.gp_a209.widget.ArialRoundTextView
-        android:id="@+id/atv_right_text"
-        style="@style/main_tv"
-        android:layout_centerVertical="true"
-        android:layout_toLeftOf="@+id/img_point"
-        android:textColor="@color/gray" />
-    <TextView
-        android:id="@+id/img_point"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_centerVertical="true"
-        android:drawableLeft="@drawable/right_ball"
-        android:layout_marginLeft="@dimen/dp_4_x"
-        android:layout_marginRight="@dimen/dp_7_x"/>
-
-    <View
+    <RelativeLayout
+        android:id="@+id/rl_view"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/dp_1_x"
-        android:layout_below="@+id/atv_left_text"
-        android:background="@color/gray"/>
+        android:layout_height="wrap_content">
+        <com.txtled.gp_a209.widget.ArialRoundTextView
+            android:id="@+id/atv_left_text"
+            style="@style/main_tv"
+            android:layout_centerVertical="true"
+            android:layout_alignParentLeft="true"
+            android:layout_margin="@dimen/dp_16_x"/>
+        <com.txtled.gp_a209.widget.ArialRoundTextView
+            android:id="@+id/atv_right_text"
+            style="@style/main_tv"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@+id/img_point"
+            android:textColor="@color/gray" />
+        <TextView
+            android:id="@+id/img_point"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:drawableLeft="@drawable/right_ball"
+            android:layout_marginLeft="@dimen/dp_4_x"
+            android:layout_marginRight="@dimen/dp_7_x"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_1_x"
+            android:layout_below="@+id/atv_left_text"
+            android:background="@color/gray"/>
+    </RelativeLayout>
 </RelativeLayout>

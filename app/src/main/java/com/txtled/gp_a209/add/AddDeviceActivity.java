@@ -1,6 +1,7 @@
 package com.txtled.gp_a209.add;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -27,7 +28,9 @@ import com.txtled.gp_a209.widget.ArialRoundTextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static com.txtled.gp_a209.utils.Constants.ENDPOINT;
 import static com.txtled.gp_a209.utils.Constants.OK;
+import static com.txtled.gp_a209.utils.Constants.TYPE;
 
 /**
  * Created by Mr.Quan on 2020/3/17.
@@ -57,6 +60,8 @@ public class AddDeviceActivity extends MvpBaseActivity<AddPresenter> implements 
 
     private DeviceNameAdapter adapter;
     private AlertDialog dialog;
+    private int type;
+    private String ip;
 
     @Override
     public void setInject() {
@@ -65,13 +70,17 @@ public class AddDeviceActivity extends MvpBaseActivity<AddPresenter> implements 
 
     @Override
     public void init() {
+        Intent intent = getIntent();
+        type = intent.getIntExtra(TYPE,0);
+        ip = intent.getStringExtra(ENDPOINT);
         initToolbar();
         setNavigationIcon(true);
-        tvTitle.setText(R.string.add_device);
         changeBtnColor(false);
         aetPassword.requestFocus();
         abtCollect.setOnClickListener(this);
-        presenter.init(this);
+        presenter.init(this,ip);
+        aetWifiName.clearFocus();
+        aetPassword.clearFocus();
         AlertUtils.setListener(b -> {
             if (b) {
                 presenter.configWifi(aetWifiName.getTag() == null ?
@@ -79,8 +88,22 @@ public class AddDeviceActivity extends MvpBaseActivity<AddPresenter> implements 
                         (byte[]) aetWifiName.getTag(), aetPassword.getText().toString());
             }
         });
-        AlertUtils.showHintDialog(this, R.layout.alert_hint, getString(R.string.hint_title)
-                , R.string.hint_msg, false);
+        if (type == 1){
+            tvTitle.setText(R.string.change_name_big);
+            dialog = AlertUtils.showLoadingDialog(this,R.layout.alert_progress);
+            dialog.show();
+            rlvNameList.setVisibility(View.VISIBLE);
+            tilName.setVisibility(View.GONE);
+            tilPass.setVisibility(View.GONE);
+            atvNoPass.setVisibility(View.GONE);
+            atvEyeHint.setVisibility(View.GONE);
+            atvTop.setText(R.string.connected);
+            atvDeviceWill.setText(R.string.new_name);
+        }else {
+            tvTitle.setText(R.string.add_device);
+            AlertUtils.showHintDialog(this, R.layout.alert_hint, getString(R.string.hint_title)
+                    , R.string.hint_msg, false);
+        }
         atvNoPass.setOnClickListener(this);
         aetPassword.addTextChangedListener(this);
 
@@ -160,6 +183,11 @@ public class AddDeviceActivity extends MvpBaseActivity<AddPresenter> implements 
     @Override
     public void setData(String[] data) {
         adapter.setData(data);
+        rlvNameList.setAdapter(adapter);
+        if (type == 1){
+            dialog.dismiss();
+        }
+
     }
 
     /**
@@ -274,10 +302,11 @@ public class AddDeviceActivity extends MvpBaseActivity<AddPresenter> implements 
 
     @Override
     public void onBackPressed() {
-        if (rlvNameList.getVisibility() == View.VISIBLE){
+        if (rlvNameList.getVisibility() == View.VISIBLE && type == 0){
             showList(false);
         }else {
             super.onBackPressed();
+            this.finish();
         }
     }
 

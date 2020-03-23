@@ -12,14 +12,11 @@ import com.txtled.gp_a209.base.BaseView;
 public interface InfoContract {
     interface View extends BaseView{
 
-        void showDialog();
     }
 
     interface Presenter extends BasePresenter<View>{
 
         void init(Activity activity);
-
-        void onClick(android.view.View v);
 
     }
 }

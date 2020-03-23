@@ -34,16 +34,4 @@ public class InfoPresenter extends RxPresenter<InfoContract.View> implements Inf
 
         userId = dataManagerModel.getUserId();
     }
-
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()){
-            case R.id.mv_change_name:
-                view.showDialog();
-                break;
-            case R.id.mv_version:
-
-                break;
-        }
-    }
 }

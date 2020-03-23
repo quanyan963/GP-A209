@@ -146,8 +146,11 @@ public class AddPresenter extends RxPresenter<AddContract.View> implements AddCo
      * @param activity
      */
     @Override
-    public void init(Activity activity) {
+    public void init(Activity activity, String ip) {
         this.activity = activity;
+        if (!ip.isEmpty()){
+            broadCast = ip;
+        }
         registerBroadcast(activity);
         provider = MyApplication.getCredentialsProvider();
         client = new AmazonDynamoDBClient(provider);
