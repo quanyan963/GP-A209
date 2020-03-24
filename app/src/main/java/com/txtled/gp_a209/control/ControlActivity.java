@@ -75,6 +75,8 @@ public class ControlActivity extends MvpBaseActivity<ControlPresenter> implement
     RadioGroup rgDuration;
     @BindView(R.id.abt_power)
     ArialRoundButton abtPower;
+    @BindView(R.id.atv_duration)
+    ArialRoundTextView atvDuration;
     private String name;
     private String endpoint;
     private AlertDialog loading;
@@ -96,7 +98,7 @@ public class ControlActivity extends MvpBaseActivity<ControlPresenter> implement
         tvTitle.setText(name);
         setNavigationIcon(true);
 
-        presenter.init(endpoint,this);
+        presenter.init(endpoint, this);
         rbLullaby.setOnCheckedChangeListener(this);
         rbSleeves.setOnCheckedChangeListener(this);
         rbCanon.setOnCheckedChangeListener(this);
@@ -109,6 +111,7 @@ public class ControlActivity extends MvpBaseActivity<ControlPresenter> implement
         rbThirteen.setOnCheckedChangeListener(this);
         rbSixty.setOnCheckedChangeListener(this);
         abtPower.setOnClickListener(this);
+        sbVolume.setOnTouchListener((v, event) -> !power);
         sbVolume.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -125,7 +128,7 @@ public class ControlActivity extends MvpBaseActivity<ControlPresenter> implement
                 presenter.sendVolume(seekBar.getProgress());
             }
         });
-        loading = AlertUtils.showLoadingDialog(this,R.layout.alert_progress);
+        loading = AlertUtils.showLoadingDialog(this, R.layout.alert_progress);
         loading.show();
     }
 
@@ -261,9 +264,12 @@ public class ControlActivity extends MvpBaseActivity<ControlPresenter> implement
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
         switch (buttonView.getId()) {
             case R.id.rb_lullaby:
-                rgSoundTwo.clearCheck();
-                rbNone.setChecked(false);
+
                 if (isChecked) {
+                    rgSoundTwo.clearCheck();
+                    rbNone.setChecked(false);
+                    rbNone.setCompoundDrawables(null, getImgUnResources(2, 1), null, null);
+                    rbNone.setTextColor(getResources().getColor(R.color.text_un));
                     buttonView.setCompoundDrawables(null, getImgResources(0, 1), null, null);
                     buttonView.setTextColor(getResources().getColor(R.color.white));
                 } else {
@@ -272,9 +278,12 @@ public class ControlActivity extends MvpBaseActivity<ControlPresenter> implement
                 }
                 break;
             case R.id.rb_sleeves:
-                rgSoundTwo.clearCheck();
-                rbNone.setChecked(false);
+
                 if (isChecked) {
+                    rgSoundTwo.clearCheck();
+                    rbNone.setChecked(false);
+                    rbNone.setCompoundDrawables(null, getImgUnResources(2, 1), null, null);
+                    rbNone.setTextColor(getResources().getColor(R.color.text_un));
                     buttonView.setCompoundDrawables(null, getImgResources(0, 2), null, null);
                     buttonView.setTextColor(getResources().getColor(R.color.white));
                 } else {
@@ -283,9 +292,12 @@ public class ControlActivity extends MvpBaseActivity<ControlPresenter> implement
                 }
                 break;
             case R.id.rb_canon:
-                rgSoundTwo.clearCheck();
-                rbNone.setChecked(false);
+
                 if (isChecked) {
+                    rgSoundTwo.clearCheck();
+                    rbNone.setChecked(false);
+                    rbNone.setCompoundDrawables(null, getImgUnResources(2, 1), null, null);
+                    rbNone.setTextColor(getResources().getColor(R.color.text_un));
                     buttonView.setCompoundDrawables(null, getImgResources(0, 3), null, null);
                     buttonView.setTextColor(getResources().getColor(R.color.white));
                 } else {
@@ -294,9 +306,12 @@ public class ControlActivity extends MvpBaseActivity<ControlPresenter> implement
                 }
                 break;
             case R.id.rb_waves:
-                rgSoundOne.clearCheck();
-                rbNone.setChecked(false);
+
                 if (isChecked) {
+                    rgSoundOne.clearCheck();
+                    rbNone.setChecked(false);
+                    rbNone.setCompoundDrawables(null, getImgUnResources(2, 1), null, null);
+                    rbNone.setTextColor(getResources().getColor(R.color.text_un));
                     buttonView.setCompoundDrawables(null, getImgResources(1, 1), null, null);
                     buttonView.setTextColor(getResources().getColor(R.color.white));
                 } else {
@@ -305,9 +320,12 @@ public class ControlActivity extends MvpBaseActivity<ControlPresenter> implement
                 }
                 break;
             case R.id.rb_rain:
-                rgSoundOne.clearCheck();
-                rbNone.setChecked(false);
+
                 if (isChecked) {
+                    rgSoundOne.clearCheck();
+                    rbNone.setChecked(false);
+                    rbNone.setCompoundDrawables(null, getImgUnResources(2, 1), null, null);
+                    rbNone.setTextColor(getResources().getColor(R.color.text_un));
                     buttonView.setCompoundDrawables(null, getImgResources(1, 2), null, null);
                     buttonView.setTextColor(getResources().getColor(R.color.white));
                 } else {
@@ -316,9 +334,12 @@ public class ControlActivity extends MvpBaseActivity<ControlPresenter> implement
                 }
                 break;
             case R.id.rb_noise:
-                rgSoundOne.clearCheck();
-                rbNone.setChecked(false);
+
                 if (isChecked) {
+                    rgSoundOne.clearCheck();
+                    rbNone.setChecked(false);
+                    rbNone.setCompoundDrawables(null, getImgUnResources(2, 1), null, null);
+                    rbNone.setTextColor(getResources().getColor(R.color.text_un));
                     buttonView.setCompoundDrawables(null, getImgResources(1, 3), null, null);
                     buttonView.setTextColor(getResources().getColor(R.color.white));
                 } else {
@@ -327,9 +348,9 @@ public class ControlActivity extends MvpBaseActivity<ControlPresenter> implement
                 }
                 break;
             case R.id.rb_none:
-                rgSoundTwo.clearCheck();
-                rgSoundOne.clearCheck();
                 if (isChecked) {
+                    rgSoundTwo.clearCheck();
+                    rgSoundOne.clearCheck();
                     buttonView.setCompoundDrawables(null, getImgResources(2, 1), null, null);
                     buttonView.setTextColor(getResources().getColor(R.color.white));
                 } else {
@@ -381,7 +402,7 @@ public class ControlActivity extends MvpBaseActivity<ControlPresenter> implement
 
     @Override
     public void onClick(View v) {
-        presenter.onClick(v.getId(),power);
+        presenter.onClick(v.getId(), power);
     }
 
     @Override
@@ -391,7 +412,7 @@ public class ControlActivity extends MvpBaseActivity<ControlPresenter> implement
 
     @Override
     public void hidLoadingView() {
-        if (loading != null && loading.isShowing()){
+        if (loading != null && loading.isShowing()) {
             loading.dismiss();
         }
     }
@@ -407,53 +428,8 @@ public class ControlActivity extends MvpBaseActivity<ControlPresenter> implement
         runOnUiThread(() -> {
             powerChanged(iotCoreData.getDevice().equals("on"));
             sbVolume.setProgress(iotCoreData.getVolume());
-            switch (iotCoreData.getDuration()){
-                case 0:
-                    result = true;
-                    rbNever.setChecked(true);
-                    break;
-                case 15:
-                    result = true;
-                    rbFifteen.setChecked(true);
-                    break;
-                case 30:
-                    result = true;
-                    rbThirteen.setChecked(true);
-                    break;
-                case 60:
-                    result = true;
-                    rbSixty.setChecked(true);
-                    break;
-            }
-            switch (iotCoreData.getSound()){
-                case 0:
-                    result = true;
-                    rbNone.setChecked(true);
-                    break;
-                case 1:
-                    result = true;
-                    rbLullaby.setChecked(true);
-                    break;
-                case 2:
-                    result = true;
-                    rbSleeves.setChecked(true);
-                    break;
-                case 3:
-                    result = true;
-                    rbCanon.setChecked(true);
-                    break;
-                case 4:
-                    result = true;
-                    rbWaves.setChecked(true);
-                    break;
-                case 5:
-                    result = true;
-                    rbRain.setChecked(true);
-                    break;
-                case 6:
-                    result = true;
-                    rbNoise.setChecked(true);
-                    break;
+            if (power) {
+                resetView(iotCoreData);
             }
         });
     }
@@ -461,14 +437,42 @@ public class ControlActivity extends MvpBaseActivity<ControlPresenter> implement
     @Override
     public void powerChanged(boolean b) {
         power = b;
-        if (b){
+        if (b) {
             abtPower.setTextColor(getResources().getColor(R.color.bg_snack));
             abtPower.setText(R.string.turn_off);
             abtPower.setBackgroundColor(getResources().getColor(R.color.gray));
-        }else {
+            for (int i = 0; i < rgSoundOne.getChildCount(); i++) {
+                rgSoundOne.getChildAt(i).setEnabled(true);
+                rgSoundTwo.getChildAt(i).setEnabled(true);
+            }
+            for (int i = 0; i < rgDuration.getChildCount(); i++) {
+                rgDuration.getChildAt(i).setEnabled(true);
+            }
+            rbNone.setEnabled(true);
+            presenter.enableView();
+            sbVolume.setProgressDrawable(getResources().getDrawable(R.drawable.progress));
+            sbVolume.setThumb(getResources().getDrawable(R.drawable.seekbar_selector));
+            atvDuration.setTextColor(getResources().getColor(R.color.white));
+        } else {
             abtPower.setTextColor(getResources().getColor(R.color.yellow));
             abtPower.setText(R.string.turn_on);
             abtPower.setBackgroundColor(getResources().getColor(R.color.black));
+            result = true;
+            rbNone.setChecked(false);
+            rbNone.setEnabled(false);
+            rgSoundOne.clearCheck();
+            rgSoundTwo.clearCheck();
+            rgDuration.clearCheck();
+            for (int i = 0; i < rgSoundOne.getChildCount(); i++) {
+                rgSoundOne.getChildAt(i).setEnabled(false);
+                rgSoundTwo.getChildAt(i).setEnabled(false);
+            }
+            for (int i = 0; i < rgDuration.getChildCount(); i++) {
+                rgDuration.getChildAt(i).setEnabled(false);
+            }
+            sbVolume.setProgressDrawable(getResources().getDrawable(R.drawable.progress_un));
+            sbVolume.setThumb(getResources().getDrawable(R.drawable.seekbar_selector_un));
+            atvDuration.setTextColor(getResources().getColor(R.color.text_un));
         }
     }
 
@@ -484,8 +488,62 @@ public class ControlActivity extends MvpBaseActivity<ControlPresenter> implement
     }
 
     @Override
+    public void resetView(IotCoreData iotCoreData) {
+        switch (iotCoreData.getDuration()) {
+            case 0:
+                result = true;
+                rbNever.setChecked(true);
+                break;
+            case 15:
+                result = true;
+                rbFifteen.setChecked(true);
+                break;
+            case 30:
+                result = true;
+                rbThirteen.setChecked(true);
+                break;
+            case 60:
+                result = true;
+                rbSixty.setChecked(true);
+                break;
+        }
+        switch (iotCoreData.getSound()) {
+            case 0:
+                result = true;
+                rbNone.setChecked(true);
+                break;
+            case 1:
+                result = true;
+                rbLullaby.setChecked(true);
+                break;
+            case 2:
+                result = true;
+                rbSleeves.setChecked(true);
+                break;
+            case 3:
+                result = true;
+                rbCanon.setChecked(true);
+                break;
+            case 4:
+                result = true;
+                rbWaves.setChecked(true);
+                break;
+            case 5:
+                result = true;
+                rbRain.setChecked(true);
+                break;
+            case 6:
+                result = true;
+                rbNoise.setChecked(true);
+                break;
+        }
+
+    }
+
+    @Override
     public void mqttFail(int id) {
         result = true;
-        ((ArialRoundRadioButton)findViewById(id)).setChecked(false);
+        runOnUiThread(() -> ((ArialRoundRadioButton) findViewById(id)).setChecked(false));
+
     }
 }

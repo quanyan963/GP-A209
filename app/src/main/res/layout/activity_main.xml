@@ -17,11 +17,13 @@
         app:layout_constraintBottom_toTopOf="@+id/abt_off_all"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
+        android:background="@android:color/transparent"
         android:layout_marginBottom="@dimen/dp_8_y">
         <com.txtled.gp_a209.widget.SlidRecycleView
             android:id="@+id/rlv_device_list"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent"
+            android:background="@android:color/transparent"/>
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     <com.txtled.gp_a209.widget.ArialRoundButton
@@ -32,7 +34,7 @@
         app:layout_constraintRight_toRightOf="parent"
         android:layout_marginBottom="@dimen/dp_32_y"
         android:textColor="@color/bg_snack"
-        android:text="Turn Off All Device"
+        android:text="@string/off_all"
         app:layout_constraintBottom_toBottomOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -40,6 +40,6 @@
         android:textColor="@color/blue"
         android:gravity="center"
         android:text="@string/ok"
-        android:padding="@dimen/dp_12_x"/>
+        android:padding="@dimen/dp_10_x"/>
 
 </RelativeLayout>

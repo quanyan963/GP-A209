@@ -8,6 +8,7 @@ import android.net.DhcpInfo;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Build;
+import android.view.View;
 
 import androidx.core.location.LocationManagerCompat;
 
@@ -24,8 +25,12 @@ import com.amazonaws.services.dynamodbv2.model.GetItemRequest;
 import com.amazonaws.services.dynamodbv2.model.GetItemResult;
 import com.amazonaws.services.dynamodbv2.model.UpdateItemRequest;
 import com.amazonaws.services.iot.AWSIotClient;
+import com.amazonaws.services.iot.client.AWSIotDevice;
+import com.amazonaws.services.iot.client.AWSIotException;
+import com.amazonaws.services.iot.client.AWSIotQos;
 import com.amazonaws.services.iot.model.DeleteThingRequest;
 import com.amazonaws.services.iot.model.DeleteThingResult;
+import com.txtled.gp_a209.R;
 import com.txtled.gp_a209.add.listener.OnUdpSendRequest;
 import com.txtled.gp_a209.add.udp.UDPBuild;
 import com.txtled.gp_a209.application.MyApplication;
@@ -34,6 +39,10 @@ import com.txtled.gp_a209.base.RxPresenter;
 import com.txtled.gp_a209.bean.DeviceInfo;
 import com.txtled.gp_a209.bean.WWADeviceInfo;
 import com.txtled.gp_a209.broadcast.MyBroadcastReceiver;
+import com.txtled.gp_a209.control.mqtt.MqttClient;
+import com.txtled.gp_a209.control.mqtt.MyShadowMessage;
+import com.txtled.gp_a209.control.mqtt.listener.OnConnectListener;
+import com.txtled.gp_a209.control.mqtt.listener.OnMessageListener;
 import com.txtled.gp_a209.model.DataManagerModel;
 import com.txtled.gp_a209.utils.RxUtil;
 import com.txtled.gp_a209.utils.Utils;
@@ -51,7 +60,6 @@ import javax.inject.Inject;
 
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
-import io.reactivex.FlowableEmitter;
 import io.reactivex.FlowableOnSubscribe;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -59,12 +67,12 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
 import static com.txtled.gp_a209.base.BaseActivity.TAG;
-import static com.txtled.gp_a209.utils.Constants.CA;
+import static com.txtled.gp_a209.utils.Constants.DATA_DEVICE;
 import static com.txtled.gp_a209.utils.Constants.DB_NAME;
 import static com.txtled.gp_a209.utils.Constants.DISCOVERY;
 import static com.txtled.gp_a209.utils.Constants.FRIENDLY_NAME;
+import static com.txtled.gp_a209.utils.Constants.PUBLISH;
 import static com.txtled.gp_a209.utils.Constants.REST_API;
-import static com.txtled.gp_a209.utils.Constants.SEND_CA_ONE;
 import static com.txtled.gp_a209.utils.Constants.SEND_THING_NAME;
 import static com.txtled.gp_a209.utils.Constants.THING_DIR;
 import static com.txtled.gp_a209.utils.Constants.USER_ID;
@@ -94,6 +102,7 @@ public class MainPresenter extends RxPresenter<MainContract.View> implements Mai
     private Disposable timeCount;
     private int count;
     private AWSIotClient awsIot;
+    private boolean allOff;
 
     @Inject
     public MainPresenter(DataManagerModel mDataManagerModel) {
@@ -270,6 +279,69 @@ public class MainPresenter extends RxPresenter<MainContract.View> implements Mai
 
     }
 
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.abt_off_all:
+                view.showLoading();
+                for (WWADeviceInfo info : refreshData) {
+                    MqttClient.getClient().initClient(info.getThing(), new OnConnectListener() {
+                        @Override
+                        public void onSuccess(AWSIotDevice device) {
+                            AWSIotDevice iotDevice = device;
+                            powerOff(iotDevice,info.getThing());
+                        }
+                        @Override
+                        public void onFail() {
+                            view.mqttInitFail();
+                            hidSnackBarDelay();
+                        }
+                    });
+                }
+                break;
+        }
+    }
+
+    private void hidSnackBarDelay(){
+        addSubscribe(Flowable.timer(3, TimeUnit.SECONDS)
+                .compose(RxUtil.rxSchedulerHelper())
+                .subscribeWith(new CommonSubscriber<Long>(view) {
+                    @Override
+                    public void onNext(Long aLong) {
+                        view.hidSnackBar();
+                    }
+                }));
+    }
+
+    private void powerOff(AWSIotDevice iotDevice, String endpoint) {
+        try {
+            MyShadowMessage myMessage = new MyShadowMessage(String.format(PUBLISH,endpoint),
+                    AWSIotQos.QOS0,String.format(DATA_DEVICE,allOff == true ? "\"on\"" : "\"off\""));
+            myMessage.setListener(new OnMessageListener() {
+                @Override
+                public void onSuccess() {
+                    allOff = !allOff;
+                    view.success(allOff);
+                }
+
+                @Override
+                public void onFailure() {
+                    view.fail();
+                    hidSnackBarDelay();
+                }
+
+                @Override
+                public void onTimeout() {
+                    view.fail();
+                    hidSnackBarDelay();
+                }
+            });
+            iotDevice.update(myMessage,5000);
+        } catch (AWSIotException e) {
+            e.printStackTrace();
+        }
+    }
+
     private void writeToDevice() {
         udpSend(String.format(FRIENDLY_NAME, ""), result -> {
             if (result.contains("\"friendlyname\"")){
@@ -364,15 +436,7 @@ public class MainPresenter extends RxPresenter<MainContract.View> implements Mai
                             } else {
                                 count = 0;
                                 view.noDevice();
-                                addSubscribe(Flowable.timer(3, TimeUnit.SECONDS)
-                                        .compose(RxUtil.rxSchedulerHelper())
-                                        .subscribeWith(new CommonSubscriber<Long>(view) {
-
-                                            @Override
-                                            public void onNext(Long aLong) {
-                                                view.hidSnackBar();
-                                            }
-                                        }));
+                                hidSnackBarDelay();
                             }
                             //udpBuild.sendMessage(message,broadCast);
                         } else {
@@ -403,15 +467,7 @@ public class MainPresenter extends RxPresenter<MainContract.View> implements Mai
                 return true;
             }catch (Exception e){
                 view.deleteError();
-                addSubscribe(Flowable.timer(3, TimeUnit.SECONDS)
-                        .compose(RxUtil.rxSchedulerHelper())
-                        .subscribeWith(new CommonSubscriber<Long>(view) {
-
-                            @Override
-                            public void onNext(Long aLong) {
-                                view.hidSnackBar();
-                            }
-                        }));
+                hidSnackBarDelay();
                 return false;
             }
         }else {

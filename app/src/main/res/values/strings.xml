@@ -62,6 +62,7 @@
     //main
     <string name="device_list">DEVICE LIST</string>
     <string name="already_deleted">Delete failed.</string>
+    <string name="try_again">Fail to connect to IotCore.Try again.</string>
 
     //app information
     <string name="booklet">Instruction Booklet</string>
@@ -70,5 +71,9 @@
     <string name="help">Skill Help</string>
     <string name="version">Version</string>
     <string name="account">Account</string>
+    <string name="some_no_responding">Some of devices are not responding.</string>
+    <string name="off_all">Turn Off All Device</string>
+    <string name="on_all">Turn On All Device</string>
+
 
 </resources>

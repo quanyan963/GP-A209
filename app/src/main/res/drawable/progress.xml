@@ -6,7 +6,7 @@
         android:gravity="center">
         <shape>
             <corners android:radius="@dimen/dp_3_x" />
-            <solid android:color="@color/btn_un"/>
+            <solid android:color="@color/bg_snack"/>
         </shape>
     </item>
     <!-- 拖动后的颜色 -->
@@ -16,7 +16,7 @@
         <clip>
             <shape>
                 <corners android:radius="@dimen/dp_3_x" />
-                <solid android:color="@color/text_un"/>
+                <solid android:color="@color/yellow"/>
             </shape>
         </clip>
     </item>

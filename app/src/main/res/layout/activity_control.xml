@@ -157,6 +157,7 @@
             android:drawableTop="@mipmap/afcalarm_60des_xhdpi" />
     </RadioGroup>
     <com.txtled.gp_a209.widget.ArialRoundTextView
+        android:id="@+id/atv_duration"
         style="@style/main_tv"
         app:layout_constraintBottom_toBottomOf="@+id/rg_duration"
         app:layout_constraintLeft_toLeftOf="parent"

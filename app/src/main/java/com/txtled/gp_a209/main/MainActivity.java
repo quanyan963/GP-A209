@@ -2,6 +2,7 @@ package com.txtled.gp_a209.main;
 
 import android.content.Intent;
 import android.view.KeyEvent;
+import android.view.View;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -37,7 +38,8 @@ import static com.txtled.gp_a209.utils.Constants.VERSION;
 import static com.txtled.gp_a209.utils.Constants.WIFI;
 
 public class MainActivity extends MvpBaseActivity<MainPresenter> implements MainContract.View,
-        SwipeRefreshLayout.OnRefreshListener, DeviceListAdapter.OnDeviceClickListener {
+        SwipeRefreshLayout.OnRefreshListener, DeviceListAdapter.OnDeviceClickListener,
+        View.OnClickListener {
 
     @BindView(R.id.rlv_device_list)
     RecyclerView rlvDeviceList;
@@ -63,6 +65,7 @@ public class MainActivity extends MvpBaseActivity<MainPresenter> implements Main
         setNavigationIcon(false);
         tvTitle.setText(R.string.device_list);
         userId = presenter.init(this);
+        abtOffAll.setOnClickListener(this);
         setRightImg(true, R.mipmap.devicelist_add_xhdpi, v ->
                 startActivityForResult(new Intent(MainActivity.this,
                         AddDeviceActivity.class).putExtra(TYPE,0), RESULT));
@@ -120,18 +123,6 @@ public class MainActivity extends MvpBaseActivity<MainPresenter> implements Main
 
     @Override
     public void setData(List<WWADeviceInfo> refreshData) {
-//        WWADeviceInfo info1 = new WWADeviceInfo();
-//        info1.setFriendlyNames("AHMJUHKQQTILMJO6F4YSFQBRUDUA_GGG");
-//        WWADeviceInfo info2 = new WWADeviceInfo();
-//        info2.setFriendlyNames("AHMJUHKQQTILMJO6F4YSFQBRUDUA_FFF");
-//        WWADeviceInfo info3 = new WWADeviceInfo();
-//        info3.setFriendlyNames("AHMJUHKQQTILMJO6F4YSFQBRUDUA_HHH");
-//        WWADeviceInfo info4 = new WWADeviceInfo();
-//        info4.setFriendlyNames("AHMJUHKQQTILMJO6F4YSFQBRUDUA_III");
-//        refreshData.add(info1);
-//        refreshData.add(info2);
-//        refreshData.add(info3);
-//        refreshData.add(info4);
         srlRefresh.setRefreshing(false);
         if (!refreshData.isEmpty())
             listAdapter.setData(refreshData);
@@ -160,6 +151,42 @@ public class MainActivity extends MvpBaseActivity<MainPresenter> implements Main
     public void deleteSuccess() {
         dialog.dismiss();
         listAdapter.deleteItem(name);
+    }
+
+    @Override
+    public void mqttInitFail() {
+        dialog.dismiss();
+        hidSnackBar();
+        showSnackBar(abtOffAll,R.string.try_again);
+    }
+
+    @Override
+    public void success(boolean allOff) {
+        dialog.dismiss();
+        if (allOff){
+            //on
+            abtOffAll.setBackgroundColor(getResources().getColor(R.color.black));
+            abtOffAll.setTextColor(getResources().getColor(R.color.yellow));
+            abtOffAll.setText(R.string.on_all);
+        }else {
+            //off
+            abtOffAll.setBackgroundColor(getResources().getColor(R.color.gray));
+            abtOffAll.setTextColor(getResources().getColor(R.color.bg_snack));
+            abtOffAll.setText(R.string.off_all);
+        }
+    }
+
+    @Override
+    public void fail() {
+        dialog.dismiss();
+        hidSnackBar();
+        showSnackBar(abtOffAll,R.string.some_no_responding);
+    }
+
+    @Override
+    public void showLoading() {
+        dialog = AlertUtils.showLoadingDialog(this,R.layout.alert_progress);
+        dialog.show();
     }
 
     @Override
@@ -207,5 +234,10 @@ public class MainActivity extends MvpBaseActivity<MainPresenter> implements Main
     @Override
     public void onLeftClick() {
         startActivity(new Intent(this, AppInfoActivity.class));
+    }
+
+    @Override
+    public void onClick(View v) {
+        presenter.onClick(v);
     }
 }

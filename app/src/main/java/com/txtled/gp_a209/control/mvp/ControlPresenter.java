@@ -41,7 +41,7 @@ public class ControlPresenter extends RxPresenter<ControlContract.View> implemen
     private Activity activity;
     private AWSIotDevice iotDevice;
     private MyShadowMessage myMessage;
-    private int id;
+    private IotCoreData iotCoreData;
 
     @Inject
     public ControlPresenter(DataManagerModel dataManagerModel) {
@@ -88,14 +88,12 @@ public class ControlPresenter extends RxPresenter<ControlContract.View> implemen
 
     @Override
     public void sendMqtt(int id) {
-        this.id = id;
         try {
-            myMessage = new MyShadowMessage(String.format(PUBLISH,endpoint),AWSIotQos.QOS0,getData(id));
+            MyShadowMessage myMessage = new MyShadowMessage(String.format(PUBLISH,endpoint),AWSIotQos.QOS0,getData(id));
             myMessage.setListener(new OnMessageListener() {
                 @Override
                 public void onSuccess() {
-
-                    myMessage = null;
+                    setData(id);
                 }
 
                 @Override
@@ -111,6 +109,45 @@ public class ControlPresenter extends RxPresenter<ControlContract.View> implemen
             iotDevice.update(myMessage,5000);
         } catch (AWSIotException e) {
             e.printStackTrace();
+        }
+    }
+
+    private void setData(int id) {
+
+        switch (id){
+            case R.id.rb_lullaby:
+                iotCoreData.setSound(1);
+                break;
+            case R.id.rb_sleeves:
+                iotCoreData.setSound(2);
+                break;
+            case R.id.rb_canon:
+                iotCoreData.setSound(3);
+                break;
+            case R.id.rb_waves:
+                iotCoreData.setSound(4);
+                break;
+            case R.id.rb_rain:
+                iotCoreData.setSound(5);
+                break;
+            case R.id.rb_noise:
+                iotCoreData.setSound(6);
+                break;
+            case R.id.rb_none:
+                iotCoreData.setSound(0);
+                break;
+            case R.id.rb_never:
+                iotCoreData.setDuration(0);
+                break;
+            case R.id.rb_fifteen:
+                iotCoreData.setDuration(15);
+                break;
+            case R.id.rb_thirteen:
+                iotCoreData.setDuration(30);
+                break;
+            case R.id.rb_sixty:
+                iotCoreData.setDuration(60);
+                break;
         }
     }
 
@@ -166,12 +203,12 @@ public class ControlPresenter extends RxPresenter<ControlContract.View> implemen
 
     private void sendPower(boolean power) {
         try {
-            myMessage = new MyShadowMessage(String.format(PUBLISH,endpoint),
+            MyShadowMessage myMessage = new MyShadowMessage(String.format(PUBLISH,endpoint),
                     AWSIotQos.QOS0,String.format(DATA_DEVICE,power == true ? "\"on\"" : "\"off\""));
             myMessage.setListener(new OnMessageListener() {
                 @Override
                 public void onSuccess() {
-                    myMessage = null;
+                    iotCoreData.setDevice(power == true ? "on" : "off");
                 }
 
                 @Override
@@ -201,12 +238,13 @@ public class ControlPresenter extends RxPresenter<ControlContract.View> implemen
                     try {
                         JSONObject data = new JSONObject(myMessage.getStringPayload());
                         JSONObject state = data.getJSONObject("state").getJSONObject("reported");
-                        view.setData(new IotCoreData(
+                        iotCoreData = new IotCoreData(
                                 state.optInt("light",0),
                                 state.optInt("sound",0),
                                 state.optInt("duration",0),
                                 state.optInt("volume",10),
-                                state.optString("device","off")));
+                                state.optString("device","off"));
+                        view.setData(iotCoreData);
                         view.hidLoadingView();
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -232,12 +270,12 @@ public class ControlPresenter extends RxPresenter<ControlContract.View> implemen
 
     @Override
     public void sendVolume(int progress) {
-        myMessage = new MyShadowMessage(String.format(PUBLISH,endpoint),
+        MyShadowMessage myMessage = new MyShadowMessage(String.format(PUBLISH,endpoint),
                 AWSIotQos.QOS0,String.format(DATA_VOLUME,progress));
         myMessage.setListener(new OnMessageListener() {
             @Override
             public void onSuccess() {
-                myMessage = null;
+                iotCoreData.setVolume(progress);
             }
 
             @Override
@@ -260,5 +298,10 @@ public class ControlPresenter extends RxPresenter<ControlContract.View> implemen
     @Override
     public void destroy() {
         MqttClient.getClient().closeClient();
+    }
+
+    @Override
+    public void enableView() {
+        view.resetView(iotCoreData);
     }
 }

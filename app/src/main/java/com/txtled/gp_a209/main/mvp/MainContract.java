@@ -1,6 +1,7 @@
 package com.txtled.gp_a209.main.mvp;
 
 import android.app.Activity;
+import android.view.View;
 
 import com.txtled.gp_a209.base.BasePresenter;
 import com.txtled.gp_a209.base.BaseView;
@@ -35,6 +36,14 @@ public interface MainContract {
         void deleteError();
 
         void deleteSuccess();
+
+        void mqttInitFail();
+
+        void success(boolean allOff);
+
+        void fail();
+
+        void showLoading();
     }
 
     interface Presenter extends BasePresenter<View> {
@@ -44,5 +53,7 @@ public interface MainContract {
         void onRefresh();
 
         void deleteDevice(WWADeviceInfo data, String name);
+
+        void onClick(android.view.View v);
     }
 }

@@ -25,6 +25,8 @@ public interface ControlContract {
         void volumeFail();
 
         void initFail();
+
+        void resetView(IotCoreData iotCoreData);
     }
 
     interface Presenter extends BasePresenter<View>{
@@ -39,5 +41,7 @@ public interface ControlContract {
         void sendVolume(int progress);
 
         void destroy();
+
+        void enableView();
     }
 }
