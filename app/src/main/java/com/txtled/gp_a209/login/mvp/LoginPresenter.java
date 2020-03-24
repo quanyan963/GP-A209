@@ -200,6 +200,8 @@ public class LoginPresenter extends RxPresenter<LoginContract.View> implements L
 
             }
             mDataManagerModel.setUserId(userId);
+
+            mDataManagerModel.setEmail(authorizeResult.getUser().getUserEmail());
             //view.setUserId(userId);
             view.toMainView();
         }

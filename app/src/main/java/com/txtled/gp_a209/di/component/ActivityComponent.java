@@ -4,6 +4,7 @@ import android.app.Activity;
 
 
 import com.txtled.gp_a209.add.AddDeviceActivity;
+import com.txtled.gp_a209.appinfo.AppInfoActivity;
 import com.txtled.gp_a209.control.ControlActivity;
 import com.txtled.gp_a209.di.module.ActivityModule;
 import com.txtled.gp_a209.di.scope.ActivityScope;
@@ -35,4 +36,6 @@ public interface ActivityComponent {
     void inject(ControlActivity controlActivity);
 
     void inject(InfoActivity infoActivity);
+
+    void inject(AppInfoActivity appInfoActivity);
 }

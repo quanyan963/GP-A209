@@ -11,10 +11,27 @@ import android.os.Build;
 
 import androidx.core.location.LocationManagerCompat;
 
+import com.amazonaws.ClientConfiguration;
+import com.amazonaws.Protocol;
+import com.amazonaws.auth.AWSCredentials;
+import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.auth.CognitoCachingCredentialsProvider;
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
+import com.amazonaws.services.dynamodbv2.model.AttributeValue;
+import com.amazonaws.services.dynamodbv2.model.AttributeValueUpdate;
+import com.amazonaws.services.dynamodbv2.model.GetItemRequest;
+import com.amazonaws.services.dynamodbv2.model.GetItemResult;
+import com.amazonaws.services.dynamodbv2.model.UpdateItemRequest;
+import com.amazonaws.services.iot.AWSIotClient;
+import com.amazonaws.services.iot.model.DeleteThingRequest;
+import com.amazonaws.services.iot.model.DeleteThingResult;
 import com.txtled.gp_a209.add.listener.OnUdpSendRequest;
 import com.txtled.gp_a209.add.udp.UDPBuild;
+import com.txtled.gp_a209.application.MyApplication;
 import com.txtled.gp_a209.base.CommonSubscriber;
 import com.txtled.gp_a209.base.RxPresenter;
+import com.txtled.gp_a209.bean.DeviceInfo;
 import com.txtled.gp_a209.bean.WWADeviceInfo;
 import com.txtled.gp_a209.broadcast.MyBroadcastReceiver;
 import com.txtled.gp_a209.model.DataManagerModel;
@@ -25,18 +42,34 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
+import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
+import io.reactivex.FlowableEmitter;
+import io.reactivex.FlowableOnSubscribe;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
+import static com.txtled.gp_a209.base.BaseActivity.TAG;
+import static com.txtled.gp_a209.utils.Constants.CA;
+import static com.txtled.gp_a209.utils.Constants.DB_NAME;
 import static com.txtled.gp_a209.utils.Constants.DISCOVERY;
+import static com.txtled.gp_a209.utils.Constants.FRIENDLY_NAME;
+import static com.txtled.gp_a209.utils.Constants.REST_API;
+import static com.txtled.gp_a209.utils.Constants.SEND_CA_ONE;
+import static com.txtled.gp_a209.utils.Constants.SEND_THING_NAME;
+import static com.txtled.gp_a209.utils.Constants.THING_DIR;
+import static com.txtled.gp_a209.utils.Constants.USER_ID;
+import static com.txtled.gp_a209.utils.ForUse.ACCESS_KEY;
+import static com.txtled.gp_a209.utils.ForUse.SECRET_ACCESS_KEY;
 
 /**
  * Created by Mr.Quan on 2019/12/9.
@@ -44,10 +77,10 @@ import static com.txtled.gp_a209.utils.Constants.DISCOVERY;
 public class MainPresenter extends RxPresenter<MainContract.View> implements MainContract.Presenter {
 
     private DataManagerModel mDataManagerModel;
-    //private CognitoCachingCredentialsProvider provider;
-    //private AmazonDynamoDB client;
+    private CognitoCachingCredentialsProvider provider;
+    private AmazonDynamoDB client;
     private String userId;
-    //private List<DeviceInfo> data;
+    private List<DeviceInfo> data;
     private boolean isNoWifi;
     private MyBroadcastReceiver mReceiver;
     private WifiInfo wifiInfo;
@@ -60,6 +93,7 @@ public class MainPresenter extends RxPresenter<MainContract.View> implements Mai
     private UDPBuild udpBuild;
     private Disposable timeCount;
     private int count;
+    private AWSIotClient awsIot;
 
     @Inject
     public MainPresenter(DataManagerModel mDataManagerModel) {
@@ -69,9 +103,10 @@ public class MainPresenter extends RxPresenter<MainContract.View> implements Mai
     @Override
     public String init(Activity activity) {
         this.activity = activity;
-        //provider = MyApplication.getCredentialsProvider();
-        //client = new AmazonDynamoDBClient(provider);
+        provider = MyApplication.getCredentialsProvider();
+        client = new AmazonDynamoDBClient(provider);
         userId = mDataManagerModel.getUserId();
+        createIotService();
 
         IntentFilter filter = new IntentFilter(WifiManager.NETWORK_STATE_CHANGED_ACTION);
         if (isSDKAtLeastP()) {
@@ -82,6 +117,23 @@ public class MainPresenter extends RxPresenter<MainContract.View> implements Mai
         activity.registerReceiver(mReceiver, filter);
 
         return userId;
+    }
+
+    private void createIotService() {
+        try {
+            AWSCredentials credentials = new BasicAWSCredentials(ACCESS_KEY, SECRET_ACCESS_KEY);
+
+            ClientConfiguration clientConfig = new ClientConfiguration();
+
+            clientConfig.setProtocol(Protocol.HTTPS);
+
+            awsIot = new AWSIotClient(credentials, clientConfig);
+
+        } catch (Exception e) {
+            Utils.Logger(TAG, "IotServiceUtil.createIotService aws-iot创建连接异常", e.getMessage());
+            //LOGGER.error("IotServiceUtil.createIotService aws-iot创建连接异常",e);
+            awsIot = null;
+        }
     }
 
     private void onChanged(Context context, WifiInfo info) {
@@ -146,27 +198,92 @@ public class MainPresenter extends RxPresenter<MainContract.View> implements Mai
             refreshData = new ArrayList<>();
             udpSend(DISCOVERY, result -> {
             });
-//            addSubscribe(Flowable.create((FlowableOnSubscribe<List<WWADeviceInfo>>) e -> {
-//                //查数据
-//                try {
-//
-//                    //data = getDeviceData();
-//                    e.onNext();
-//                }catch (Exception e1){
-//                    e.onNext(data);
-//                }
-//            }, BackpressureStrategy.BUFFER).compose(RxUtil.rxSchedulerHelper())
-//                    .subscribeWith(new CommonSubscriber<List<WWADeviceInfo>>(view) {
-//                        @Override
-//                        public void onNext(List<WWADeviceInfo> data) {
-//                            //返回数据
-//                            view.getDeviceData(data);
-//                        }
-//                    }));
+
         } else {
             view.closeRefresh();
         }
 
+    }
+
+    @Override
+    public void deleteDevice(WWADeviceInfo data, String name) {
+        broadCast = data.getIp();
+        addSubscribe(Flowable.create((FlowableOnSubscribe<String>) e -> {
+            //查数据
+            try {
+                //delete DB
+                String[] names = data.getFriendlyNames().split(",");
+                if (names.length > 1){
+                    //只把自己的friendlyName部分删掉
+                    if (deleteDB(name)){
+                        StringBuffer buffer = new StringBuffer();
+                        for (int i = 0; i < names.length; i++) {
+                            if (!names[i].contains(userId)){
+                                buffer.append(names[i] + (i == names.length - 1 ? "" : ","));
+                            }
+                        }
+                        udpSend(String.format(FRIENDLY_NAME, buffer.toString()), result -> {
+                            if (result.contains("\"friendlyname\":1")){
+                                e.onNext("success");
+                            }else {
+                                udpBuild.sendMessage(String.format(FRIENDLY_NAME,
+                                        buffer.toString()),broadCast);
+                            }
+                        });
+                    }else {
+                        e.onNext("");
+                    }
+                }else {
+                    //删除设备所有信息
+                    if (deleteDB(name)){
+                        //delete thing
+                        DeleteThingResult request = awsIot.deleteThing(new DeleteThingRequest()
+                                .withThingName(data.getThing()));
+
+                        if (!request.toString().isEmpty()) {
+                            //写入设备
+                            writeToDevice();
+                            e.onNext(request.toString());
+                        }else {
+                            e.onNext("");
+                        }
+                    }else {
+                        e.onNext("");
+                    }
+                }
+            } catch (Exception e1) {
+                e.onNext("");
+            }
+        }, BackpressureStrategy.BUFFER).compose(RxUtil.rxSchedulerHelper())
+                    .subscribeWith(new CommonSubscriber<String>(view) {
+                        @Override
+                        public void onNext(String data) {
+                            //返回数据
+                            //view.getDeviceData(data);
+                            if (!data.isEmpty()){
+                                view.deleteSuccess();
+                            }else {
+                                view.deleteError();
+                            }
+                        }
+                    }));
+
+    }
+
+    private void writeToDevice() {
+        udpSend(String.format(FRIENDLY_NAME, ""), result -> {
+            if (result.contains("\"friendlyname\"")){
+                udpBuild.sendMessage(result.contains("1") ?
+                        String.format(SEND_THING_NAME, REST_API, "") :
+                        String.format(FRIENDLY_NAME,"") ,broadCast);
+            }else {
+                if (result.contains("\"endpoint\":1")){
+                    view.deleteSuccess();
+                }else {
+                    udpBuild.sendMessage(String.format(SEND_THING_NAME, REST_API, ""),broadCast);
+                }
+            }
+        });
     }
 
     private void udpSend(String message, OnUdpSendRequest listener) {
@@ -265,23 +382,40 @@ public class MainPresenter extends RxPresenter<MainContract.View> implements Mai
                 }));
     }
 
-//    private List<DeviceInfo> getDeviceData() {
-//        data = new ArrayList<>();
-//        HashMap<String, AttributeValue> key = new HashMap<>();
-//        key.put(USER_ID, new AttributeValue().withS(userId));
-//        //获取数据
-//        GetItemResult itemResult = client.getItem(new GetItemRequest()
-//                .withTableName(DB_NAME).withKey(key));
-//        if (itemResult.getItem() != null) {
-//            Map<String, AttributeValue> resultItem = itemResult.getItem();
-//            AttributeValue cert_data = resultItem.get(THING_DIR);
-//            //设备名称
-//            String[] names = cert_data.getM().keySet().toArray(new String[cert_data.getM().size()]);
-//            //endpointId
-//            for (int i = 0; i < names.length; i++) {
-//                data.add(new DeviceInfo(names[i], cert_data.getM().get(names[i]).getS()));
-//            }
-//        }
-//        return data;
-//    }
+    private boolean deleteDB(String name) {
+
+        data = new ArrayList<>();
+        HashMap<String, AttributeValue> key = new HashMap<>();
+        key.put(USER_ID, new AttributeValue().withS(userId));
+        //获取数据
+        GetItemResult itemResult = client.getItem(new GetItemRequest()
+                .withTableName(DB_NAME).withKey(key));
+        if (itemResult.getItem() != null) {
+            Map<String, AttributeValue> resultItem = itemResult.getItem();
+            AttributeValue cert_data = resultItem.get(THING_DIR);
+            //删除设备
+            cert_data.getM().remove(name);
+            try{
+                client.updateItem(new UpdateItemRequest().withTableName(DB_NAME)
+                        .withKey(key).addAttributeUpdatesEntry(THING_DIR,
+                                new AttributeValueUpdate()
+                                        .withValue(cert_data)));
+                return true;
+            }catch (Exception e){
+                view.deleteError();
+                addSubscribe(Flowable.timer(3, TimeUnit.SECONDS)
+                        .compose(RxUtil.rxSchedulerHelper())
+                        .subscribeWith(new CommonSubscriber<Long>(view) {
+
+                            @Override
+                            public void onNext(Long aLong) {
+                                view.hidSnackBar();
+                            }
+                        }));
+                return false;
+            }
+        }else {
+            return false;
+        }
+    }
 }

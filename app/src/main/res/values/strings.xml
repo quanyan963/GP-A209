@@ -17,7 +17,6 @@
     <string name="no_wifi">You\'re not connected to the Internet.</string>
     <string name="unknown">Unknown</string>
     <string name="login_failed">Login failed, please try again.</string>
-    <string name="device_list">DEVICE LIST</string>
     <string name="log_wifi">Log Onto Your Home Wi-Fi</string>
     <string name="device_will_configured">Your device will be configured on\nthe following network:</string>
     <string name="eye_hint">Click the eye icon to check your password</string>
@@ -59,4 +58,17 @@
     <string name="wifi_setup_big">Wi-Fi SETUP</string>
     <string name="rename_success">Rename Successful!</string>
     <string name="re_wifi">Wi-Fi Reset Successful!</string>
+
+    //main
+    <string name="device_list">DEVICE LIST</string>
+    <string name="already_deleted">Delete failed.</string>
+
+    //app information
+    <string name="booklet">Instruction Booklet</string>
+    <string name="about">About</string>
+    <string name="enable_skill">Enable Nursery Skill</string>
+    <string name="help">Skill Help</string>
+    <string name="version">Version</string>
+    <string name="account">Account</string>
+
 </resources>

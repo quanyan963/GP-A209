@@ -21,4 +21,8 @@ public interface PreferencesHelper {
     void setUid(String uid);
 
     String getUid();
+
+    String getEmail();
+
+    void setEmail(String email);
 }

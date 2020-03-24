@@ -1,17 +1,17 @@
 package com.txtled.gp_a209.main;
 
 import android.content.Intent;
-import android.os.Bundle;
 import android.view.KeyEvent;
-import android.view.View;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.txtled.gp_a209.R;
 import com.txtled.gp_a209.add.AddDeviceActivity;
+import com.txtled.gp_a209.appinfo.AppInfoActivity;
 import com.txtled.gp_a209.base.MvpBaseActivity;
 import com.txtled.gp_a209.bean.DeviceInfo;
 import com.txtled.gp_a209.bean.WWADeviceInfo;
@@ -19,6 +19,7 @@ import com.txtled.gp_a209.control.ControlActivity;
 import com.txtled.gp_a209.information.InfoActivity;
 import com.txtled.gp_a209.main.mvp.MainContract;
 import com.txtled.gp_a209.main.mvp.MainPresenter;
+import com.txtled.gp_a209.utils.AlertUtils;
 import com.txtled.gp_a209.widget.ArialRoundButton;
 
 import java.util.List;
@@ -30,7 +31,6 @@ import static com.txtled.gp_a209.utils.Constants.INFO;
 import static com.txtled.gp_a209.utils.Constants.NAME;
 import static com.txtled.gp_a209.utils.Constants.OK;
 import static com.txtled.gp_a209.utils.Constants.RESULT;
-import static com.txtled.gp_a209.utils.Constants.THIN;
 import static com.txtled.gp_a209.utils.Constants.THING_DIR;
 import static com.txtled.gp_a209.utils.Constants.TYPE;
 import static com.txtled.gp_a209.utils.Constants.VERSION;
@@ -49,6 +49,8 @@ public class MainActivity extends MvpBaseActivity<MainPresenter> implements Main
     private DeviceListAdapter listAdapter;
     private String userId;
     private String wifiName;
+    private AlertDialog dialog;
+    private String name;
 
     @Override
     protected void beforeContentView() {
@@ -118,6 +120,18 @@ public class MainActivity extends MvpBaseActivity<MainPresenter> implements Main
 
     @Override
     public void setData(List<WWADeviceInfo> refreshData) {
+//        WWADeviceInfo info1 = new WWADeviceInfo();
+//        info1.setFriendlyNames("AHMJUHKQQTILMJO6F4YSFQBRUDUA_GGG");
+//        WWADeviceInfo info2 = new WWADeviceInfo();
+//        info2.setFriendlyNames("AHMJUHKQQTILMJO6F4YSFQBRUDUA_FFF");
+//        WWADeviceInfo info3 = new WWADeviceInfo();
+//        info3.setFriendlyNames("AHMJUHKQQTILMJO6F4YSFQBRUDUA_HHH");
+//        WWADeviceInfo info4 = new WWADeviceInfo();
+//        info4.setFriendlyNames("AHMJUHKQQTILMJO6F4YSFQBRUDUA_III");
+//        refreshData.add(info1);
+//        refreshData.add(info2);
+//        refreshData.add(info3);
+//        refreshData.add(info4);
         srlRefresh.setRefreshing(false);
         if (!refreshData.isEmpty())
             listAdapter.setData(refreshData);
@@ -126,12 +140,26 @@ public class MainActivity extends MvpBaseActivity<MainPresenter> implements Main
     @Override
     public void noDevice() {
         srlRefresh.setRefreshing(false);
+        hidSnackBar();
         showSnackBar(abtOffAll,R.string.no_device);
     }
 
     @Override
     public void getWifiName(String ssid) {
         wifiName = ssid;
+    }
+
+    @Override
+    public void deleteError() {
+        dialog.dismiss();
+        hidSnackBar();
+        showSnackBar(abtOffAll,R.string.already_deleted);
+    }
+
+    @Override
+    public void deleteSuccess() {
+        dialog.dismiss();
+        listAdapter.deleteItem(name);
     }
 
     @Override
@@ -158,6 +186,14 @@ public class MainActivity extends MvpBaseActivity<MainPresenter> implements Main
     }
 
     @Override
+    public void onDeleteClick(WWADeviceInfo data,String name) {
+        this.name = name;
+        dialog = AlertUtils.showLoadingDialog(this,R.layout.alert_progress);
+        dialog.show();
+        presenter.deleteDevice(data,name);
+    }
+
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if (requestCode == RESULT || requestCode == INFO){
             if (resultCode == OK){
@@ -166,5 +202,10 @@ public class MainActivity extends MvpBaseActivity<MainPresenter> implements Main
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    public void onLeftClick() {
+        startActivity(new Intent(this, AppInfoActivity.class));
     }
 }

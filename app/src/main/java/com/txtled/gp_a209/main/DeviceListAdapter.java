@@ -44,6 +44,15 @@ public class DeviceListAdapter extends RecyclerView.Adapter<DeviceListAdapter.De
         notifyDataSetChanged();
     }
 
+    public void deleteItem(String name){
+        int position = nameList.indexOf(name);
+        nameList.remove(position);
+        data.remove(position);
+        notifyItemRemoved(position);
+        if (position != data.size())
+            notifyItemRangeChanged(position,data.size() - position);
+    }
+
     @NonNull
     @Override
     public DeviceListAdapter.DeviceListHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -66,6 +75,8 @@ public class DeviceListAdapter extends RecyclerView.Adapter<DeviceListAdapter.De
                     listener.onDeviceClick(data.get(position).getThing(),nameList.get(position)));
             holder.imgSetting.setOnClickListener(v ->
                     listener.onSettingClick(data.get(position), nameList.get(position)));
+            holder.imgDelete.setOnClickListener(v ->
+                    listener.onDeleteClick(data.get(position), nameList.get(position)));
         }
     }
 
@@ -91,5 +102,6 @@ public class DeviceListAdapter extends RecyclerView.Adapter<DeviceListAdapter.De
     public interface OnDeviceClickListener{
         void onDeviceClick(String endpoint, String name);
         void onSettingClick(WWADeviceInfo data, String name);
+        void onDeleteClick(WWADeviceInfo data,String name);
     }
 }

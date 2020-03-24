@@ -41,6 +41,7 @@ import com.amazonaws.services.iot.model.CreateKeysAndCertificateResult;
 import com.amazonaws.services.iot.model.CreatePolicyRequest;
 import com.amazonaws.services.iot.model.CreateThingRequest;
 import com.amazonaws.services.iot.model.CreateThingResult;
+import com.amazonaws.services.iot.model.DeleteThingRequest;
 import com.espressif.iot.esptouch.EsptouchTask;
 import com.espressif.iot.esptouch.IEsptouchResult;
 import com.espressif.iot.esptouch.IEsptouchTask;

@@ -31,6 +31,10 @@ public interface MainContract {
         void noDevice();
 
         void getWifiName(String ssid);
+
+        void deleteError();
+
+        void deleteSuccess();
     }
 
     interface Presenter extends BasePresenter<View> {
@@ -38,5 +42,7 @@ public interface MainContract {
         String init(Activity activity);
 
         void onRefresh();
+
+        void deleteDevice(WWADeviceInfo data, String name);
     }
 }

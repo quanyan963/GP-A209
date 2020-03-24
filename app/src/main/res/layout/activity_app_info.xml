@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/yellow_back">
+
+    <include android:id="@+id/i_app_tool"
+        layout="@layout/toolbar"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"/>
+
+    <com.txtled.gp_a209.widget.MyView
+        android:id="@+id/mv_booklet"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/i_app_tool"
+        app:left_text="@string/booklet"/>
+    <com.txtled.gp_a209.widget.MyView
+        android:id="@+id/mv_about"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/mv_booklet"
+        app:left_text="@string/about"/>
+    <com.txtled.gp_a209.widget.MyView
+        android:id="@+id/mv_skill"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/mv_about"
+        app:left_text="@string/enable_skill"/>
+    <com.txtled.gp_a209.widget.MyView
+        android:id="@+id/mv_help"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/mv_skill"
+        app:left_text="@string/help"/>
+    <com.txtled.gp_a209.widget.MyView
+        android:id="@+id/mv_version"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/mv_help"
+        app:left_text="@string/version"/>
+    <com.txtled.gp_a209.widget.MyView
+        android:id="@+id/mv_account"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/mv_version"
+        app:left_text="@string/account"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

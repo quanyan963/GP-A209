@@ -72,6 +72,16 @@ public class DataManagerModel implements DBHelper, PreferencesHelper, NetHelper,
     }
 
     @Override
+    public String getEmail() {
+        return mPreferencesHelper.getEmail();
+    }
+
+    @Override
+    public void setEmail(String email) {
+        mPreferencesHelper.setEmail(email);
+    }
+
+    @Override
     public void requestPermissions(Activity activity, String[] permissions, OnPermissionsListener permissionsListener) {
         mOperateHelper.requestPermissions(activity, permissions, permissionsListener);
     }
