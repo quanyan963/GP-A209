@@ -270,7 +270,6 @@ public class MainPresenter extends RxPresenter<MainContract.View> implements Mai
                                     //awsIot.detachSecurityProfile(new DetachSecurityProfileRequest().)
                                     awsIot.detachThingPrincipal(new DetachThingPrincipalRequest().withThingName(data.getThing()));
 
-
                                     DeleteThingResult request = awsIot.deleteThing(new DeleteThingRequest()
                                             .withThingName(data.getThing()));
                                     //删除设备所有信息
