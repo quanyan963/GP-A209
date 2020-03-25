@@ -47,16 +47,16 @@
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait"/>
         <activity android:name=".add.AddDeviceActivity"
-            android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
+            android:configChanges="layoutDirection|locale"
             android:screenOrientation="portrait"/>
         <activity android:name=".control.ControlActivity"
-            android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
+            android:configChanges="layoutDirection|locale"
             android:screenOrientation="portrait"/>
         <activity android:name=".information.InfoActivity"
-            android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
+            android:configChanges="layoutDirection|locale"
             android:screenOrientation="portrait"/>
         <activity android:name=".appinfo.AppInfoActivity"
-            android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
+            android:configChanges="layoutDirection|locale"
             android:screenOrientation="portrait"/>
     </application>
 

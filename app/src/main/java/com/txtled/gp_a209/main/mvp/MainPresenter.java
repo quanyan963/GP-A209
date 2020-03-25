@@ -28,8 +28,13 @@ import com.amazonaws.services.iot.AWSIotClient;
 import com.amazonaws.services.iot.client.AWSIotDevice;
 import com.amazonaws.services.iot.client.AWSIotException;
 import com.amazonaws.services.iot.client.AWSIotQos;
+import com.amazonaws.services.iot.model.CertificateStatus;
 import com.amazonaws.services.iot.model.DeleteThingRequest;
 import com.amazonaws.services.iot.model.DeleteThingResult;
+import com.amazonaws.services.iot.model.DetachPolicyRequest;
+import com.amazonaws.services.iot.model.DetachSecurityProfileRequest;
+import com.amazonaws.services.iot.model.DetachThingPrincipalRequest;
+import com.amazonaws.services.iot.model.UpdateCertificateRequest;
 import com.txtled.gp_a209.R;
 import com.txtled.gp_a209.add.listener.OnUdpSendRequest;
 import com.txtled.gp_a209.add.udp.UDPBuild;
@@ -71,6 +76,7 @@ import static com.txtled.gp_a209.utils.Constants.DATA_DEVICE;
 import static com.txtled.gp_a209.utils.Constants.DB_NAME;
 import static com.txtled.gp_a209.utils.Constants.DISCOVERY;
 import static com.txtled.gp_a209.utils.Constants.FRIENDLY_NAME;
+import static com.txtled.gp_a209.utils.Constants.MY_OIT_CE;
 import static com.txtled.gp_a209.utils.Constants.PUBLISH;
 import static com.txtled.gp_a209.utils.Constants.REST_API;
 import static com.txtled.gp_a209.utils.Constants.SEND_THING_NAME;
@@ -214,65 +220,79 @@ public class MainPresenter extends RxPresenter<MainContract.View> implements Mai
 
     }
 
+    /**
+     * 删除设备
+     * @param data
+     * @param name
+     */
     @Override
     public void deleteDevice(WWADeviceInfo data, String name) {
         broadCast = data.getIp();
-        addSubscribe(Flowable.create((FlowableOnSubscribe<String>) e -> {
-            //查数据
-            try {
-                //delete DB
-                String[] names = data.getFriendlyNames().split(",");
-                if (names.length > 1){
-                    //只把自己的friendlyName部分删掉
-                    if (deleteDB(name)){
-                        StringBuffer buffer = new StringBuffer();
-                        for (int i = 0; i < names.length; i++) {
-                            if (!names[i].contains(userId)){
-                                buffer.append(names[i] + (i == names.length - 1 ? "" : ","));
-                            }
-                        }
-                        udpSend(String.format(FRIENDLY_NAME, buffer.toString()), result -> {
-                            if (result.contains("\"friendlyname\":1")){
-                                e.onNext("success");
-                            }else {
-                                udpBuild.sendMessage(String.format(FRIENDLY_NAME,
-                                        buffer.toString()),broadCast);
-                            }
-                        });
-                    }else {
-                        e.onNext("");
-                    }
-                }else {
-                    //删除设备所有信息
-                    if (deleteDB(name)){
-                        //delete thing
-                        DeleteThingResult request = awsIot.deleteThing(new DeleteThingRequest()
-                                .withThingName(data.getThing()));
-
-                        if (!request.toString().isEmpty()) {
-                            //写入设备
-                            writeToDevice();
-                            e.onNext(request.toString());
-                        }else {
-                            e.onNext("");
-                        }
-                    }else {
-                        e.onNext("");
-                    }
-                }
-            } catch (Exception e1) {
-                e.onNext("");
-            }
-        }, BackpressureStrategy.BUFFER).compose(RxUtil.rxSchedulerHelper())
+        addSubscribe(Flowable.just(name).subscribeOn(Schedulers.io()).observeOn(Schedulers.io())
                     .subscribeWith(new CommonSubscriber<String>(view) {
                         @Override
-                        public void onNext(String data) {
-                            //返回数据
-                            //view.getDeviceData(data);
-                            if (!data.isEmpty()){
-                                view.deleteSuccess();
-                            }else {
+                        public void onNext(String name) {
+                            //查数据
+                            try {
+                                //delete DB
+                                String[] names = data.getFriendlyNames().split(",");
+                                if (names.length > 1){
+                                    //只把自己的friendlyName部分删掉
+                                    if (deleteDB(name)){
+                                        StringBuffer buffer = new StringBuffer();
+                                        for (int i = 0; i < names.length; i++) {
+                                            if (!names[i].contains(userId)){
+                                                buffer.append(names[i] + (i == names.length - 1 ? "" : ","));
+                                            }
+                                        }
+                                        udpSend(String.format(FRIENDLY_NAME, buffer.toString()), result -> {
+                                            if (result.contains("\"friendlyname\":1")){
+                                                view.deleteSuccess();
+                                            }else {
+                                                udpBuild.sendMessage(String.format(FRIENDLY_NAME,
+                                                        buffer.toString()),broadCast);
+                                            }
+                                        });
+                                    }else {
+                                        view.deleteError();
+                                        hidSnackBarDelay();
+                                    }
+                                }else {
+                                    awsIot.detachThingPrincipal(new DetachThingPrincipalRequest()
+                                            .withThingName(data.getThing())
+                                            .withPrincipal("1f29341c16b40760b8d2d6c8783682bcc6ecec6d828746fe459321f85e79b243"));
+                                    awsIot.updateCertificate(new UpdateCertificateRequest()
+                                            .withCertificateId("1f29341c16b40760b8d2d6c8783682bcc6ecec6d828746fe459321f85e79b243")
+                                            .withNewStatus("INACTIVE"));
+                                    awsIot.detachPolicy(new DetachPolicyRequest()
+                                            .withPolicyName(MY_OIT_CE)
+                                            .withTarget("arn:aws:iot:us-east-1:612535970613:cert/1f29341c16b40760b8d2d6c8783682bcc6ecec6d828746fe459321f85e79b243"));
+                                    //awsIot.detachSecurityProfile(new DetachSecurityProfileRequest().)
+                                    awsIot.detachThingPrincipal(new DetachThingPrincipalRequest().withThingName(data.getThing()));
+
+
+                                    DeleteThingResult request = awsIot.deleteThing(new DeleteThingRequest()
+                                            .withThingName(data.getThing()));
+                                    //删除设备所有信息
+                                    if (deleteDB(name)){
+                                        //delete thing
+
+                                        if (!request.toString().isEmpty()) {
+                                            //写入设备
+                                            writeToDevice();
+                                            view.deleteSuccess();
+                                        }else {
+                                            view.deleteError();
+                                            hidSnackBarDelay();
+                                        }
+                                    }else {
+                                        view.deleteError();
+                                        hidSnackBarDelay();
+                                    }
+                                }
+                            } catch (Exception e1) {
                                 view.deleteError();
+                                hidSnackBarDelay();
                             }
                         }
                     }));
@@ -284,19 +304,21 @@ public class MainPresenter extends RxPresenter<MainContract.View> implements Mai
         switch (v.getId()){
             case R.id.abt_off_all:
                 view.showLoading();
-                for (WWADeviceInfo info : refreshData) {
-                    MqttClient.getClient().initClient(info.getThing(), new OnConnectListener() {
-                        @Override
-                        public void onSuccess(AWSIotDevice device) {
-                            AWSIotDevice iotDevice = device;
-                            powerOff(iotDevice,info.getThing());
-                        }
-                        @Override
-                        public void onFail() {
-                            view.mqttInitFail();
-                            hidSnackBarDelay();
-                        }
-                    });
+                if (!refreshData.isEmpty()){
+                    for (WWADeviceInfo info : refreshData) {
+                        MqttClient.getClient().initClient(info.getThing(), new OnConnectListener() {
+                            @Override
+                            public void onSuccess(AWSIotDevice device) {
+                                AWSIotDevice iotDevice = device;
+                                powerOff(iotDevice,info.getThing());
+                            }
+                            @Override
+                            public void onFail() {
+                                view.mqttInitFail();
+                                hidSnackBarDelay();
+                            }
+                        });
+                    }
                 }
                 break;
         }

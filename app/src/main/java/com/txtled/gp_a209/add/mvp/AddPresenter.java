@@ -187,8 +187,7 @@ public class AddPresenter extends RxPresenter<AddContract.View> implements AddCo
 //                    udpSend(String.format(SEND_THING_NAME, REST_API,""), new OnUdpSendRequest() {
 //                        @Override
 //                        public void OnRequestListener(String result) {
-//                            result.length();
-//                            udpBuild.stopUDPSocket();
+//                            udpBuild.sendMessage(String.format(FRIENDLY_NAME,""),broadCast);
 //                        }
 //                    });
                 }

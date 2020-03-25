@@ -73,13 +73,15 @@ public class InfoActivity extends MvpBaseActivity<InfoPresenter> implements Info
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if (requestCode == NAME_RESULT){
-            if (requestCode == OK){
+            if (resultCode == OK){
                 hasChanged = true;
                 mvChangeName.setRightText(data.getStringExtra(NAME));
             }
         }else if (requestCode == WIFI_RESULT){
-            hasChanged = true;
-            mvWifi.setRightText(data.getStringExtra(NAME));
+            if (resultCode == OK){
+                hasChanged = true;
+                mvWifi.setRightText(data.getStringExtra(NAME));
+            }
         }
 
         super.onActivityResult(requestCode, resultCode, data);

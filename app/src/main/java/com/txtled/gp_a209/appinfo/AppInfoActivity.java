@@ -40,6 +40,7 @@ public class AppInfoActivity extends MvpBaseActivity<AppInfoPresenter> implement
     public void init() {
         initToolbar();
         tvTitle.setText(R.string.information);
+        setNavigationIcon(true);
         email = presenter.geEmail();
         mvAccount.setRightText(email);
         try {
