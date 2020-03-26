@@ -240,9 +240,9 @@ public class ControlPresenter extends RxPresenter<ControlContract.View> implemen
                         JSONObject state = data.getJSONObject("state").getJSONObject("reported");
                         iotCoreData = new IotCoreData(
                                 state.optInt("light",0),
-                                state.optInt("sound",0),
+                                state.optInt("sound",1),
                                 state.optInt("duration",0),
-                                state.optInt("volume",10),
+                                state.optInt("volume",2),
                                 state.optString("device","off"));
                         view.setData(iotCoreData);
                         view.hidLoadingView();

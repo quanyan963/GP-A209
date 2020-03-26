@@ -80,8 +80,7 @@ public class ControlActivity extends MvpBaseActivity<ControlPresenter> implement
     private String name;
     private String endpoint;
     private AlertDialog loading;
-    private boolean power;
-    private boolean result;
+    private boolean power,result,offDuration;
     private int beforeProgress;
 
     @Override
@@ -489,28 +488,12 @@ public class ControlActivity extends MvpBaseActivity<ControlPresenter> implement
 
     @Override
     public void resetView(IotCoreData iotCoreData) {
-        switch (iotCoreData.getDuration()) {
-            case 0:
-                result = true;
-                rbNever.setChecked(true);
-                break;
-            case 15:
-                result = true;
-                rbFifteen.setChecked(true);
-                break;
-            case 30:
-                result = true;
-                rbThirteen.setChecked(true);
-                break;
-            case 60:
-                result = true;
-                rbSixty.setChecked(true);
-                break;
-        }
+        offDuration = false;
         switch (iotCoreData.getSound()) {
             case 0:
                 result = true;
                 rbNone.setChecked(true);
+                offDuration = true;
                 break;
             case 1:
                 result = true;
@@ -536,6 +519,31 @@ public class ControlActivity extends MvpBaseActivity<ControlPresenter> implement
                 result = true;
                 rbNoise.setChecked(true);
                 break;
+        }
+        if (!offDuration){
+            switch (iotCoreData.getDuration()) {
+                case 0:
+                    result = true;
+                    rbNever.setChecked(true);
+                    break;
+                case 15:
+                    result = true;
+                    rbFifteen.setChecked(true);
+                    break;
+                case 30:
+                    result = true;
+                    rbThirteen.setChecked(true);
+                    break;
+                case 60:
+                    result = true;
+                    rbSixty.setChecked(true);
+                    break;
+            }
+        }else {
+            rgDuration.clearCheck();
+            for (int i = 0; i < rgDuration.getChildCount(); i++) {
+                rgDuration.getChildAt(i).setEnabled(true);
+            }
         }
 
     }
