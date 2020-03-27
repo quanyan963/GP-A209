@@ -89,7 +89,7 @@ public class ControlPresenter extends RxPresenter<ControlContract.View> implemen
     @Override
     public void sendMqtt(int id) {
         try {
-            MyShadowMessage myMessage = new MyShadowMessage(String.format(PUBLISH,endpoint),AWSIotQos.QOS0,getData(id));
+            MyShadowMessage myMessage = new MyShadowMessage(String.format(PUBLISH,endpoint), AWSIotQos.QOS0,getData(id));
             myMessage.setListener(new OnMessageListener() {
                 @Override
                 public void onSuccess() {
@@ -243,7 +243,7 @@ public class ControlPresenter extends RxPresenter<ControlContract.View> implemen
                                 state.optInt("sound",1),
                                 state.optInt("duration",0),
                                 state.optInt("volume",2),
-                                state.optString("device","off"));
+                                state.optString("device","on"));
                         view.setData(iotCoreData);
                         view.hidLoadingView();
                     } catch (JSONException e) {

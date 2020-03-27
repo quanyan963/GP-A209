@@ -63,7 +63,7 @@ public class AddDeviceActivity extends MvpBaseActivity<AddPresenter> implements 
 
     private DeviceNameAdapter adapter;
     private AlertDialog dialog;
-    private int type;
+    private int type;//0:全流程 1：改名 2：改wifi
     private String ip;
     private String friendlyName;
     private String thing;
@@ -190,18 +190,8 @@ public class AddDeviceActivity extends MvpBaseActivity<AddPresenter> implements 
     @Override
     public void configureSuccess() {
         runOnUiThread(() -> {
-            if (type == 2){
-                AlertUtils.showAlertDialog(this, R.string.re_wifi,
-                        (dialog, which) -> {
-                            this.setResult(OK,new Intent().putExtra(NAME,
-                                    aetWifiName.getText().toString()));
-                            this.finish();
-                        });
-            }else {
-                showList(true);
-                changeBtnColor(false);
-            }
-
+            showList(true);
+            changeBtnColor(false);
         });
     }
 
@@ -374,6 +364,21 @@ public class AddDeviceActivity extends MvpBaseActivity<AddPresenter> implements 
                 dialog = null;
             }
         });
+    }
+
+    @Override
+    public void showSuccess() {
+        if (type == 2){
+            AlertUtils.showAlertDialog(this, R.string.re_wifi,
+                    (dialog, which) -> {
+                        this.setResult(OK,new Intent().putExtra(NAME,
+                                aetWifiName.getText().toString()));
+                        this.finish();
+                    });
+        }else {
+            AlertUtils.showAlertDialog(this, R.string.configure_result_success,
+                    (dialog, which) -> configureSuccess());
+        }
     }
 
     @Override

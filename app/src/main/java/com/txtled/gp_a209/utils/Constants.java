@@ -18,6 +18,8 @@ public class Constants {
     public static final int NAME_RESULT = 2001;
     public static final int WIFI_RESULT = 2002;
     public static final int INFO = 2003;
+    public static final int LOGIN = 2004;
+    public static final int APP = 2005;
     public static final int OK = 200;
     public static final String PUBLISH = "$aws/things/%s/shadow/update";
     public static final String SUBSCRIBE = "$aws/things/%s/shadow/update/accepted";

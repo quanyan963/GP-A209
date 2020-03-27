@@ -1,16 +1,25 @@
 package com.txtled.gp_a209.appinfo;
 
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.view.View;
+
+import androidx.annotation.Nullable;
 
 import com.txtled.gp_a209.R;
 import com.txtled.gp_a209.appinfo.mvp.AppInfoConteact;
 import com.txtled.gp_a209.appinfo.mvp.AppInfoPresenter;
 import com.txtled.gp_a209.base.MvpBaseActivity;
+import com.txtled.gp_a209.login.LoginActivity;
 import com.txtled.gp_a209.widget.MyView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
+import static com.txtled.gp_a209.utils.Constants.LOGIN;
+import static com.txtled.gp_a209.utils.Constants.OK;
+import static com.txtled.gp_a209.utils.Constants.TYPE;
 
 /**
  * Created by Mr.Quan on 2020/3/24.
@@ -41,14 +50,32 @@ public class AppInfoActivity extends MvpBaseActivity<AppInfoPresenter> implement
         initToolbar();
         tvTitle.setText(R.string.information);
         setNavigationIcon(true);
-        email = presenter.geEmail();
-        mvAccount.setRightText(email);
+        setEmailText();
         try {
             mvVersion.setRightText(getPackageManager()
                     .getPackageInfo(getPackageName(),0).versionName);
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
+        mvAccount.setListener(v ->
+                startActivityForResult(new Intent(AppInfoActivity.this,LoginActivity.class)
+                        .putExtra(TYPE,1),LOGIN));
+    }
+
+    private void setEmailText() {
+        email = presenter.geEmail();
+        mvAccount.setRightText(email);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        if (requestCode == LOGIN){
+            if (resultCode == OK){
+                setEmailText();
+                this.setResult(OK);
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override

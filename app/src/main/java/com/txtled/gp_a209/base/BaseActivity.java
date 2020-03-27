@@ -1,12 +1,17 @@
 package com.txtled.gp_a209.base;
 
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -165,9 +170,43 @@ public abstract class BaseActivity extends AppCompatActivity {
         if (snackbar == null) {
             snackbar = Snackbar.make(view, str, Snackbar.LENGTH_INDEFINITE).setAction(btnStr,listener);
             snackbar.getView().setBackgroundColor(getResources().getColor(R.color.bg_snack));
+            snackbar.setActionTextColor(getResources().getColor(R.color.white));
         }
         snackbar.show();
     }
+
+//    public void showSnackBar(View view, int layoutId, int str) {
+//        if (snackbar == null) {
+//            snackbar = Snackbar.make(view, str, Snackbar.LENGTH_INDEFINITE);
+//            snackbar.getView().setBackgroundColor(getResources().getColor(R.color.bg_snack));
+//            View snackbarview = snackbar.getView();//获取snackbar的View(其实就是SnackbarLayout)
+//
+//            Snackbar.SnackbarLayout snackbarLayout=(Snackbar.SnackbarLayout)snackbarview;//将获取的View转换成SnackbarLayout
+//
+//            View add_view = LayoutInflater.from(snackbarview.getContext()).inflate(layoutId,null);//加载布局文件新建View
+//
+//            LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.WRAP_CONTENT);//设置新建布局参数
+//
+//            p.gravity= Gravity.CENTER_VERTICAL;//设置新建布局在Snackbar内垂直居中显示
+//
+//            snackbarLayout.addView(add_view,1,p);//将新建布局添加进snackbarLayout相应位置
+//        }
+//        snackbar.show();
+//    }
+
+//    public void changeSnackBar(int str,int btnStr, boolean isShow, View.OnClickListener listener){
+//        snackbar.setText(str);
+//        View snackbarview = snackbar.getView();
+//        ProgressBar bar = (ProgressBar) snackbarview.findViewById(R.id.clp_loading);
+//        if (isShow){
+//            bar.setVisibility(View.VISIBLE);
+//            snackbar.setAction(null,null);
+//        }else {
+//            bar.setVisibility(View.GONE);
+//            snackbar.setAction(btnStr,listener);
+//        }
+//
+//    }
 
     public void hideSnackBar() {
         if (snackbar != null && snackbar.isShown()) {

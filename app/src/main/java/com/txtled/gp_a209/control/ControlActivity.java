@@ -272,6 +272,7 @@ public class ControlActivity extends MvpBaseActivity<ControlPresenter> implement
                     buttonView.setCompoundDrawables(null, getImgResources(0, 1), null, null);
                     buttonView.setTextColor(getResources().getColor(R.color.white));
                 } else {
+                    result = true;
                     buttonView.setCompoundDrawables(null, getImgUnResources(0, 1), null, null);
                     buttonView.setTextColor(getResources().getColor(R.color.text_un));
                 }
@@ -286,6 +287,7 @@ public class ControlActivity extends MvpBaseActivity<ControlPresenter> implement
                     buttonView.setCompoundDrawables(null, getImgResources(0, 2), null, null);
                     buttonView.setTextColor(getResources().getColor(R.color.white));
                 } else {
+                    result = true;
                     buttonView.setCompoundDrawables(null, getImgUnResources(0, 2), null, null);
                     buttonView.setTextColor(getResources().getColor(R.color.text_un));
                 }
@@ -300,6 +302,7 @@ public class ControlActivity extends MvpBaseActivity<ControlPresenter> implement
                     buttonView.setCompoundDrawables(null, getImgResources(0, 3), null, null);
                     buttonView.setTextColor(getResources().getColor(R.color.white));
                 } else {
+                    result = true;
                     buttonView.setCompoundDrawables(null, getImgUnResources(0, 3), null, null);
                     buttonView.setTextColor(getResources().getColor(R.color.text_un));
                 }
@@ -314,6 +317,7 @@ public class ControlActivity extends MvpBaseActivity<ControlPresenter> implement
                     buttonView.setCompoundDrawables(null, getImgResources(1, 1), null, null);
                     buttonView.setTextColor(getResources().getColor(R.color.white));
                 } else {
+                    result = true;
                     buttonView.setCompoundDrawables(null, getImgUnResources(1, 1), null, null);
                     buttonView.setTextColor(getResources().getColor(R.color.text_un));
                 }
@@ -328,6 +332,7 @@ public class ControlActivity extends MvpBaseActivity<ControlPresenter> implement
                     buttonView.setCompoundDrawables(null, getImgResources(1, 2), null, null);
                     buttonView.setTextColor(getResources().getColor(R.color.white));
                 } else {
+                    result = true;
                     buttonView.setCompoundDrawables(null, getImgUnResources(1, 2), null, null);
                     buttonView.setTextColor(getResources().getColor(R.color.text_un));
                 }
@@ -342,6 +347,7 @@ public class ControlActivity extends MvpBaseActivity<ControlPresenter> implement
                     buttonView.setCompoundDrawables(null, getImgResources(1, 3), null, null);
                     buttonView.setTextColor(getResources().getColor(R.color.white));
                 } else {
+                    result = true;
                     buttonView.setCompoundDrawables(null, getImgUnResources(1, 3), null, null);
                     buttonView.setTextColor(getResources().getColor(R.color.text_un));
                 }
@@ -353,6 +359,7 @@ public class ControlActivity extends MvpBaseActivity<ControlPresenter> implement
                     buttonView.setCompoundDrawables(null, getImgResources(2, 1), null, null);
                     buttonView.setTextColor(getResources().getColor(R.color.white));
                 } else {
+                    result = true;
                     buttonView.setCompoundDrawables(null, getImgUnResources(2, 1), null, null);
                     buttonView.setTextColor(getResources().getColor(R.color.text_un));
                 }
@@ -362,6 +369,7 @@ public class ControlActivity extends MvpBaseActivity<ControlPresenter> implement
                     buttonView.setCompoundDrawables(null, getImgResources(3, 1), null, null);
                     buttonView.setTextColor(getResources().getColor(R.color.white));
                 } else {
+                    result = true;
                     buttonView.setCompoundDrawables(null, getImgUnResources(3, 1), null, null);
                     buttonView.setTextColor(getResources().getColor(R.color.text_un));
                 }
@@ -371,6 +379,7 @@ public class ControlActivity extends MvpBaseActivity<ControlPresenter> implement
                     buttonView.setCompoundDrawables(null, getImgResources(3, 2), null, null);
                     buttonView.setTextColor(getResources().getColor(R.color.white));
                 } else {
+                    result = true;
                     buttonView.setCompoundDrawables(null, getImgUnResources(3, 2), null, null);
                     buttonView.setTextColor(getResources().getColor(R.color.text_un));
                 }
@@ -380,6 +389,7 @@ public class ControlActivity extends MvpBaseActivity<ControlPresenter> implement
                     buttonView.setCompoundDrawables(null, getImgResources(3, 3), null, null);
                     buttonView.setTextColor(getResources().getColor(R.color.white));
                 } else {
+                    result = true;
                     buttonView.setCompoundDrawables(null, getImgUnResources(3, 3), null, null);
                     buttonView.setTextColor(getResources().getColor(R.color.text_un));
                 }
@@ -389,6 +399,7 @@ public class ControlActivity extends MvpBaseActivity<ControlPresenter> implement
                     buttonView.setCompoundDrawables(null, getImgResources(3, 4), null, null);
                     buttonView.setTextColor(getResources().getColor(R.color.white));
                 } else {
+                    result = true;
                     buttonView.setCompoundDrawables(null, getImgUnResources(3, 4), null, null);
                     buttonView.setTextColor(getResources().getColor(R.color.text_un));
                 }

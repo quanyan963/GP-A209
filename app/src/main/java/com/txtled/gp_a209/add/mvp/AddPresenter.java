@@ -241,7 +241,7 @@ public class AddPresenter extends RxPresenter<AddContract.View> implements AddCo
         try{
             if (names != null){
 
-                if (info.getThing().isEmpty()){
+                if (info.getFriendlyNames().isEmpty()){
                     //创建事物
                     createIotThing();
 
@@ -794,8 +794,7 @@ public class AddPresenter extends RxPresenter<AddContract.View> implements AddCo
                 Thread.sleep(5000);
                 dialog.dismiss();
                 dialog = null;
-                AlertUtils.showAlertDialog(activity, R.string.configure_result_success,
-                        (dialog, which) -> view.configureSuccess());
+                view.showSuccess();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

@@ -10,6 +10,8 @@ import com.txtled.gp_a209.main.MainActivity;
 import com.txtled.gp_a209.start.mvp.StartContract;
 import com.txtled.gp_a209.start.mvp.StartPresenter;
 
+import static com.txtled.gp_a209.utils.Constants.TYPE;
+
 /**
  * Created by Mr.Quan on 2020/3/11.
  */
@@ -40,7 +42,7 @@ public class StartActivity extends MvpBaseActivity<StartPresenter> implements St
         if (presenter.isLogin()){
             startActivity(new Intent(this, MainActivity.class));
         }else {
-            startActivity(new Intent(this, LoginActivity.class));
+            startActivity(new Intent(this, LoginActivity.class).putExtra(TYPE,0));
         }
         this.finish();
     }

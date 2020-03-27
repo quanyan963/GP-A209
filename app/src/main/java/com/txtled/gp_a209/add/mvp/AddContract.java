@@ -33,6 +33,8 @@ public interface AddContract {
         void dismiss();
 
         void changeName(String name);
+
+        void showSuccess();
     }
 
     interface Presenter extends BasePresenter<View>{

@@ -9,6 +9,7 @@ import com.txtled.gp_a209.add.AddDeviceActivity;
 import com.txtled.gp_a209.base.MvpBaseActivity;
 import com.txtled.gp_a209.information.mvp.InfoContract;
 import com.txtled.gp_a209.information.mvp.InfoPresenter;
+import com.txtled.gp_a209.utils.AlertUtils;
 import com.txtled.gp_a209.widget.MyView;
 
 import butterknife.BindView;
@@ -62,9 +63,14 @@ public class InfoActivity extends MvpBaseActivity<InfoPresenter> implements Info
         mvVersion.setRightText(version);
         mvWifi.setRightText(wifiName);
 
-        mvChangeName.setListener(v -> startActivityForResult(new Intent(InfoActivity.this,
-                AddDeviceActivity.class).putExtra(TYPE,1).putExtra(ENDPOINT,ip)
-                .putExtra(THING_DIR,thing).putExtra(NAME,friendlyName), NAME_RESULT));
+        if (ip != null){
+            mvChangeName.setListener(v -> startActivityForResult(new Intent(InfoActivity.this,
+                    AddDeviceActivity.class).putExtra(TYPE,1).putExtra(ENDPOINT,ip)
+                    .putExtra(THING_DIR,thing).putExtra(NAME,friendlyName), NAME_RESULT));
+        }else {
+            mvChangeName.setListener(v -> AlertUtils.showAlertDialog(this, R.string.change_name_hint));
+        }
+
         mvVersion.setListener(v -> {});
         mvWifi.setListener(v -> startActivityForResult(new Intent(InfoActivity.this,
                 AddDeviceActivity.class).putExtra(TYPE,2),WIFI_RESULT));

@@ -94,7 +94,7 @@ public class MainPresenter extends RxPresenter<MainContract.View> implements Mai
     private CognitoCachingCredentialsProvider provider;
     private AmazonDynamoDB client;
     private String userId;
-    private List<DeviceInfo> data;
+    private List<WWADeviceInfo> data;
     private boolean isNoWifi;
     private MyBroadcastReceiver mReceiver;
     private WifiInfo wifiInfo;
@@ -164,7 +164,7 @@ public class MainPresenter extends RxPresenter<MainContract.View> implements Mai
 
                 if (!(locationManager != null && LocationManagerCompat
                         .isLocationEnabled(locationManager))) {
-                    view.checkLocation();
+                    //view.checkLocation();
                 } else {
 
                     view.setNoWifiView();
@@ -208,16 +208,47 @@ public class MainPresenter extends RxPresenter<MainContract.View> implements Mai
 
     @Override
     public void onRefresh() {
-        if (!isNoWifi) {
-            getBroadCastIp();
-            refreshData = new ArrayList<>();
-            udpSend(DISCOVERY, result -> {
-            });
+        addSubscribe(Flowable.create((FlowableOnSubscribe<List<WWADeviceInfo>>) e -> {
+            //查数据
+            try {
+                discovery();
+                e.onNext(getDeviceData());
+            }catch (Exception e1){
+                refreshData = new ArrayList<>();
+                e.onNext(refreshData);
+            }
+        }, BackpressureStrategy.BUFFER).compose(RxUtil.rxSchedulerHelper())
+                .subscribeWith(new CommonSubscriber<List<WWADeviceInfo>>(view) {
+                    @Override
+                    public void onNext(List<WWADeviceInfo> data) {
+                        //返回数据
+                        view.getDeviceData(data);
+                    }
+                }));
 
-        } else {
-            view.closeRefresh();
+    }
+
+    private List<WWADeviceInfo> getDeviceData() {
+        refreshData = new ArrayList<>();
+        HashMap<String, AttributeValue> key = new HashMap<>();
+        key.put(USER_ID, new AttributeValue().withS(userId));
+        //获取数据
+        GetItemResult itemResult = client.getItem(new GetItemRequest()
+                .withTableName(DB_NAME).withKey(key));
+        if (itemResult.getItem() != null) {
+            Map<String, AttributeValue> resultItem = itemResult.getItem();
+            AttributeValue cert_data = resultItem.get(THING_DIR);
+            //设备名称
+            String[] names = cert_data.getM().keySet().toArray(new String[cert_data.getM().size()]);
+            //endpointId
+            for (int i = 0; i < names.length; i++) {
+                WWADeviceInfo info = new WWADeviceInfo();
+                info.setFriendlyNames(userId+"_"+names[i]);
+                info.setThing(cert_data.getM().get(names[i]).getS());
+                refreshData.add(info);
+            }
         }
-
+        return refreshData;
     }
 
     /**
@@ -258,36 +289,38 @@ public class MainPresenter extends RxPresenter<MainContract.View> implements Mai
                                         hidSnackBarDelay();
                                     }
                                 }else {
-                                    awsIot.detachThingPrincipal(new DetachThingPrincipalRequest()
-                                            .withThingName(data.getThing())
-                                            .withPrincipal("1f29341c16b40760b8d2d6c8783682bcc6ecec6d828746fe459321f85e79b243"));
-                                    awsIot.updateCertificate(new UpdateCertificateRequest()
-                                            .withCertificateId("1f29341c16b40760b8d2d6c8783682bcc6ecec6d828746fe459321f85e79b243")
-                                            .withNewStatus("INACTIVE"));
-                                    awsIot.detachPolicy(new DetachPolicyRequest()
-                                            .withPolicyName(MY_OIT_CE)
-                                            .withTarget("arn:aws:iot:us-east-1:612535970613:cert/1f29341c16b40760b8d2d6c8783682bcc6ecec6d828746fe459321f85e79b243"));
-                                    //awsIot.detachSecurityProfile(new DetachSecurityProfileRequest().)
-                                    awsIot.detachThingPrincipal(new DetachThingPrincipalRequest().withThingName(data.getThing()));
+                                    //删除事物
+                                    view.deleteSuccess();
+//                                    awsIot.detachThingPrincipal(new DetachThingPrincipalRequest()
+//                                            .withThingName(data.getThing())
+//                                            .withPrincipal("1f29341c16b40760b8d2d6c8783682bcc6ecec6d828746fe459321f85e79b243"));
+//                                    awsIot.updateCertificate(new UpdateCertificateRequest()
+//                                            .withCertificateId("1f29341c16b40760b8d2d6c8783682bcc6ecec6d828746fe459321f85e79b243")
+//                                            .withNewStatus("INACTIVE"));
+//                                    awsIot.detachPolicy(new DetachPolicyRequest()
+//                                            .withPolicyName(MY_OIT_CE)
+//                                            .withTarget("arn:aws:iot:us-east-1:612535970613:cert/1f29341c16b40760b8d2d6c8783682bcc6ecec6d828746fe459321f85e79b243"));
+//                                    //awsIot.detachSecurityProfile(new DetachSecurityProfileRequest().)
+//                                    awsIot.detachThingPrincipal(new DetachThingPrincipalRequest().withThingName(data.getThing()));
 
-                                    DeleteThingResult request = awsIot.deleteThing(new DeleteThingRequest()
-                                            .withThingName(data.getThing()));
-                                    //删除设备所有信息
-                                    if (deleteDB(name)){
-                                        //delete thing
-
-                                        if (!request.toString().isEmpty()) {
-                                            //写入设备
-                                            writeToDevice();
-                                            view.deleteSuccess();
-                                        }else {
-                                            view.deleteError();
-                                            hidSnackBarDelay();
-                                        }
-                                    }else {
-                                        view.deleteError();
-                                        hidSnackBarDelay();
-                                    }
+//                                    DeleteThingResult request = awsIot.deleteThing(new DeleteThingRequest()
+//                                            .withThingName(data.getThing()));
+//                                    //删除设备所有信息
+//                                    if (deleteDB(name)){
+//                                        //delete thing
+//
+//                                        if (!request.toString().isEmpty()) {
+//                                            //写入设备
+//                                            writeToDevice();
+//                                            view.deleteSuccess();
+//                                        }else {
+//                                            view.deleteError();
+//                                            hidSnackBarDelay();
+//                                        }
+//                                    }else {
+//                                        view.deleteError();
+//                                        hidSnackBarDelay();
+//                                    }
                                 }
                             } catch (Exception e1) {
                                 view.deleteError();
@@ -320,6 +353,20 @@ public class MainPresenter extends RxPresenter<MainContract.View> implements Mai
                     }
                 }
                 break;
+        }
+    }
+
+    @Override
+    public void discovery() {
+        if (!isNoWifi) {
+            getBroadCastIp();
+            view.showSearching();
+            if (udpBuild != null){
+                udpBuild.stopUDPSocket();
+            }
+            udpSend(DISCOVERY, result -> {
+            });
+
         }
     }
 
@@ -380,14 +427,15 @@ public class MainPresenter extends RxPresenter<MainContract.View> implements Mai
     }
 
     private void udpSend(String message, OnUdpSendRequest listener) {
+        data = new ArrayList<>();
         strReceive = "";
         udpBuild = UDPBuild.getUdpBuild();
         myWifiManager = ((WifiManager) activity.getApplicationContext()
                 .getSystemService(Context.WIFI_SERVICE));
         dhcpInfo = myWifiManager.getDhcpInfo();
         udpBuild.setIgnoreIp(Utils.getWifiIp(dhcpInfo.ipAddress));
-        udpBuild.setUdpReceiveCallback(data -> {
-            strReceive = new String(data.getData(), 0, data.getLength());
+        udpBuild.setUdpReceiveCallback(result -> {
+            strReceive = new String(result.getData(), 0, result.getLength());
             try {
                 JSONObject deviceInfo = new JSONObject(strReceive);
                 if (message.equals(DISCOVERY)) {
@@ -402,7 +450,7 @@ public class MainPresenter extends RxPresenter<MainContract.View> implements Mai
                             deviceInfo.optString("friendlyname"),
                             deviceInfo.optString("ver")
                     );
-                    refreshData.add(info);
+                    data.add(info);
                     willStop();
                 } else {
                     listener.OnRequestListener(strReceive);
@@ -422,18 +470,18 @@ public class MainPresenter extends RxPresenter<MainContract.View> implements Mai
         }
         timeCount = Observable.timer(5, TimeUnit.SECONDS).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread()).subscribe(aLong -> {
-                            if (!refreshData.isEmpty()) {
-                                for (int i = 0; i < refreshData.size(); i++) {
-                                    if (refreshData.get(i).getFriendlyNames() != null) {
-                                        if (!refreshData.get(i).getFriendlyNames()
+                            if (!data.isEmpty()) {
+                                for (int i = 0; i < data.size(); i++) {
+                                    if (data.get(i).getFriendlyNames() != null) {
+                                        if (!data.get(i).getFriendlyNames()
                                                 .contains(userId)) {
-                                            refreshData.remove(i);
+                                            data.remove(i);
                                         }
                                     } else {
-                                        refreshData.remove(i);
+                                        data.remove(i);
                                     }
                                 }
-                                view.setData(refreshData);
+                                view.setData(data);
                                 udpBuild.stopUDPSocket();
                             }else {
                                 view.noDevice();
@@ -450,14 +498,14 @@ public class MainPresenter extends RxPresenter<MainContract.View> implements Mai
 
                     @Override
                     public void onNext(Long aLong) {
-                        if (refreshData.isEmpty()) {
+                        if (data.isEmpty()) {
                             count += 1;
-                            if (count < 5) {
+                            if (count < 3) {
                                 udpSend(message, listener);
                             } else {
                                 count = 0;
                                 view.noDevice();
-                                hidSnackBarDelay();
+                                //hidSnackBarDelay();
                             }
                             //udpBuild.sendMessage(message,broadCast);
                         } else {
@@ -468,8 +516,6 @@ public class MainPresenter extends RxPresenter<MainContract.View> implements Mai
     }
 
     private boolean deleteDB(String name) {
-
-        data = new ArrayList<>();
         HashMap<String, AttributeValue> key = new HashMap<>();
         key.put(USER_ID, new AttributeValue().withS(userId));
         //获取数据

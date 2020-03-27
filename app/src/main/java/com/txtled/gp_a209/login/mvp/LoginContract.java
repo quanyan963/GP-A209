@@ -26,13 +26,17 @@ public interface LoginContract {
 
         void showLoginFail();
 
-        void toMainView();
+        void toMainView(boolean back);
+
+        void signOut();
+
+        void signOutFail();
     }
     interface Presenter extends BasePresenter<View>{
 
         void init(Activity activity);
 
-        void viewClick(int id);
+        void viewClick(int id, int type);
 
         void onResume(boolean isShowing);
 

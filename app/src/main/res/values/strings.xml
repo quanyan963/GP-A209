@@ -47,7 +47,6 @@
     <string name="select_timer">Select Timer</string>
     <string name="turn_on">Turn On</string>
     <string name="turn_off">Turn off</string>
-    <string name="no_device">There was no devices powered on.</string>
 
     //device information
     <string name="information">INFORMATION</string>
@@ -63,6 +62,9 @@
     <string name="device_list">DEVICE LIST</string>
     <string name="already_deleted">Delete failed.</string>
     <string name="try_again">Fail to connect to IotCore.Try again.</string>
+    <string name="searching_device">Searching for devices in the same network…</string>
+    <string name="no_device">Not found.But you can still control device.</string>
+    <string name="retry">RETRY</string>
 
     //app information
     <string name="booklet">Instruction Booklet</string>
@@ -74,6 +76,9 @@
     <string name="some_no_responding">Some of devices are not responding.</string>
     <string name="off_all">Turn Off All Device</string>
     <string name="on_all">Turn On All Device</string>
+    <string name="change_name_hint">Device info was not obtained.\nYou may not be in the same network\nsegment as the device.\nPlease return to the device list\npage and connect to the same network\nthen try to pull down to\nrefresh the data</string>
+    <string name="sign_out">Sign out</string>
+    <string name="sign_out_fail">Sign Out Failed.</string>
 
 
 </resources>

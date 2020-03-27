@@ -116,8 +116,8 @@
             android:layout_toLeftOf="@+id/img_volume_up"
             android:progressDrawable="@drawable/progress_un"
             android:thumb="@drawable/seekbar_selector_un"
-            android:max="10"
-            android:progress="10"/>
+            android:max="9"
+            android:progress="0"/>
         <ImageButton
             android:id="@+id/img_volume_up"
             android:layout_width="wrap_content"

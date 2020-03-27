@@ -23,6 +23,10 @@ import com.txtled.gp_a209.widget.ArialRoundTextView;
 
 import butterknife.BindView;
 
+import static com.txtled.gp_a209.utils.Constants.NAME;
+import static com.txtled.gp_a209.utils.Constants.OK;
+import static com.txtled.gp_a209.utils.Constants.TYPE;
+
 /**
  * Created by Mr.Quan on 2020/3/12.
  */
@@ -35,6 +39,7 @@ public class LoginActivity extends MvpBaseActivity<LoginPresenter> implements Lo
     ArialRoundTextView atvWifiName;
 
     private AlertDialog dialog;
+    private int type;
 
     @Override
     public void setInject() {
@@ -43,6 +48,12 @@ public class LoginActivity extends MvpBaseActivity<LoginPresenter> implements Lo
 
     @Override
     public void init() {
+        Intent intent = getIntent();
+        type = intent.getIntExtra(TYPE,0);
+
+        if (type == 1){
+            abtLogin.setText(R.string.sign_out);
+        }
         presenter.init(this);
         atvProblem.setHighlightColor(getResources().getColor(android.R.color.transparent));
         SpannableStringBuilder stringBuilder = new SpannableStringBuilder(getResources()
@@ -68,7 +79,7 @@ public class LoginActivity extends MvpBaseActivity<LoginPresenter> implements Lo
 
     @Override
     public void onClick(View v) {
-        presenter.viewClick(v.getId());
+        presenter.viewClick(v.getId(),type);
     }
 
     @Override
@@ -113,10 +124,28 @@ public class LoginActivity extends MvpBaseActivity<LoginPresenter> implements Lo
     }
 
     @Override
-    public void toMainView() {
+    public void toMainView(boolean back) {
         hidLoadingView();
-        startActivity(new Intent(this, MainActivity.class));
+        if (back){
+            this.setResult(OK);
+            finish();
+        }else {
+            startActivity(new Intent(this, MainActivity.class));
+        }
         finish();
+    }
+
+    @Override
+    public void signOut() {
+        hidLoadingView();
+        abtLogin.setText(R.string.login_with_amazon);
+        type = 0;
+    }
+
+    @Override
+    public void signOutFail() {
+        hidSnackBar();
+        showSnackBar(abtLogin,R.string.sign_out_fail);
     }
 
     private class FirstClick extends ClickableSpan {
@@ -146,16 +175,23 @@ public class LoginActivity extends MvpBaseActivity<LoginPresenter> implements Lo
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        return onExitActivity(keyCode,event);
-    }
-
-    @Override
-    public void onBackPressed() {
         if (snackbar != null && snackbar.isShown()){
             snackbar.dismiss();
             snackbar = null;
+            return false;
         }else {
-            super.onBackPressed();
+            return onExitActivity(keyCode,event);
         }
+
     }
+
+//    @Override
+//    public void onBackPressed() {
+//        if (snackbar != null && snackbar.isShown()){
+//            snackbar.dismiss();
+//            snackbar = null;
+//        }else {
+//            super.onBackPressed();
+//        }
+//    }
 }

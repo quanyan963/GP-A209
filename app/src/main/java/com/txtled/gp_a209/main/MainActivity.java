@@ -27,6 +27,7 @@ import java.util.List;
 
 import butterknife.BindView;
 
+import static com.txtled.gp_a209.utils.Constants.APP;
 import static com.txtled.gp_a209.utils.Constants.ENDPOINT;
 import static com.txtled.gp_a209.utils.Constants.INFO;
 import static com.txtled.gp_a209.utils.Constants.NAME;
@@ -95,10 +96,10 @@ public class MainActivity extends MvpBaseActivity<MainPresenter> implements Main
     }
 
     @Override
-    public void getDeviceData(List<DeviceInfo> data) {
-//        srlRefresh.setRefreshing(false);
-//        if (!data.isEmpty())
-//            listAdapter.setData(data);
+    public void getDeviceData(List<WWADeviceInfo> data) {
+        srlRefresh.setRefreshing(false);
+        if (!data.isEmpty())
+            listAdapter.setData(data);
     }
 
     @Override
@@ -123,16 +124,25 @@ public class MainActivity extends MvpBaseActivity<MainPresenter> implements Main
 
     @Override
     public void setData(List<WWADeviceInfo> refreshData) {
-        srlRefresh.setRefreshing(false);
-        if (!refreshData.isEmpty())
-            listAdapter.setData(refreshData);
+        //srlRefresh.setRefreshing(false);
+
+        if (!refreshData.isEmpty()){
+            hidSnackBar();
+            listAdapter.setDiscoveryData(refreshData);
+        }
+
     }
 
     @Override
     public void noDevice() {
-        srlRefresh.setRefreshing(false);
+        //srlRefresh.setRefreshing(false);
         hidSnackBar();
-        showSnackBar(abtOffAll,R.string.no_device);
+        //showSnackBar(abtOffAll,R.string.no_device);
+        showSnackBar(abtOffAll,R.string.no_device, R.string.retry, v -> {
+            presenter.discovery();
+            hidSnackBar();
+            showSnackBar(abtOffAll,R.string.searching_device);
+        });
     }
 
     @Override
@@ -190,8 +200,21 @@ public class MainActivity extends MvpBaseActivity<MainPresenter> implements Main
     }
 
     @Override
+    public void showSearching() {
+        runOnUiThread(() -> {
+            hidSnackBar();
+            showSnackBar(abtOffAll, R.string.searching_device);
+        });
+    }
+
+    @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        return onExitActivity(keyCode,event);
+        if (snackbar != null && snackbar.isShown()){
+            hidSnackBar();
+            return false;
+        }else {
+            return onExitActivity(keyCode,event);
+        }
     }
 
     /**
@@ -222,7 +245,7 @@ public class MainActivity extends MvpBaseActivity<MainPresenter> implements Main
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        if (requestCode == RESULT || requestCode == INFO){
+        if (requestCode == RESULT || requestCode == INFO || requestCode == APP){
             if (resultCode == OK){
                 srlRefresh.setRefreshing(true);
                 onRefresh();
@@ -233,7 +256,7 @@ public class MainActivity extends MvpBaseActivity<MainPresenter> implements Main
 
     @Override
     public void onLeftClick() {
-        startActivity(new Intent(this, AppInfoActivity.class));
+        startActivityForResult(new Intent(this, AppInfoActivity.class),APP);
     }
 
     @Override

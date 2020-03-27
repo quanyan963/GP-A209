@@ -17,7 +17,7 @@ public interface MainContract {
 
     interface View extends BaseView {
 
-        void getDeviceData(List<DeviceInfo> data);
+        void getDeviceData(List<WWADeviceInfo> data);
 
         void hidSnackBar();
 
@@ -44,6 +44,8 @@ public interface MainContract {
         void fail();
 
         void showLoading();
+
+        void showSearching();
     }
 
     interface Presenter extends BasePresenter<View> {
@@ -55,5 +57,7 @@ public interface MainContract {
         void deleteDevice(WWADeviceInfo data, String name);
 
         void onClick(android.view.View v);
+
+        void discovery();
     }
 }

@@ -14,6 +14,7 @@ import android.util.Log;
 import androidx.core.location.LocationManagerCompat;
 
 import com.amazon.identity.auth.device.AuthError;
+import com.amazon.identity.auth.device.api.Listener;
 import com.amazon.identity.auth.device.api.authorization.AuthCancellation;
 import com.amazon.identity.auth.device.api.authorization.AuthorizationManager;
 import com.amazon.identity.auth.device.api.authorization.AuthorizeListener;
@@ -55,6 +56,8 @@ public class LoginPresenter extends RxPresenter<LoginContract.View> implements L
     private String userId;
     private CognitoCachingCredentialsProvider provider;
     private AmazonDynamoDB client;
+    private Activity activity;
+    private boolean back = false;
 
     @Inject
     public LoginPresenter(DataManagerModel mDataManagerModel) {
@@ -63,6 +66,7 @@ public class LoginPresenter extends RxPresenter<LoginContract.View> implements L
 
     @Override
     public void init(Activity activity) {
+        this.activity = activity;
         provider = MyApplication.getCredentialsProvider();
         //client = new AmazonDynamoDBClient(provider);
         userId = mDataManagerModel.getUserId();
@@ -135,18 +139,50 @@ public class LoginPresenter extends RxPresenter<LoginContract.View> implements L
     }
 
     @Override
-    public void viewClick(int id) {
+    public void viewClick(int id, int type) {
         switch (id){
             case R.id.abt_login:
                 view.showLoadingView();
-                userId = "";
-                mDataManagerModel.setUserId(userId);
-                AuthorizationManager.authorize(
-                        new AuthorizeRequest.Builder(mRequestContext)
-                                .addScopes(ProfileScope.profile(),ProfileScope.postalCode())
-                                .build());
+                if (type == 0){
+                    userId = "";
+                    mDataManagerModel.setUserId(userId);
+                    mDataManagerModel.setEmail("");
+                    AuthorizationManager.authorize(
+                            new AuthorizeRequest.Builder(mRequestContext)
+                                    .addScopes(ProfileScope.profile(),ProfileScope.postalCode())
+                                    .build());
+                }else {
+                    back = true;
+                    AuthorizationManager.signOut(activity, new Listener<Void, AuthError>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            userId = "";
+                            mDataManagerModel.setUserId(userId);
+                            mDataManagerModel.setEmail("");
+                            view.signOut();
+                        }
+
+                        @Override
+                        public void onError(AuthError authError) {
+                            view.signOutFail();
+                            hidSnackBarDelay();
+                        }
+                    });
+                }
+
                 break;
         }
+    }
+
+    private void hidSnackBarDelay(){
+        addSubscribe(Flowable.timer(3, TimeUnit.SECONDS)
+                .compose(RxUtil.rxSchedulerHelper())
+                .subscribeWith(new CommonSubscriber<Long>(view) {
+                    @Override
+                    public void onNext(Long aLong) {
+                        view.hidSnackBar();
+                    }
+                }));
     }
 
     @Override
@@ -203,7 +239,7 @@ public class LoginPresenter extends RxPresenter<LoginContract.View> implements L
 
             mDataManagerModel.setEmail(authorizeResult.getUser().getUserEmail());
             //view.setUserId(userId);
-            view.toMainView();
+            view.toMainView(back);
         }
 
         @Override
