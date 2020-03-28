@@ -9,6 +9,7 @@ import android.widget.ImageButton;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 
@@ -81,7 +82,6 @@ public class ControlActivity extends MvpBaseActivity<ControlPresenter> implement
     private String endpoint;
     private AlertDialog loading;
     private boolean power,result,offDuration;
-    private int beforeProgress;
 
     @Override
     public void setInject() {
@@ -119,7 +119,7 @@ public class ControlActivity extends MvpBaseActivity<ControlPresenter> implement
 
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
-                beforeProgress = seekBar.getProgress();
+
             }
 
             @Override
@@ -358,10 +358,20 @@ public class ControlActivity extends MvpBaseActivity<ControlPresenter> implement
                     rgSoundOne.clearCheck();
                     buttonView.setCompoundDrawables(null, getImgResources(2, 1), null, null);
                     buttonView.setTextColor(getResources().getColor(R.color.white));
+                    rgDuration.clearCheck();
+                    for (int i = 0; i < rgDuration.getChildCount(); i++) {
+                        rgDuration.getChildAt(i).setEnabled(false);
+                    }
                 } else {
                     result = true;
                     buttonView.setCompoundDrawables(null, getImgUnResources(2, 1), null, null);
                     buttonView.setTextColor(getResources().getColor(R.color.text_un));
+
+                    for (int i = 0; i < rgDuration.getChildCount(); i++) {
+                        rgDuration.getChildAt(i).setEnabled(true);
+                    }
+                    result = true;
+                    rbNever.setChecked(true);
                 }
                 break;
             case R.id.rb_never:
@@ -436,6 +446,8 @@ public class ControlActivity extends MvpBaseActivity<ControlPresenter> implement
     @Override
     public void setData(IotCoreData iotCoreData) {
         runOnUiThread(() -> {
+            hideSnackBar();
+            abtPower.setEnabled(true);
             powerChanged(iotCoreData.getDevice().equals("on"));
             sbVolume.setProgress(iotCoreData.getVolume());
             if (power) {
@@ -487,13 +499,29 @@ public class ControlActivity extends MvpBaseActivity<ControlPresenter> implement
     }
 
     @Override
-    public void volumeFail() {
-        sbVolume.setProgress(beforeProgress);
+    public void volumeFail(int progress) {
+        Toast.makeText(this,R.string.change_fail,Toast.LENGTH_SHORT).show();
+        sbVolume.setProgress(progress);
     }
 
     @Override
     public void initFail() {
         hidLoadingView();
+        hideSnackBar();
+        abtPower.setEnabled(false);
+        rbNone.setEnabled(false);
+        for (int i = 0; i < rgSoundOne.getChildCount(); i++) {
+            rgSoundOne.getChildAt(i).setEnabled(false);
+            rgSoundTwo.getChildAt(i).setEnabled(false);
+        }
+        for (int i = 0; i < rgDuration.getChildCount(); i++) {
+            rgDuration.getChildAt(i).setEnabled(false);
+        }
+        showSnackBar(abtPower, R.string.sync_fail, R.string.retry, v -> {
+            presenter.initData();
+            hideSnackBar();
+            loading.show();
+        });
 
     }
 
@@ -553,7 +581,7 @@ public class ControlActivity extends MvpBaseActivity<ControlPresenter> implement
         }else {
             rgDuration.clearCheck();
             for (int i = 0; i < rgDuration.getChildCount(); i++) {
-                rgDuration.getChildAt(i).setEnabled(true);
+                rgDuration.getChildAt(i).setEnabled(false);
             }
         }
 
@@ -562,7 +590,10 @@ public class ControlActivity extends MvpBaseActivity<ControlPresenter> implement
     @Override
     public void mqttFail(int id) {
         result = true;
-        runOnUiThread(() -> ((ArialRoundRadioButton) findViewById(id)).setChecked(false));
+        runOnUiThread(() -> {
+            ((ArialRoundRadioButton) findViewById(id)).setChecked(false);
+            Toast.makeText(this,R.string.change_fail,Toast.LENGTH_SHORT).show();
+        });
 
     }
 }

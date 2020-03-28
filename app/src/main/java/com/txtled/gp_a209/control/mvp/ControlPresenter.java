@@ -280,12 +280,12 @@ public class ControlPresenter extends RxPresenter<ControlContract.View> implemen
 
             @Override
             public void onFailure() {
-                view.volumeFail();
+                view.volumeFail(iotCoreData.getVolume());
             }
 
             @Override
             public void onTimeout() {
-                view.volumeFail();
+                view.volumeFail(iotCoreData.getVolume());
             }
         });
         try {

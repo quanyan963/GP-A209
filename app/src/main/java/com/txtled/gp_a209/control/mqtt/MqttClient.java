@@ -45,6 +45,11 @@ public class MqttClient {
             @Override
             public void onConnectionSuccess() {
                 listener.onSuccess(device);
+                try {
+                    client.subscribe(myTopic);
+                } catch (AWSIotException e) {
+                    e.printStackTrace();
+                }
                 super.onConnectionSuccess();
             }
         };
@@ -67,13 +72,8 @@ public class MqttClient {
 
     public void subscribe(String endpoint, OnSuccessListener listener){
 
-        try {
-            myTopic = new MyTopic(String.format(SUBSCRIBE,endpoint));
-            myTopic.setListener(listener);
-            client.subscribe(myTopic);
-        } catch (AWSIotException e) {
-
-        }
+        myTopic = new MyTopic(String.format(SUBSCRIBE,endpoint));
+        myTopic.setListener(listener);
     }
 
     public void closeClient(){

@@ -22,7 +22,7 @@ public interface ControlContract {
 
         void powerChanged(boolean power);
 
-        void volumeFail();
+        void volumeFail(int progress);
 
         void initFail();
 
