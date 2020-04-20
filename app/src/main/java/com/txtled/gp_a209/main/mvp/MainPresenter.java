@@ -370,6 +370,11 @@ public class MainPresenter extends RxPresenter<MainContract.View> implements Mai
         }
     }
 
+    @Override
+    public void onDestroy() {
+        activity.unregisterReceiver(mReceiver);
+    }
+
     private void hidSnackBarDelay(){
         addSubscribe(Flowable.timer(3, TimeUnit.SECONDS)
                 .compose(RxUtil.rxSchedulerHelper())

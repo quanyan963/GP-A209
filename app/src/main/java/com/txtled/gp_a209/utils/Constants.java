@@ -23,6 +23,7 @@ public class Constants {
     public static final int OK = 200;
     public static final String PUBLISH = "$aws/things/%s/shadow/update";
     public static final String SUBSCRIBE = "$aws/things/%s/shadow/update/accepted";
+    public static final String REJECTED = "$aws/things/%s/shadow/update/rejected";
     public static final String GET_DATA = "$aws/things/%s/shadow/get";
     public static final String DATA_SOUND = "{\"state\":{\"desired\":{\"sound\":%d}}}";
     public static final String DATA_VOLUME = "{\"state\":{\"desired\":{\"volume\":%d}}}";

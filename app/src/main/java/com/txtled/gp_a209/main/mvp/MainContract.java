@@ -59,5 +59,7 @@ public interface MainContract {
         void onClick(android.view.View v);
 
         void discovery();
+
+        void onDestroy();
     }
 }

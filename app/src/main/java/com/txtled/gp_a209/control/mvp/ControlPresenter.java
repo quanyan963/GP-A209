@@ -52,19 +52,6 @@ public class ControlPresenter extends RxPresenter<ControlContract.View> implemen
     public void init(String endpoint, Activity activity) {
         this.endpoint = endpoint;
         this.activity = activity;
-
-        MqttClient.getClient().initClient(endpoint, new OnConnectListener() {
-            @Override
-            public void onSuccess(AWSIotDevice device) {
-                iotDevice = device;
-                initData();
-            }
-
-            @Override
-            public void onFail() {
-
-            }
-        });
         MqttClient.getClient().subscribe(endpoint, new OnSuccessListener() {
             @Override
             public void onSuccess() {
@@ -81,6 +68,37 @@ public class ControlPresenter extends RxPresenter<ControlContract.View> implemen
 
             @Override
             public void onMessage() {
+
+            }
+        });
+        MqttClient.getClient().reject(endpoint, new OnSuccessListener() {
+            @Override
+            public void onSuccess() {
+                //view.hidLoadingView();
+            }
+
+            @Override
+            public void onFailure() {
+            }
+
+            @Override
+            public void onTimeout() {
+            }
+
+            @Override
+            public void onMessage() {
+
+            }
+        });
+        MqttClient.getClient().initClient(endpoint, new OnConnectListener() {
+            @Override
+            public void onSuccess(AWSIotDevice device) {
+                iotDevice = device;
+                initData();
+            }
+
+            @Override
+            public void onFail() {
 
             }
         });

@@ -19,6 +19,7 @@ import com.txtled.gp_a209.utils.ForUse;
 
 import org.json.JSONObject;
 
+import static com.txtled.gp_a209.utils.Constants.REJECTED;
 import static com.txtled.gp_a209.utils.Constants.REST_API;
 import static com.txtled.gp_a209.utils.Constants.SUBSCRIBE;
 
@@ -27,6 +28,7 @@ public class MqttClient {
     private AWSIotDevice device;
     private AWSIotMqttClient client;
     private MyTopic myTopic;
+    private MyTopic myTopicr;
     private AwsIotConnection connection;
 
     public static MqttClient getClient() {
@@ -45,11 +47,18 @@ public class MqttClient {
             @Override
             public void onConnectionSuccess() {
                 listener.onSuccess(device);
-                try {
-                    client.subscribe(myTopic);
-                } catch (AWSIotException e) {
-                    e.printStackTrace();
-                }
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            client.subscribe(myTopic);
+                            client.subscribe(myTopicr);
+                        } catch (AWSIotException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                }).start();
                 super.onConnectionSuccess();
             }
         };
@@ -72,8 +81,14 @@ public class MqttClient {
 
     public void subscribe(String endpoint, OnSuccessListener listener){
 
-        myTopic = new MyTopic(String.format(SUBSCRIBE,endpoint));
+        myTopic = new MyTopic(String.format(SUBSCRIBE,endpoint),AWSIotQos.QOS0);
         myTopic.setListener(listener);
+    }
+
+    public void reject(String endpoint, OnSuccessListener listener){
+
+        myTopicr = new MyTopic(String.format(REJECTED,endpoint),AWSIotQos.QOS0);
+        myTopicr.setListener(listener);
     }
 
     public void closeClient(){

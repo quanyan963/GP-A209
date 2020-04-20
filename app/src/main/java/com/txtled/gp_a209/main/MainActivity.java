@@ -263,4 +263,10 @@ public class MainActivity extends MvpBaseActivity<MainPresenter> implements Main
     public void onClick(View v) {
         presenter.onClick(v);
     }
+
+    @Override
+    public void onDestroy() {
+        presenter.onDestroy();
+        super.onDestroy();
+    }
 }

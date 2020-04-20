@@ -7,9 +7,6 @@ import com.txtled.gp_a209.control.mqtt.listener.OnSuccessListener;
 
 public class MyTopic extends AWSIotTopic {
     private OnSuccessListener listener;
-    public MyTopic(String topic) {
-        super(topic);
-    }
 
     public MyTopic(String topic, AWSIotQos qos) {
         super(topic, qos);
