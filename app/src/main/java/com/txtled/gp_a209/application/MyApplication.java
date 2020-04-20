@@ -49,7 +49,6 @@ public class MyApplication extends Application {
         return credentialsProvider;
     }
 
-
     public static MyApplication getInstance() {
         if (sInstance == null) {
             return new MyApplication();
