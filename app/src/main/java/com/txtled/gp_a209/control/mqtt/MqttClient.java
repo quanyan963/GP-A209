@@ -55,6 +55,8 @@ public class MqttClient {
                             client.subscribe(myTopicr);
                         } catch (AWSIotException e) {
                             e.printStackTrace();
+                            System.out.println("onConnectionSuccess出错了"+e);
+
                         }
 
                     }
@@ -74,8 +76,11 @@ public class MqttClient {
 //            }
         } catch (AWSIotException e) {
             listener.onFail();
+            System.out.println("出错了"+e);
         } catch (AWSIotTimeoutException e) {
             e.printStackTrace();
+            System.out.println("出错了22"+e);
+
         }
     }
 

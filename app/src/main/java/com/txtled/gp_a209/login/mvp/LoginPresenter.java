@@ -79,6 +79,7 @@ public class LoginPresenter extends RxPresenter<LoginContract.View> implements L
         return Build.VERSION.SDK_INT >= 28;
     }
 
+    //广播监听网络变化
     private BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -100,6 +101,10 @@ public class LoginPresenter extends RxPresenter<LoginContract.View> implements L
         }
     };
 
+    /**
+     * 注册广播
+     * @param activity
+     */
     private void registerBroadcast(Activity activity) {
         IntentFilter filter = new IntentFilter(WifiManager.NETWORK_STATE_CHANGED_ACTION);
         if (isSDKAtLeastP()) {
@@ -109,6 +114,11 @@ public class LoginPresenter extends RxPresenter<LoginContract.View> implements L
     }
 
 
+    /**
+     * 判断网络状态变化
+     * @param context
+     * @param info
+     */
     private void onWifiChanged(Context context,WifiInfo info) {
         view.hidSnackBar();
         boolean disconnected = info == null
@@ -138,6 +148,11 @@ public class LoginPresenter extends RxPresenter<LoginContract.View> implements L
         }
     }
 
+    /**
+     * 所有按钮点击监听事件
+     * @param id 控件id
+     * @param type 类型
+     */
     @Override
     public void viewClick(int id, int type) {
         switch (id){
@@ -174,6 +189,9 @@ public class LoginPresenter extends RxPresenter<LoginContract.View> implements L
         }
     }
 
+    /**
+     * 延时关闭底部弹窗
+     */
     private void hidSnackBarDelay(){
         addSubscribe(Flowable.timer(3, TimeUnit.SECONDS)
                 .compose(RxUtil.rxSchedulerHelper())
@@ -213,6 +231,9 @@ public class LoginPresenter extends RxPresenter<LoginContract.View> implements L
         activity.unregisterReceiver(mReceiver);
     }
 
+    /**
+     * 亚马逊登录返回监听
+     */
     private class AuthorizeListenerImpl extends AuthorizeListener {
         @Override
         public void onSuccess(final AuthorizeResult authorizeResult) {

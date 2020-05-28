@@ -33,6 +33,10 @@ public class StartPresenter extends RxPresenter<StartContract.View> implements S
         this.mDataManagerModel = mDataManagerModel;
     }
 
+    /**
+     * 初始化操作
+     * @param activity
+     */
     @Override
     public void startTimer(Activity activity) {
         if (mDataManagerModel.getUid().isEmpty()){

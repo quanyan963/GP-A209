@@ -57,6 +57,7 @@ public class AppInfoActivity extends MvpBaseActivity<AppInfoPresenter> implement
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
+        //退出登录
         mvAccount.setListener(v ->
                 startActivityForResult(new Intent(AppInfoActivity.this,LoginActivity.class)
                         .putExtra(TYPE,1),LOGIN));

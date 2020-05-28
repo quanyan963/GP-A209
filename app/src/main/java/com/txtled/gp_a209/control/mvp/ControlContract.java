@@ -24,6 +24,8 @@ public interface ControlContract {
 
         void volumeFail(int progress);
 
+        void lightFail();
+
         void initFail();
 
         void resetView(IotCoreData iotCoreData);
@@ -33,6 +35,8 @@ public interface ControlContract {
         void init(String endpoint, Activity activity);
 
         void sendMqtt(int id);
+
+        void sendLight(int state);
 
         void onClick(int id,boolean power);
 

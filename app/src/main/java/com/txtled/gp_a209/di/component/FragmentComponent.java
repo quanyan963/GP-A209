@@ -4,6 +4,7 @@ import android.app.Activity;
 
 import com.txtled.gp_a209.di.module.FragmentModule;
 import com.txtled.gp_a209.di.scope.FragmentScope;
+import com.txtled.gp_a209.light.LightFragment;
 
 import dagger.Component;
 
@@ -17,5 +18,6 @@ import dagger.Component;
 public interface FragmentComponent {
     Activity getActivity();
 
+    void inject(LightFragment lightFragment);
     //void inject(IntroductionFragment introductionFragment);
 }

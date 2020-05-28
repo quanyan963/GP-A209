@@ -123,6 +123,10 @@ public class LoginActivity extends MvpBaseActivity<LoginPresenter> implements Lo
         showSnackBar(atvProblem,R.string.login_failed);
     }
 
+    /**
+     * 跳转至主界面
+     * @param back
+     */
     @Override
     public void toMainView(boolean back) {
         hidLoadingView();

@@ -32,9 +32,15 @@ public class DeviceNameAdapter extends RecyclerView.Adapter<DeviceNameAdapter.De
         this.listener = listener;
     }
 
+    /**
+     * 设备名称列表
+     * @param d
+     */
     public void setData(String[] d) {
         List<String> temp = Arrays.asList(context.getResources().getStringArray(R.array.friendlyName));
         data = new ArrayList<>(temp);
+        System.out.println("获取名字");
+
         if (d != null){
             for (int i = 0; i < d.length; i++) {
                 for (int j = 0; j < data.size(); j++) {

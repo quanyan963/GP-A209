@@ -81,6 +81,8 @@
     <string name="sign_out_fail">Sign Out Failed.</string>
     <string name="sync_fail">Data sync failed.Please try again.</string>
     <string name="change_fail">Change Failed.</string>
-
+    <string name="light">Light</string>
+    <string name="alarm">Alarm</string>
+    <string name="cycle_change">Cyclic change</string>
 
 </resources>

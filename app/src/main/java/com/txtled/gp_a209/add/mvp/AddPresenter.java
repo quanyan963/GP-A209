@@ -139,7 +139,6 @@ public class AddPresenter extends RxPresenter<AddContract.View> implements AddCo
         provider = MyApplication.getCredentialsProvider();
         client = new AmazonDynamoDBClient(provider);
         userId = dataManagerModel.getUserId();
-
         key = new HashMap<>();
         key.put(USER_ID, new AttributeValue().withS(userId));
         //初始化awsIot
@@ -150,6 +149,7 @@ public class AddPresenter extends RxPresenter<AddContract.View> implements AddCo
         } catch (Exception e) {
             Utils.Logger(TAG, "IotServiceUtil.getAmazonIotService", e.getMessage());
         }
+        System.out.println("初始化addpresent控件");
     }
 
     private void createIotService() {
@@ -178,10 +178,16 @@ public class AddPresenter extends RxPresenter<AddContract.View> implements AddCo
     public void onClick(int id, boolean isCommit) {
         switch (id){
             case R.id.abt_collect:
+
+                System.out.println("点击了collect按钮");
             case R.id.atv_no_pass:
                 if (isCommit){
                     connDevice();
+                    System.out.println("点击了atv_no_pass按钮1");
+
                 }else {
+                    System.out.println("点击了atv_no_pass按钮2");
+
                     view.showConnectHint();
 //                    broadCast = dataManagerModel.getDeviceAddress();
 //                    udpSend(String.format(SEND_THING_NAME, REST_API,""), new OnUdpSendRequest() {
@@ -219,6 +225,9 @@ public class AddPresenter extends RxPresenter<AddContract.View> implements AddCo
      * 创建事务
      */
     public void connDevice() {
+
+        System.out.println("初始化connDevice");
+
         addSubscribe(Flowable.create((FlowableOnSubscribe<String>) e -> {
             createIotCore(name);
             e.onNext("success");
@@ -227,7 +236,7 @@ public class AddPresenter extends RxPresenter<AddContract.View> implements AddCo
                 .subscribeWith(new CommonSubscriber<String>(view){
                     @Override
                     public void onNext(String s) {
-
+                        System.out.println("初始化connDevice  onNext");
                     }
                 }));
     }
@@ -380,6 +389,10 @@ public class AddPresenter extends RxPresenter<AddContract.View> implements AddCo
         writeToDevice(friendlyName);
     }
 
+    /**
+     * 将数据写入设备
+     * @param friendlyName 设备名称
+     */
     private void writeToDevice(String friendlyName) {
         //listener.onStatueChange(R.string.transmitting_data);
         String friendlyNames = getNewName(info.getFriendlyNames().split(","),friendlyName);
@@ -447,6 +460,12 @@ public class AddPresenter extends RxPresenter<AddContract.View> implements AddCo
         });
     }
 
+    /**
+     * 返回新的名称
+     * @param friendlyNames
+     * @param friendlyName
+     * @return
+     */
     private String getNewName(String[] friendlyNames, String friendlyName){
         String newNames = "";
         boolean changed = false;
@@ -497,6 +516,9 @@ public class AddPresenter extends RxPresenter<AddContract.View> implements AddCo
                 }));
     }
 
+    /**
+     * 创建事物
+     */
     private void createIotThing() {
         //listener.onStatueChange(R.string.hint_create_thing);
         //创建事物
@@ -545,6 +567,8 @@ public class AddPresenter extends RxPresenter<AddContract.View> implements AddCo
 
     @Override
     public void getConfiguredData() {
+
+        System.out.println("获取数据库datagetConfiguredData");
         addSubscribe(Flowable.create((FlowableOnSubscribe<String[]>) e -> {
                     //查数据
                     e.onNext(getDeviceData());
@@ -554,6 +578,8 @@ public class AddPresenter extends RxPresenter<AddContract.View> implements AddCo
                     @Override
                     public void onNext(String[] data) {
                         //返回数据
+                        System.out.println("获取数据库setData");
+
                         view.setData(data);
 
                     }
@@ -602,21 +628,36 @@ public class AddPresenter extends RxPresenter<AddContract.View> implements AddCo
         broadCast = info.getIp();
     }
 
+    /**
+     * 获取用户下所有设备列表
+     * @return 所有设备名称
+     */
     private String[] getDeviceData() {
         data = new ArrayList<>();
         //获取数据
+
+        System.out.println("获取数据库getDeviceData");
+
         GetItemResult itemResult = client.getItem(new GetItemRequest()
                 .withTableName(DB_NAME).withKey(key));
+        System.out.println("数据库key==="+key);
         if (itemResult.getItem() != null) {
+            System.out.println("获取数据库getItem");
+
             Map<String, AttributeValue> resultItem = itemResult.getItem();
             cert_data = resultItem.get(THING_DIR);
             //设备名称
             names = cert_data.getM().keySet().toArray(new String[cert_data.getM().size()]);
 
             for (int i = 0; i < names.length; i++) {
+                System.out.println("获取数据库names"+names[i]);
+
                 data.add(new DeviceInfo(names[i],cert_data.getM().get(names[i]).getS()));
+
             }
         }else {
+            System.out.println("获取数据库names为空");
+
             names = null;
         }
         return names;
@@ -677,6 +718,10 @@ public class AddPresenter extends RxPresenter<AddContract.View> implements AddCo
         }
     }
 
+    /**
+     * 注册广播
+     * @param activity
+     */
     private void registerBroadcast(Activity activity) {
         IntentFilter filter = new IntentFilter(WifiManager.NETWORK_STATE_CHANGED_ACTION);
         if (isSDKAtLeastP()) {
@@ -687,6 +732,9 @@ public class AddPresenter extends RxPresenter<AddContract.View> implements AddCo
         activity.registerReceiver(mReceiver, filter);
     }
 
+    /**
+     * 异步配网
+     */
     public class EsptouchAsyncTask4 extends AsyncTask<byte[], IEsptouchResult, List<IEsptouchResult>> {
 
         private final Object mLock = new Object();
@@ -798,7 +846,6 @@ public class AddPresenter extends RxPresenter<AddContract.View> implements AddCo
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-
             cancelEsptouch();
             //CharSequence[] items = new CharSequence[resultMsgList.size()];
 

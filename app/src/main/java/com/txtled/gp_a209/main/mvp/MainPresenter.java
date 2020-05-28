@@ -134,6 +134,9 @@ public class MainPresenter extends RxPresenter<MainContract.View> implements Mai
         return userId;
     }
 
+    /**
+     * 创建service
+     */
     private void createIotService() {
         try {
             AWSCredentials credentials = new BasicAWSCredentials(ACCESS_KEY, SECRET_ACCESS_KEY);
@@ -187,6 +190,9 @@ public class MainPresenter extends RxPresenter<MainContract.View> implements Mai
         return Build.VERSION.SDK_INT >= 28;
     }
 
+    /**
+     * 根据本机ip得出广播地址
+     */
     private void getBroadCastIp() {
         myWifiManager = ((WifiManager) activity.getApplicationContext()
                 .getSystemService(Context.WIFI_SERVICE));
@@ -206,6 +212,9 @@ public class MainPresenter extends RxPresenter<MainContract.View> implements Mai
         }
     }
 
+    /**
+     * 列表刷新
+     */
     @Override
     public void onRefresh() {
         addSubscribe(Flowable.create((FlowableOnSubscribe<List<WWADeviceInfo>>) e -> {
@@ -289,7 +298,7 @@ public class MainPresenter extends RxPresenter<MainContract.View> implements Mai
                                         hidSnackBarDelay();
                                     }
                                 }else {
-                                    //删除事物
+                                    //删除事物 未完成
                                     view.deleteSuccess();
 //                                    awsIot.detachThingPrincipal(new DetachThingPrincipalRequest()
 //                                            .withThingName(data.getThing())
@@ -331,6 +340,10 @@ public class MainPresenter extends RxPresenter<MainContract.View> implements Mai
 
     }
 
+    /**
+     * 按钮点击事件
+     * @param v
+     */
     @Override
     public void onClick(View v) {
         switch (v.getId()){
@@ -362,6 +375,7 @@ public class MainPresenter extends RxPresenter<MainContract.View> implements Mai
             getBroadCastIp();
             view.showSearching();
             if (udpBuild != null){
+                System.out.println("discovery执行111111111");
                 udpBuild.stopUDPSocket();
             }
             udpSend(DISCOVERY, result -> {
@@ -431,6 +445,11 @@ public class MainPresenter extends RxPresenter<MainContract.View> implements Mai
         });
     }
 
+    /**
+     * 发送udp数据
+     * @param message 内容
+     * @param listener 监听
+     */
     private void udpSend(String message, OnUdpSendRequest listener) {
         data = new ArrayList<>();
         strReceive = "";
@@ -488,6 +507,8 @@ public class MainPresenter extends RxPresenter<MainContract.View> implements Mai
                                 }
                                 view.setData(data);
                                 udpBuild.stopUDPSocket();
+                                System.out.println("discovery执行");
+
                             }else {
                                 view.noDevice();
                             }
@@ -520,6 +541,11 @@ public class MainPresenter extends RxPresenter<MainContract.View> implements Mai
                 }));
     }
 
+    /**
+     * 删除数据库数据
+     * @param name
+     * @return
+     */
     private boolean deleteDB(String name) {
         HashMap<String, AttributeValue> key = new HashMap<>();
         key.put(USER_ID, new AttributeValue().withS(userId));

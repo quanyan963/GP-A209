@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".fragment_light"
+    android:background="@color/colorPrimaryDark"
+    >
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <RadioGroup
+            android:id="@+id/light_group_one"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/light_group_two"
+            android:layout_marginTop="@dimen/dp_40_x"
+            >
+
+            <LinearLayout
+                android:id="@+id/lightGroup1Line"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp_50_x"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                android:orientation="horizontal"
+                >
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical">
+
+                    <com.txtled.gp_a209.widget.ArialRoundRadioButton
+                        android:id="@+id/button_light_red"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:background="@drawable/btn_circle"
+                        android:button="@null"
+                        />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical">
+
+                    <com.txtled.gp_a209.widget.ArialRoundRadioButton
+                        android:id="@+id/button_light_orange"
+                        android:layout_width="@dimen/dp_50_x"
+                        android:layout_height="@dimen/dp_50_x"
+                        android:background="@drawable/btn_circle"
+                        android:button="@null"
+
+                        />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical">
+
+                    <com.txtled.gp_a209.widget.ArialRoundRadioButton
+                        android:id="@+id/button_light_yellow"
+                        android:layout_width="@dimen/dp_50_x"
+                        android:layout_height="@dimen/dp_50_x"
+                        android:background="@drawable/btn_circle"
+                        android:button="@null"
+
+                        />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical">
+
+                    <com.txtled.gp_a209.widget.ArialRoundRadioButton
+                        android:id="@+id/button_light_green"
+                        android:layout_width="@dimen/dp_50_x"
+                        android:layout_height="@dimen/dp_50_x"
+                        android:background="@drawable/btn_circle"
+                        android:button="@null"
+
+                        />
+                </RelativeLayout>
+
+            </LinearLayout>
+
+
+        </RadioGroup>
+
+        <RadioGroup
+            android:id="@+id/light_group_two"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/light_group_one"
+            android:layout_marginTop="@dimen/dp_40_x"
+            >
+
+            <LinearLayout
+                android:id="@+id/relative_two"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp_50_x"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                android:orientation="horizontal"
+                >
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical"
+                    >
+                    <com.txtled.gp_a209.widget.ArialRoundRadioButton
+                        android:id="@+id/button_light_cy_blue"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:background="@drawable/btn_circle"
+                        android:button="@null"
+                        />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical"
+                    >
+
+                    <com.txtled.gp_a209.widget.ArialRoundRadioButton
+                        android:id="@+id/button_light_blue"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:background="@drawable/btn_circle"
+                        android:button="@null"
+                        />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical">
+
+                    <com.txtled.gp_a209.widget.ArialRoundRadioButton
+                        android:id="@+id/button_light_purple"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:background="@drawable/btn_circle"
+                        android:button="@null"
+                        />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical"
+                    >
+
+                    <com.txtled.gp_a209.widget.ArialRoundRadioButton
+                        android:id="@+id/button_light_white"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:background="@drawable/btn_circle"
+                        android:button="@null"
+                        />
+                </RelativeLayout>
+            </LinearLayout>
+        </RadioGroup>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintTop_toBottomOf="@+id/light_group_two"
+            android:layout_marginTop="@dimen/dp_30_x"
+            >
+            <com.txtled.gp_a209.widget.ArialRoundRadioButton
+                android:id="@+id/button_light_cycle"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_gravity="center_horizontal"
+                android:background="@drawable/btn_circle"
+                android:gravity="center"
+                android:text="@string/cycle_change"
+                android:button="@null"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginTop="@dimen/dp_50_x"
+            android:layout_marginBottom="@dimen/dp_50_x"
+            android:orientation="vertical">
+
+            <com.txtled.gp_a209.widget.ArialRoundButton
+                android:id="@+id/light_button_switch"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/main_btn"
+                android:text="@string/turn_off"
+                android:gravity="center"
+                android:backgroundTint="@color/black"
+                android:textColor="@color/yellow"
+                android:background="@drawable/btn_bg"
+                />
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</FrameLayout>

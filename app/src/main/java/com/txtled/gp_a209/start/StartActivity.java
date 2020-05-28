@@ -21,6 +21,9 @@ public class StartActivity extends MvpBaseActivity<StartPresenter> implements St
         getActivityComponent().inject(this);
     }
 
+    /**
+     * 加载布局前做一些事情
+     */
     @Override
     protected void beforeContentView() {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
@@ -37,6 +40,9 @@ public class StartActivity extends MvpBaseActivity<StartPresenter> implements St
         return R.layout.activity_start;
     }
 
+    /**
+     * 判断是否需要跳转至登录界面
+     */
     @Override
     public void toMain() {
         if (presenter.isLogin()){

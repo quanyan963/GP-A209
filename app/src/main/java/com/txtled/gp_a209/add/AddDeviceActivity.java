@@ -134,6 +134,8 @@ public class AddDeviceActivity extends MvpBaseActivity<AddPresenter> implements 
             changeBtnColor(true);
         });
         presenter.getConfiguredData();
+        System.out.println("初始化addactivity控件");
+
     }
 
     private void changeBtnColor(boolean b) {
@@ -201,6 +203,7 @@ public class AddDeviceActivity extends MvpBaseActivity<AddPresenter> implements 
      */
     @Override
     public void setData(String[] data) {
+        System.out.println("进入了setData这个函数吗");
         adapter.setData(data);
         rlvNameList.setAdapter(adapter);
         if (type == 1){
@@ -366,6 +369,9 @@ public class AddDeviceActivity extends MvpBaseActivity<AddPresenter> implements 
         });
     }
 
+    /**
+     * 显示成功并跳转
+     */
     @Override
     public void showSuccess() {
         if (type == 2){

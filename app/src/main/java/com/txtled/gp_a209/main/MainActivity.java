@@ -235,6 +235,11 @@ public class MainActivity extends MvpBaseActivity<MainPresenter> implements Main
                 .putExtra(WIFI,wifiName).putExtra(THING_DIR,data.getThing()),INFO);
     }
 
+    /**
+     * 侧滑删除按钮
+     * @param data
+     * @param name
+     */
     @Override
     public void onDeleteClick(WWADeviceInfo data,String name) {
         this.name = name;

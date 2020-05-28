@@ -125,7 +125,6 @@ public class UDPBuild {
                     client.receive(receivePacket);
                 } catch (IOException e) {
                     Utils.Logger(TAG,"UDP数据包接收失败！线程停止","");
-                    stopUDPSocket();
                     e.printStackTrace();
                     return;
                 }
@@ -148,7 +147,6 @@ public class UDPBuild {
             if (receivePacket != null) {
                 receivePacket.setLength(BUFFER_LENGTH);
             }
-
         }
     }
 
@@ -157,6 +155,7 @@ public class UDPBuild {
      **/
     public void stopUDPSocket() {
         isThreadRunning = false;
+        System.out.println("主动停止socket");
         receivePacket = null;
         if (clientThread != null) {
             clientThread.interrupt();
